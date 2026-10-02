@@ -1,12 +1,37 @@
 window.onload = () => cargarModulo('inicio');
 
-function toggleSidebar() {
-    document.getElementById('sidebarMenu').classList.toggle('active');
+function toggleSidebar(forceState) {
+    const sidebar = document.getElementById('sidebarMenu');
+    const backdrop = document.getElementById('sidebar-backdrop');
+    if (!sidebar) return;
+
+    if (forceState !== undefined) {
+        if (forceState) {
+            sidebar.classList.add('active');
+            if (backdrop) backdrop.classList.add('active');
+        } else {
+            sidebar.classList.remove('active');
+            if (backdrop) backdrop.classList.remove('active');
+        }
+    } else {
+        const isActive = sidebar.classList.toggle('active');
+        if (backdrop) backdrop.classList.toggle('active', isActive);
+    }
 }
 
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') toggleSidebar(false);
+});
+
 function cargarModulo(modulo) {
+    toggleSidebar(false);
+    requestAnimationFrame(() => {
+        ejecutarCargaModulo(modulo);
+    });
+}
+
+function ejecutarCargaModulo(modulo) {
     const areaTabla = document.getElementById('area-tabla');
-    document.getElementById('sidebarMenu').classList.remove('active');
 
     if (modulo === 'inicio') {
         const hermanos = obtenerHermanos();
@@ -144,18 +169,21 @@ function cargarModulo(modulo) {
     
     else if (modulo === 'asignaciones') {
         areaTabla.innerHTML = `
-            <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap">
-                <h3 class="mb-0 text-primary fw-bold" style="color: #2c3e50;">Gestor de Asignaciones Pro</h3>
-                <div class="d-flex align-items-center gap-2">
-                    <label class="fw-bold text-muted mb-0">Año:</label>
-                    <select id="selectorAnioAsignaciones" class="form-select form-select-sm fw-bold shadow-sm" style="width: 100px;" onchange="cambiarAnioAsignaciones()"></select>
+            <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+                <div>
+                    <h3 class="mb-1 fw-bold header-title-primary">📅 Gestor de Asignaciones</h3>
+                    <p class="text-muted small mb-0">Programa semanal de Vida y Ministerio Cristianos, estado de publicadores y planeación</p>
+                </div>
+                <div class="d-flex align-items-center gap-2 bg-white p-2 rounded-pill shadow-sm border">
+                    <label class="fw-bold text-muted mb-0 ps-2 small">Año:</label>
+                    <select id="selectorAnioAsignaciones" class="form-select form-select-sm fw-bold border-0 bg-transparent" style="width: 85px;" onchange="cambiarAnioAsignaciones()"></select>
                 </div>
             </div>
 
-            <ul class="nav nav-pills justify-content-center mb-4 shadow-sm p-2 bg-white rounded" id="pills-tab" role="tablist">
+            <ul class="nav nav-pills justify-content-center mb-4 shadow-sm" id="pills-tab" role="tablist">
                 <li class="nav-item"><button class="nav-link active" data-bs-toggle="pill" data-bs-target="#modulo1">📅 Programa General</button></li>
-                <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#modulo2">👥 Vista General</button></li>
-                <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#modulo-planificacion">📂 Planificación</button></li>
+                <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#modulo2">👥 Disponibilidad y Grupos</button></li>
+                <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#modulo-planificacion" onclick="renderizarPlanificacionMeses()">📂 Planificación Anual</button></li>
                 <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#modulo3">🕒 Historial Personal</button></li>
             </ul>
 
@@ -164,7 +192,7 @@ function cargarModulo(modulo) {
                 <div class="tab-pane fade show active" id="modulo1">
                     <div class="row justify-content-center mb-4">
                         <div class="col-md-6 text-center">
-                            <select id="selectorMesPrograma" class="form-select select-mes-gigante text-center shadow-sm" onchange="renderizarProgramaMensual()">
+                            <select id="selectorMesPrograma" class="form-select select-mes-gigante text-center" onchange="renderizarProgramaMensual()">
                                 <option value="">-- No hay meses registrados --</option>
                             </select>
                         </div>
@@ -186,9 +214,9 @@ function cargarModulo(modulo) {
                 <div class="tab-pane fade" id="modulo3">
                     <div class="row">
                         <div class="col-md-12 mb-4">
-                            <div class="card p-3 shadow-sm bg-white">
-                                <label class="form-label fw-bold" style="color: #2c3e50;">Seleccionar Hermano para ver Historial:</label>
-                                <select id="selectHistorial" class="form-select border-dark" onchange="mostrarHistorialAsignaciones()">
+                            <div class="card p-4 shadow-sm border-0 rounded-4">
+                                <label class="form-label fw-bold text-dark mb-2">Seleccionar Hermano para ver Historial Completo:</label>
+                                <select id="selectHistorial" class="form-select rounded-pill px-3 py-2 fw-semibold" onchange="mostrarHistorialAsignaciones()">
                                     <option value="">-- Buscar hermano --</option>
                                 </select>
                             </div>
@@ -558,7 +586,7 @@ function cargarModulo(modulo) {
                         <div class="row g-4">
                             <div class="col-lg-6">
                                 <div class="card border p-3 shadow-sm h-100 bg-light">
-                                    <h6 class="fw-bold text-secondary text-center mb-3">📊 Comparativa: Presencial vs Parados vs Zoom</h6>
+                                    <h6 class="fw-bold text-secondary text-center mb-3">📊 Comparativa: Total Presencial vs Zoom</h6>
                                     <div style="position: relative; height: 320px;">
                                         <canvas id="graficoBarrasAsistencia"></canvas>
                                     </div>
@@ -608,7 +636,7 @@ function cargarModulo(modulo) {
               </div>
             </div>
         `;
-        setTimeout(() => { inicializarModuloAsistencia(); }, 100);
+        inicializarModuloAsistencia();
     }
     else if (modulo === 'territorios') {
         areaTabla.innerHTML = `
@@ -944,8 +972,156 @@ function cargarModulo(modulo) {
                 </table>
             </div>
         `;
+        if (typeof renderizarModalHermano === 'function') {
+            renderizarModalHermano();
+        }
         renderizarTablaHermanos();
     } 
+    else if (modulo === 'ajustes') {
+        let nombreCongregacionActual = localStorage.getItem('app_nombre_congregacion') || 'Paraíso de Carabayllo';
+        let stats = typeof obtenerEstadisticasBD === 'function' ? obtenerEstadisticasBD() : {
+            activos: 0, inactivos: 0, totalHermanos: 0, asignaciones: 0, territorios: 0, asistencias: 0, tamanoKb: '0'
+        };
+
+        areaTabla.innerHTML = `
+            <div class="mb-4">
+                <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+                    <div>
+                        <h3 class="fw-bold mb-1 header-title-primary">⚙️ Configuración y Base de Datos</h3>
+                        <p class="text-muted mb-0 small">Gestión integral de persistencia, exportaciones relacionales SQL y preferencias</p>
+                    </div>
+                    <span class="badge badge-db-status">
+                        🟢 Almacenamiento Local Activo (HTML5 + SQL Bridge)
+                    </span>
+                </div>
+
+                <!-- Tarjetas de métricas de la Base de Datos -->
+                <div class="row g-3 mb-4">
+                    <div class="col-6 col-md-3">
+                        <div class="card card-stat-ajustes shadow-sm p-3">
+                            <span class="text-muted small fw-semibold">👥 Directorio Hermanos</span>
+                            <div class="fs-4 fw-bold text-dark mt-1">${stats.totalHermanos} <span class="fs-7 fw-normal text-muted">(${stats.activos} act. / ${stats.inactivos} inact.)</span></div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="card card-stat-ajustes shadow-sm p-3">
+                            <span class="text-muted small fw-semibold">📅 Asignaciones Guardadas</span>
+                            <div class="fs-4 fw-bold text-primary mt-1">${stats.asignaciones} <span class="fs-7 fw-normal text-muted">registros</span></div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="card card-stat-ajustes shadow-sm p-3">
+                            <span class="text-muted small fw-semibold">📦 Tarjetas de Territorio</span>
+                            <div class="fs-4 fw-bold text-success mt-1">${stats.territorios} <span class="fs-7 fw-normal text-muted">zonas</span></div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="card card-stat-ajustes shadow-sm p-3">
+                            <span class="text-muted small fw-semibold">📊 Registro de Asistencia</span>
+                            <div class="fs-4 fw-bold text-secondary mt-1">${stats.asistencias} <span class="fs-7 fw-normal text-muted">reuniones</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row g-4">
+                    <!-- Panel Maestro de Base de Datos -->
+                    <div class="col-lg-7">
+                        <div class="card card-ajustes-panel shadow-sm h-100 p-4">
+                            <div class="d-flex align-items-center justify-content-between mb-3 border-bottom pb-2">
+                                <h5 class="fw-bold text-dark mb-0">🗄️ Motor de Base de Datos y Respaldos</h5>
+                                <span class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill px-3 py-1 small">SQL / JSON</span>
+                            </div>
+                            <p class="text-muted small mb-3">
+                                Los datos de tu congregación se guardan en tiempo real en la memoria interna de alta velocidad. Desde aquí puedes generar copias de seguridad portátiles o volcados SQL relacionales para servidores.
+                            </p>
+
+                            <div class="d-grid gap-2 mb-3">
+                                <button class="btn btn-primary fw-bold py-2 d-flex align-items-center justify-content-center gap-2 rounded-3 shadow-sm" onclick="exportarBaseDatosSQL()">
+                                    <span>💾</span> Exportar Base de Datos SQL (.sql)
+                                </button>
+                                <div class="d-flex gap-2">
+                                    <button class="btn btn-outline-primary fw-bold py-2 flex-grow-1 rounded-3" onclick="exportarDatosRespaldo()">
+                                        <span>📥</span> Copia de Seguridad JSON
+                                    </button>
+                                    <label class="btn btn-outline-success fw-bold py-2 flex-grow-1 rounded-3 mb-0 text-center" style="cursor: pointer;">
+                                        <span>📂</span> Restaurar Base de Datos
+                                        <input type="file" id="inputArchivoRestaurar" accept=".json" onchange="cambiarBaseDeDatosCongregacion(event)" hidden>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="p-3 rounded-3 bg-light-subtle border">
+                                <h6 class="fw-bold text-dark mb-1 small">💡 Compatibilidad de la Base de Datos SQL:</h6>
+                                <p class="text-muted small mb-0">
+                                    El archivo <code>.sql</code> generado contiene la estructura de tablas relacionales (<code>hermanos_activos</code>, <code>asignaciones</code>, <code>territorios</code>, <code>asistencia</code>) compatible con <strong>MySQL, MariaDB, SQLite 3 y phpMyAdmin</strong>. También dispones del generador nativo <code>python generar_sqlite.py</code> que crea el archivo <code>datos/congregacion.db</code>.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Panel de Configuración de Congregación y Tema -->
+                    <div class="col-lg-5">
+                        <div class="card card-ajustes-panel shadow-sm h-100 p-4 d-flex flex-column">
+                            <div class="border-bottom pb-2 mb-3">
+                                <h5 class="fw-bold text-dark mb-0">🏢 Congregación y Entorno</h5>
+                            </div>
+
+                            <div class="mb-4">
+                                <label class="text-muted small fw-semibold d-block mb-1">Congregación Activa:</label>
+                                <div class="p-3 bg-light-subtle border rounded-3 d-flex justify-content-between align-items-center">
+                                    <span class="fw-bold text-primary fs-6" id="lblCongregacionActiva">${nombreCongregacionActual}</span>
+                                    <button class="btn btn-sm btn-outline-secondary rounded-pill px-3 py-1 fw-bold" onclick="abrirModalNombreCongregacion()">
+                                        ✏️ Renombrar
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="mt-auto">
+                                <div class="border-top pt-3">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h6 class="fw-bold text-dark mb-0">🌙 Modo Oscuro</h6>
+                                            <small class="text-muted">Ajusta la interfaz para lectura nocturna</small>
+                                        </div>
+                                        <div class="form-check form-switch fs-5 m-0">
+                                            <input class="form-check-input" type="checkbox" id="checkModoOscuro" onchange="toggleModoOscuro(this)">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal para Cambiar Nombre de Congregación -->
+            <div class="modal fade" id="modalCambiarCongregacion" tabindex="-1" aria-hidden="true">
+              <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content rounded-4 border-0 shadow">
+                  <div class="modal-header bg-slate-navy text-white py-3">
+                    <h5 class="modal-title fw-bold">🏢 Configurar Nombre de Congregación</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body py-4">
+                    <label class="form-label fw-bold text-muted small">Nombre de la Congregación:</label>
+                    <input type="text" id="inputNuevoNombreCongregacion" class="form-control form-control-lg fw-bold text-primary rounded-3" value="${nombreCongregacionActual}">
+                    <small class="text-muted mt-2 d-block">Este nombre aparecerá en todos los encabezados y en los respaldos oficiales.</small>
+                  </div>
+                  <div class="modal-footer justify-content-end bg-light-subtle">
+                    <button type="button" class="btn btn-outline-secondary rounded-pill px-3" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary rounded-pill px-4 fw-bold" onclick="guardarNuevoNombreCongregacion()">Guardar y Actualizar</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+        `;
+        
+        // Sincronizar el estado del switch de modo oscuro
+        let check = document.getElementById('checkModoOscuro');
+        if (check) {
+            check.checked = localStorage.getItem('app_modo_oscuro') === 'true';
+        }
+    }
 }
 
 function sincronizarCargoFormulario() {
@@ -963,7 +1139,12 @@ function sincronizarCargoFormulario() {
 }
 
 function abrirEdicion(index, tipo = 'activo') {
-    const modal = new bootstrap.Modal(document.getElementById('modalHermano'));
+    if (!document.getElementById('modalHermano') && typeof renderizarModalHermano === 'function') {
+        renderizarModalHermano();
+    }
+    const modalEl = document.getElementById('modalHermano');
+    if (!modalEl) return;
+    const modal = new bootstrap.Modal(modalEl);
     document.getElementById('editTipo').value = tipo;
 
     if (index === -1) {

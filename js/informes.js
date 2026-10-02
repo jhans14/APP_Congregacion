@@ -13,36 +13,34 @@ const ordenMesesServ = {
 };
 
 function inicializarModuloServicio() {
-    setTimeout(() => {
-        const fechaActual = new Date();
-        const anioActual = fechaActual.getFullYear().toString();
-        const mesActualIndex = fechaActual.getMonth();
-        const mesActualNombre = mesesNombres[mesActualIndex];
+    const fechaActual = new Date();
+    const anioActual = fechaActual.getFullYear().toString();
+    const mesActualIndex = fechaActual.getMonth();
+    const mesActualNombre = mesesNombres[mesActualIndex];
 
-        let aniosDisponibles = [
-            ...new Set([...dbServicio.map(r => r.anio), anioActual, String(Number(anioActual) - 1), String(Number(anioActual) + 1)])
-        ].filter(Boolean);
-        aniosDisponibles.sort().reverse();
+    let aniosDisponibles = [
+        ...new Set([...dbServicio.map(r => r.anio), anioActual, String(Number(anioActual) - 1), String(Number(anioActual) + 1)])
+    ].filter(Boolean);
+    aniosDisponibles.sort().reverse();
 
-        const selTablaAnio = document.getElementById('filtroAnioInforme');
-        const selAnalisisAnio = document.getElementById('filtroAnioAnalisis');
+    const selTablaAnio = document.getElementById('filtroAnioInforme');
+    const selAnalisisAnio = document.getElementById('filtroAnioAnalisis');
 
-        if (selTablaAnio) {
-            selTablaAnio.innerHTML = aniosDisponibles.map(a => `<option value="${a}">${a}</option>`).join('');
-            selTablaAnio.value = anioActual;
-        }
+    if (selTablaAnio) {
+        selTablaAnio.innerHTML = aniosDisponibles.map(a => `<option value="${a}">${a}</option>`).join('');
+        selTablaAnio.value = anioActual;
+    }
 
-        if (selAnalisisAnio) {
-            selAnalisisAnio.innerHTML = aniosDisponibles.map(a => `<option value="${a}">${a}</option>`).join('');
-            selAnalisisAnio.value = anioActual;
-        }
+    if (selAnalisisAnio) {
+        selAnalisisAnio.innerHTML = aniosDisponibles.map(a => `<option value="${a}">${a}</option>`).join('');
+        selAnalisisAnio.value = anioActual;
+    }
 
-        const selMes = document.getElementById('filtroMesInforme');
-        if (selMes) selMes.value = mesActualNombre;
+    const selMes = document.getElementById('filtroMesInforme');
+    if (selMes) selMes.value = mesActualNombre;
 
-        actualizarTablaServicio();
-        actualizarSelectorGraficoHermanos();
-    }, 50);
+    actualizarTablaServicio();
+    actualizarSelectorGraficoHermanos();
 }
 
 function determinarTipoPrecursorado(h) {
@@ -217,9 +215,9 @@ function actualizarSelectorGraficoHermanos() {
 
 function inicializarGraficosServicio() {
     actualizarSelectorGraficoHermanos();
-    setTimeout(() => {
+    requestAnimationFrame(() => {
         renderizarGraficosServicio();
-    }, 150);
+    });
 }
 
 function destruirGraficosServicio() {

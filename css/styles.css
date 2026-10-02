@@ -1,16 +1,137 @@
-body { background-color: #f8f9fa; font-family: 'Segoe UI', sans-serif; overflow-x: hidden; }
-.sidebar-izquierda { 
-    position: fixed; top: 0; left: -280px; width: 280px; height: 100vh; 
-    background-color: #2c3e50; color: white; transition: all 0.3s; z-index: 1040;
+/* ==========================================================================
+   1. ESTILOS BASE, VARIABLES Y SISTEMA DE DISEÑO
+   ========================================================================== */
+:root {
+    --primary: #2563eb;
+    --primary-dark: #1d4ed8;
+    --primary-light: #eff6ff;
+    --navy-900: #0f172a;
+    --navy-800: #1e293b;
+    --navy-700: #334155;
+    --slate-600: #475569;
+    --slate-400: #94a3b8;
+    --slate-200: #e2e8f0;
+    --slate-100: #f1f5f9;
+    --slate-50: #f8fafc;
+    --amber-600: #d97706;
+    --amber-700: #b45309;
+    --emerald-600: #059669;
+    --rose-600: #e11d48;
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 14px;
+    --radius-xl: 18px;
+    --radius-full: 9999px;
+    --shadow-subtle: 0 1px 3px rgba(0, 0, 0, 0.05);
+    --shadow-card: 0 4px 14px rgba(15, 23, 42, 0.06);
+    --shadow-hover: 0 8px 24px rgba(15, 23, 42, 0.1);
 }
-.sidebar-izquierda.active { left: 0; }
-.contenido-principal { padding: 20px; transition: all 0.3s; }
-.btn-menu { position: fixed; top: 10px; left: 10px; z-index: 1050; }
-.sidebar-link { display: block; padding: 15px; color: white; cursor: pointer; text-decoration: none; }
-.sidebar-link:hover { background-color: #34495e; }
 
+body { 
+    background-color: var(--slate-50);
+    color: var(--navy-900);
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+}
+
+.header-title-primary {
+    color: #1e3a8a;
+    letter-spacing: -0.02em;
+}
+
+/* ==========================================================================
+   2. NAVEGACIÓN LATERAL (SIDEBAR) Y BACKDROP
+   ========================================================================== */
+.sidebar-izquierda { 
+    position: fixed; 
+    top: 0; 
+    left: 0;
+    width: 280px; 
+    height: 100vh; 
+    background-color: var(--navy-900); 
+    color: white; 
+    transform: translateX(-100%);
+    transition: transform 0.22s cubic-bezier(0.25, 1, 0.5, 1);
+    will-change: transform;
+    z-index: 1040; 
+    box-shadow: 4px 0 20px rgba(0, 0, 0, 0.35);
+    overflow-y: auto;
+}
+
+.sidebar-izquierda.active { 
+    transform: translateX(0);
+}
+
+.sidebar-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(15, 23, 42, 0.5);
+    z-index: 1035;
+    backdrop-filter: blur(3px);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.22s ease, visibility 0.22s ease;
+    pointer-events: none;
+}
+
+.sidebar-backdrop.active {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+}
+
+.contenido-principal { 
+    padding: 20px; 
+}
+
+.btn-menu { 
+    position: fixed; 
+    top: 12px; 
+    left: 12px; 
+    z-index: 1050;
+    border-radius: var(--radius-md);
+    background-color: var(--navy-900);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: var(--shadow-card);
+    transition: all 0.2s ease;
+}
+
+.btn-menu:hover {
+    background-color: var(--navy-800);
+    transform: scale(1.05);
+}
+
+.sidebar-link { 
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 20px; 
+    color: #cbd5e1; 
+    cursor: pointer; 
+    text-decoration: none; 
+    font-weight: 500;
+    font-size: 0.95rem;
+    transition: all 0.18s ease;
+    border-left: 3px solid transparent;
+}
+
+.sidebar-link:hover { 
+    background-color: var(--navy-800);
+    color: #ffffff;
+    border-left-color: var(--primary);
+}
+
+/* ==========================================================================
+   3. TABLAS Y ENCABEZADOS DE COLUMNAS
+   ========================================================================== */
 .table th {
-    vertical-align: top;
+    vertical-align: middle;
+    font-weight: 600;
+    color: var(--slate-600);
 }
 
 .column-header {
@@ -33,63 +154,102 @@ body { background-color: #f8f9fa; font-family: 'Segoe UI', sans-serif; overflow-
 .column-toggle {
     border: none;
     background: transparent;
-    color: #6c757d;
+    color: var(--slate-400);
     padding: 0;
     font-size: 0.95rem;
 }
 
 .column-toggle:hover {
-    color: #0d6efd;
+    color: var(--primary);
 }
 
+/* ==========================================================================
+   4. ETIQUETAS DE ESTADOS Y PRIVILEGIOS / BADGES
+   ========================================================================== */
 .badge-anciano {
     background-color: #dbeafe;
-    color: #1d5ee9;
+    color: #1e40af;
+    border: 1px solid #bfdbfe;
+    border-radius: var(--radius-full);
+    padding: 4px 12px;
+    font-weight: 600;
 }
 
 .badge-siervo {
     background-color: #dcfce7;
-    color: #15803d;
+    color: #166534;
+    border: 1px solid #bbf7d0;
+    border-radius: var(--radius-full);
+    padding: 4px 12px;
+    font-weight: 600;
 }
 
 .badge-publicador-bautizado {
-    background-color: #dbeafe;
-    color: #19a1e0;
+    background-color: #e0f2fe;
+    color: #0369a1;
+    border: 1px solid #bae6fd;
+    border-radius: var(--radius-full);
+    padding: 4px 12px;
+    font-weight: 600;
 }
 
 .badge-publicador-no-bautizado {
     background-color: #fef3c7;
-    color: #d97706;
+    color: #b45309;
+    border: 1px solid #fde68a;
+    border-radius: var(--radius-full);
+    padding: 4px 12px;
+    font-weight: 600;
 }
 
 .badge-precursor-auxiliar {
-    background-color: #f5e1ff;
+    background-color: #f3e8ff;
     color: #7e22ce;
+    border: 1px solid #e9d5ff;
+    border-radius: var(--radius-full);
+    padding: 4px 12px;
+    font-weight: 600;
 }
 
 .badge-precursor-regular {
     background-color: #ffedd5;
     color: #c2410c;
+    border: 1px solid #fed7aa;
+    border-radius: var(--radius-full);
+    padding: 4px 12px;
+    font-weight: 600;
 }
 
 .badge-precursor-ninguno {
-    background-color: #f3f4f6;
-    color: #6b7280;
+    background-color: #f1f5f9;
+    color: #64748b;
+    border: 1px solid #e2e8f0;
+    border-radius: var(--radius-full);
+    padding: 4px 12px;
+    font-weight: 600;
 }
 
 .badge-inactivo {
-    background-color: #f8d7da;
-    color: #8b1e2f;
+    background-color: #fee2e2;
+    color: #b91c1c;
+    border: 1px solid #fecaca;
+    border-radius: var(--radius-full);
+    padding: 4px 12px;
+    font-weight: 600;
 }
 
+/* ==========================================================================
+   5. BOTONES DE ACCIÓN: EDITAR Y ELIMINAR
+   ========================================================================== */
 .btn-action {
     border: 1px solid transparent;
-    background: rgba(255, 255, 255, 0.72);
+    background: rgba(255, 255, 255, 0.85);
     backdrop-filter: blur(4px);
     color: #495057;
-    padding: 0.24rem 0.5rem;
+    padding: 0.3rem 0.6rem;
     line-height: 1;
     min-width: 2rem;
+    border-radius: var(--radius-sm);
     transition: all 0.2s ease;
 }
 
@@ -100,14 +260,20 @@ body { background-color: #f8f9fa; font-family: 'Segoe UI', sans-serif; overflow-
 
 .btn-edit {
     border-color: #c4b5fd;
-    background: rgba(237, 233, 254, 0.72);
+    background: #f5f3ff;
     color: #6d28d9;
+}
+.btn-edit:hover {
+    background: #ede9fe;
 }
 
 .btn-delete {
-    border-color: #f9a8d4;
-    background: rgba(252, 231, 243, 0.72);
+    border-color: #fecdd3;
+    background: #fff1f2;
     color: #be185d;
+}
+.btn-delete:hover {
+    background: #ffe4e6;
 }
 
 .estado-badges {
@@ -116,44 +282,552 @@ body { background-color: #f8f9fa; font-family: 'Segoe UI', sans-serif; overflow-
     gap: 6px;
 }
 
-/* Estilos para el Gestor de Asignaciones */
-.nav-pills .nav-link { color: #2c3e50; font-weight: 500; }
-.nav-pills .nav-link.active { background-color: #2c3e50; color: white; }
+/* ==========================================================================
+   6. GESTOR DE ASIGNACIONES (PROGRAMA GENERAL Y PLANIFICACIÓN)
+   ========================================================================== */
+/* Segmented Nav Pills */
+.nav-pills { 
+    background: #f1f5f9; 
+    border-radius: var(--radius-lg); 
+    padding: 6px; 
+    gap: 6px; 
+    border: 1px solid var(--slate-200); 
+}
 
-.semana-header { background-color: #343a40; color: white; padding: 10px 15px; font-weight: bold; font-size: 1em; border-radius: 8px 8px 0 0; display: flex; justify-content: space-between; align-items: center; }
-.btn-add-quick { background: rgba(255,255,255,0.2); border: none; color: white; border-radius: 4px; padding: 2px 10px; font-weight: bold; transition: background 0.2s; }
-.btn-add-quick:hover { background: rgba(255,255,255,0.4); }
+.nav-pills .nav-link { 
+    color: var(--slate-600); 
+    font-weight: 600; 
+    font-size: 0.92rem;
+    border-radius: var(--radius-md); 
+    padding: 8px 18px; 
+    transition: all 0.2s ease;
+    border: none;
+}
 
-.franja-maestros { background-color: #b58100; color: white; padding: 4px 15px; font-weight: 800; display: flex; justify-content: space-between; font-size: 0.85em; margin: 10px 0 5px 0; text-transform: uppercase; }
-.fila-programa { display: flex; align-items: center; padding: 6px 15px; border-bottom: 1px solid #f0f0f0; background: white; transition: background 0.2s; }
-.fila-programa:hover { background: #f8f9fa; }
+.nav-pills .nav-link.active { 
+    background-color: #ffffff; 
+    color: var(--primary); 
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    font-weight: 700;
+}
 
-.prog-titulo { flex: 1; font-size: 1.05em; }
-.prog-rol { width: 160px; text-align: right; font-size: 0.85em; color: #666; padding-right: 15px; }
-.prog-nombres { width: 300px; font-weight: 500; font-size: 0.95em; color: #000; }
-.acciones-iconos { opacity: 0.3; transition: opacity 0.3s; }
-.fila-programa:hover .acciones-iconos { opacity: 1; }
+/* Selector Gigante de Mes */
+.select-mes-gigante { 
+    font-size: 1.25rem; 
+    font-weight: 800; 
+    color: #1e3a8a; 
+    border: 2px solid var(--primary); 
+    border-radius: var(--radius-full); 
+    text-transform: uppercase; 
+    background: #ffffff url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%232563eb' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e") no-repeat right 1.25rem center/16px 12px;
+    padding: 10px 45px 10px 25px;
+    box-shadow: 0 4px 14px rgba(37, 99, 235, 0.12);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
 
-.texto-azul { color: #275673; font-weight: bold; }
-.texto-dorado { color: #a47622; font-weight: bold; }
+.select-mes-gigante:focus {
+    outline: none;
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.25);
+}
 
-#toast-copiado { position: fixed; top: 20px; right: 20px; z-index: 1050; display: none; background: #28a745; color: white; padding: 10px 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-.select-mes-gigante { font-size: 1.5rem; font-weight: 800; color: #2c3e50; border: 2px solid #2c3e50; border-radius: 8px; text-transform: uppercase; background-color: white; }
+/* Tarjeta Semanal */
+.card-semana {
+    border: 1px solid var(--slate-200);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    background: #ffffff;
+    box-shadow: var(--shadow-card);
+    transition: box-shadow 0.2s ease;
+}
 
-.tabla-grupos th { background-color: #2c3e50; color: white; }
-.estado-btn { cursor: pointer; border: none; font-size: 1rem; width: 32px; height: 32px; border-radius: 5px; display: inline-flex; align-items: center; justify-content: center; font-weight: bold; transition: 0.2s; }
+.card-semana:hover {
+    box-shadow: var(--shadow-hover);
+}
 
-.bg-estado-ok { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
-.bg-estado-menor { background-color: #fff3cd; color: #856404; border: 1px solid #ffeeba; }
-.bg-estado-no { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+/* Cabecera de la Semana */
+.semana-header { 
+    background: linear-gradient(135deg, var(--navy-800) 0%, var(--navy-700) 100%); 
+    color: white; 
+    padding: 12px 20px; 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
 
-/* Estilos limpios para etiquetas de estado en Vista General */
-.badge-estado-libre { color: #198754; font-weight: 600; background: transparent; }
-.badge-estado-asignado { color: #0d6efd; font-weight: 600; background: transparent; }
-.badge-estado-alerta { color: #dc3545; font-weight: bold; background: transparent; }
-.badge-estado-normal { color: #6c757d; font-weight: 500; background: transparent; }
+.semana-header-badge {
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: var(--radius-full);
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    font-weight: 700;
+    padding: 3px 10px;
+    color: #cbd5e1;
+}
 
-/* Sombreado rojo pastel para filas con más de 60 días */
+.semana-header-title {
+    font-weight: 700;
+    font-size: 0.98rem;
+    letter-spacing: 0.01em;
+}
+
+.btn-add-quick { 
+    background: rgba(255, 255, 255, 0.16); 
+    backdrop-filter: blur(4px); 
+    border: 1px solid rgba(255, 255, 255, 0.25); 
+    color: white; 
+    border-radius: var(--radius-full); 
+    padding: 4px 14px; 
+    font-weight: 600; 
+    font-size: 0.82rem; 
+    transition: all 0.2s ease; 
+    cursor: pointer;
+}
+
+.btn-add-quick:hover { 
+    background: #ffffff; 
+    color: var(--navy-900); 
+    transform: translateY(-1px);
+}
+
+/* Franja Seamos Mejores Maestros */
+.franja-maestros { 
+    background: linear-gradient(135deg, var(--amber-700) 0%, var(--amber-600) 100%); 
+    color: white; 
+    border-radius: var(--radius-md); 
+    padding: 8px 16px; 
+    margin: 12px 6px 8px 6px; 
+    font-weight: 700; 
+    font-size: 0.82rem; 
+    letter-spacing: 0.05em; 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    box-shadow: 0 2px 8px rgba(180, 83, 9, 0.2);
+}
+
+.franja-sub {
+    font-size: 0.75rem;
+    font-weight: 500;
+    opacity: 0.9;
+    text-transform: none;
+}
+
+/* Fila de Asignación / Programa */
+.fila-programa { 
+    display: flex; 
+    align-items: center; 
+    padding: 10px 14px; 
+    margin: 5px 6px; 
+    border-radius: var(--radius-md); 
+    background: #ffffff; 
+    border: 1px solid var(--slate-100); 
+    transition: all 0.18s ease; 
+}
+
+.fila-programa:hover { 
+    background: var(--slate-50); 
+    border-color: #cbd5e1; 
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04); 
+    transform: translateX(3px);
+}
+
+.badge-numero-parte {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: #eff6ff;
+    color: var(--primary-dark);
+    font-weight: 800;
+    font-size: 0.85rem;
+    margin-right: 10px;
+    flex-shrink: 0;
+    border: 1px solid #dbeafe;
+}
+
+.prog-numero-tipo {
+    display: flex;
+    align-items: center;
+    flex: 1.2;
+    min-width: 230px;
+}
+
+.prog-titulo { 
+    font-size: 0.96rem; 
+}
+
+.prog-rol { 
+    min-width: 160px; 
+    text-align: center; 
+}
+
+.badge-rol-pill {
+    background: #f1f5f9;
+    color: var(--slate-600);
+    border: 1px solid var(--slate-200);
+    border-radius: var(--radius-full);
+    padding: 4px 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.prog-nombres { 
+    flex: 1.5; 
+    font-size: 0.92rem; 
+    min-width: 260px; 
+    display: flex; 
+    align-items: center; 
+    flex-wrap: wrap; 
+}
+
+.badge-estado-cumplio {
+    background: #dcfce7;
+    color: #15803d;
+    border-radius: var(--radius-full);
+    padding: 3px 10px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    border: 1px solid #bbf7d0;
+}
+
+.badge-estado-fallo {
+    background: #fee2e2;
+    color: #b91c1c;
+    border-radius: var(--radius-full);
+    padding: 3px 10px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    border: 1px solid #fecaca;
+}
+
+.badge-estado-pendiente {
+    background: #fef3c7;
+    color: #b45309;
+    border-radius: var(--radius-full);
+    padding: 3px 10px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    border: 1px solid #fde68a;
+}
+
+.prog-acciones {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+}
+
+.btn-icon-action {
+    border: 1px solid var(--slate-200);
+    background: #ffffff;
+    color: var(--slate-600);
+    width: 32px;
+    height: 32px;
+    border-radius: var(--radius-sm);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+    transition: all 0.15s ease;
+    cursor: pointer;
+}
+
+.btn-icon-action:hover {
+    background: var(--slate-100);
+    border-color: #cbd5e1;
+    transform: translateY(-1px);
+}
+
+.btn-cumplimiento {
+    border-color: #bfdbfe;
+    background: #eff6ff;
+    color: #1d4ed8;
+}
+.btn-cumplimiento:hover {
+    background: #dbeafe;
+}
+
+.btn-delete-asig {
+    color: var(--rose-600);
+}
+.btn-delete-asig:hover {
+    background: #fff1f2;
+    border-color: #fecdd3;
+}
+
+/* Tarjeta vacía de semana */
+.empty-semana-card {
+    border: 2px dashed #cbd5e1;
+    border-radius: var(--radius-md);
+    background: var(--slate-50);
+}
+
+.empty-semana-icon {
+    font-size: 2rem;
+    opacity: 0.7;
+}
+
+.texto-azul { color: #1e40af; font-weight: 700; }
+.texto-dorado { color: #b45309; font-weight: 700; }
+
+/* Planificación y Grupos */
+.card-grupo, .card-planif {
+    border: 1px solid var(--slate-200);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-card);
+}
+
+.bg-slate-navy {
+    background: linear-gradient(135deg, var(--navy-900) 0%, var(--navy-800) 100%) !important;
+}
+
+.bg-gradient-navy {
+    background: linear-gradient(135deg, var(--navy-800) 0%, var(--navy-700) 100%) !important;
+}
+
+.table-header-navy {
+    background: var(--navy-800);
+    color: #ffffff;
+}
+
+/* ==========================================================================
+   7. COMPONENTES VISUALES AUXILIARES (Ajustes, Métricas, Toasts)
+   ========================================================================== */
+#toast-copiado { 
+    position: fixed; 
+    top: 20px; 
+    right: 20px; 
+    z-index: 1060; 
+    display: none; 
+    background: #059669; 
+    color: white; 
+    padding: 12px 22px; 
+    border-radius: var(--radius-full); 
+    box-shadow: 0 8px 24px rgba(5, 150, 105, 0.25); 
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.badge-db-status {
+    background: #ecfdf5;
+    color: #047857;
+    border: 1px solid #a7f3d0;
+    border-radius: var(--radius-full);
+    padding: 6px 14px;
+    font-weight: 600;
+    font-size: 0.8rem;
+}
+
+.card-stat-ajustes {
+    border: 1px solid var(--slate-200);
+    border-radius: var(--radius-lg);
+    background: #ffffff;
+    transition: transform 0.2s ease;
+}
+
+.card-stat-ajustes:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-hover);
+}
+
+.card-ajustes-panel {
+    border: 1px solid var(--slate-200);
+    border-radius: var(--radius-lg);
+    background: #ffffff;
+}
+
+/* ==========================================================================
+   8. TABLA DE GRUPOS Y ESTADOS DE INFORME
+   ========================================================================== */
+.tabla-grupos th { 
+    background-color: var(--slate-100); 
+    color: var(--slate-600); 
+}
+
+.estado-btn { 
+    cursor: pointer; 
+    border: none; 
+    font-size: 1rem; 
+    width: 32px; 
+    height: 32px; 
+    border-radius: var(--radius-sm); 
+    display: inline-flex; 
+    align-items: center; 
+    justify-content: center; 
+    font-weight: bold; 
+    transition: 0.2s; 
+}
+
+.bg-estado-ok { background-color: #dcfce7; color: #15803d; border: 1px solid #bbf7d0; }
+.bg-estado-menor { background-color: #fef3c7; color: #b45309; border: 1px solid #fde68a; }
+.bg-estado-no { background-color: #fee2e2; color: #b91c1c; border: 1px solid #fecaca; }
+
+.badge-estado-libre { color: #15803d; font-weight: 600; background: transparent; }
+.badge-estado-asignado { color: #2563eb; font-weight: 600; background: transparent; }
+.badge-estado-alerta { color: #e11d48; font-weight: bold; background: transparent; }
+.badge-estado-normal { color: #64748b; font-weight: 500; background: transparent; }
+
 tr.fila-alerta-60 {
-    background-color: #f8d7da !important;
+    background-color: #fff1f2 !important;
+}
+
+/* ==========================================================================
+   9. ESTILOS GLOBALES PARA EL MODO OSCURO
+   ========================================================================== */
+body.modo-oscuro {
+    background-color: #0b0f19 !important;
+    color: #f1f5f9 !important;
+}
+
+body.modo-oscuro .header-title-primary {
+    color: #60a5fa !important;
+}
+
+body.modo-oscuro .card {
+    background-color: #151e2e !important;
+    color: #f1f5f9 !important;
+    border-color: #243046 !important;
+}
+
+body.modo-oscuro .bg-light,
+body.modo-oscuro .bg-white,
+body.modo-oscuro .bg-light-subtle {
+    background-color: #151e2e !important;
+    color: #f1f5f9 !important;
+}
+
+body.modo-oscuro .text-dark {
+    color: #f8fafc !important;
+}
+
+body.modo-oscuro .text-muted {
+    color: #94a3b8 !important;
+}
+
+body.modo-oscuro .table {
+    color: #f1f5f9 !important;
+    background-color: #151e2e !important;
+}
+
+body.modo-oscuro thead.table-light th,
+body.modo-oscuro .table-light {
+    background-color: #1e293b !important;
+    color: #e2e8f0 !important;
+    border-color: #243046 !important;
+}
+
+body.modo-oscuro .modal-content {
+    background-color: #151e2e !important;
+    color: #f1f5f9 !important;
+    border-color: #243046 !important;
+}
+
+body.modo-oscuro .modal-header,
+body.modo-oscuro .modal-footer {
+    border-color: #243046 !important;
+}
+
+body.modo-oscuro .form-control,
+body.modo-oscuro .form-select {
+    background-color: #0b0f19 !important;
+    color: #f1f5f9 !important;
+    border-color: #243046 !important;
+}
+
+body.modo-oscuro .form-control:focus,
+body.modo-oscuro .form-select:focus {
+    background-color: #111827 !important;
+    color: #ffffff !important;
+    border-color: #3b82f6 !important;
+}
+
+body.modo-oscuro .list-group-item {
+    background-color: #151e2e !important;
+    color: #f1f5f9 !important;
+    border-color: #243046 !important;
+}
+
+body.modo-oscuro .card-semana {
+    background-color: #151e2e !important;
+    border-color: #243046 !important;
+}
+
+body.modo-oscuro .fila-programa {
+    background-color: #151e2e !important;
+    color: #f1f5f9 !important;
+    border-color: #243046 !important;
+}
+
+body.modo-oscuro .fila-programa:hover {
+    background-color: #1e293b !important;
+}
+
+body.modo-oscuro .prog-nombres {
+    color: #f1f5f9 !important;
+}
+
+body.modo-oscuro .badge-rol-pill {
+    background-color: #1e293b !important;
+    color: #94a3b8 !important;
+    border-color: #334155 !important;
+}
+
+body.modo-oscuro .badge-numero-parte {
+    background-color: #1e293b !important;
+    color: #60a5fa !important;
+    border-color: #334155 !important;
+}
+
+body.modo-oscuro .select-mes-gigante {
+    background-color: #0b0f19 !important;
+    color: #60a5fa !important;
+    border-color: #3b82f6 !important;
+}
+
+body.modo-oscuro .nav-pills {
+    background-color: #0b0f19 !important;
+    border-color: #243046 !important;
+}
+
+body.modo-oscuro .nav-pills .nav-link {
+    color: #94a3b8;
+}
+
+body.modo-oscuro .nav-pills .nav-link.active {
+    background-color: #1e293b !important;
+    color: #60a5fa !important;
+}
+
+body.modo-oscuro .btn-icon-action {
+    background-color: #1e293b !important;
+    color: #cbd5e1 !important;
+    border-color: #334155 !important;
+}
+
+body.modo-oscuro .btn-icon-action:hover {
+    background-color: #334155 !important;
+}
+
+body.modo-oscuro .empty-semana-card {
+    background-color: #0b0f19 !important;
+    border-color: #334155 !important;
+}
+
+body.modo-oscuro .card-stat-ajustes,
+body.modo-oscuro .card-ajustes-panel {
+    background-color: #151e2e !important;
+    border-color: #243046 !important;
+}
+
+body.modo-oscuro .badge-db-status {
+    background: #064e3b !important;
+    color: #6ee7b7 !important;
+    border-color: #047857 !important;
+}
+
+body.modo-oscuro tr.fila-alerta-60 {
+    background-color: #450a0a !important;
 }

@@ -280,17 +280,17 @@ function confirmarGuardadoAsistenciaHistorial() {
         modalGuardarInstancia.hide();
     }
 
-    alert("✅ ¡Asistencia guardada correctamente con éxito!");
-    
-    // Limpieza automática tras guardar para iniciar un nuevo conteo limpio
-    let asientosPresencialesGuardados = {};
-    // Conservar los valores adicionales (_parados y _zoom) para el historial estadístico
-    asientosPresencialesGuardados._parados = baseDatosAsistenciasPorFecha[fecha]._parados;
-    asientosPresencialesGuardados._zoom = baseDatosAsistenciasPorFecha[fecha]._zoom;
-    
-    // Dejar los asientos en falso (limpios) para el siguiente registro diario
-    baseDatosAsistenciasPorFecha[fecha] = asientosPresencialesGuardados;
-    localStorage.setItem('bd_asistencia_fechas_v1', JSON.stringify(baseDatosAsistenciasPorFecha));
+    const toast = document.getElementById('toast-copiado');
+    if (toast) {
+        toast.textContent = "✅ ¡Asistencia guardada correctamente con éxito!";
+        toast.style.display = 'block';
+        setTimeout(() => {
+            toast.style.display = 'none';
+            toast.textContent = "✅ Mensaje copiado al portapapeles";
+        }, 2500);
+    } else {
+        alert("✅ ¡Asistencia guardada correctamente con éxito!");
+    }
     
     renderizarMapaAsientos();
     actualizarContadoresAsistencia();
@@ -299,9 +299,9 @@ function confirmarGuardadoAsistenciaHistorial() {
 // --- FUNCIONES PARA LAS GRÁFICAS Y RESUMEN ESTADÍSTICO ---
 
 function cargarDatosResumenEstadisticas() {
-    setTimeout(() => {
+    requestAnimationFrame(() => {
         actualizarGraficasEstadisticas();
-    }, 200);
+    });
 }
 
 function actualizarGraficasEstadisticas() {
@@ -381,19 +381,21 @@ function actualizarGraficasEstadisticas() {
         });
     }
 
-    // --- RENDERIZAR GRÁFICA DE BARRAS ---
+    // --- RENDERIZAR GRÁFICA DE BARRAS (Presencial Total vs Zoom) ---
     const elBarras = document.getElementById('graficoBarrasAsistencia');
     if (elBarras) {
         const ctxBarras = elBarras.getContext('2d');
         if (myChartBarras) myChartBarras.destroy();
+
+        // Sumamos presenciales (asientos) + parados en un solo arreglo de Presencial Total
+        let presencialTotalArr = presencialArr.map((val, idx) => val + paradosArr[idx]);
 
         myChartBarras = new Chart(ctxBarras, {
             type: 'bar',
             data: {
                 labels: etiquetas.length > 0 ? etiquetas : ['Sin registros'],
                 datasets: [
-                    { label: 'Presencial (Asientos)', data: etiquetas.length > 0 ? presencialArr : [0], backgroundColor: '#198754' },
-                    { label: 'Parados', data: etiquetas.length > 0 ? paradosArr : [0], backgroundColor: '#ffc107' },
+                    { label: 'Total Presencial (Asientos + Parados)', data: etiquetas.length > 0 ? presencialTotalArr : [0], backgroundColor: '#198754' },
                     { label: 'Zoom', data: etiquetas.length > 0 ? zoomArr : [0], backgroundColor: '#0d6efd' }
                 ]
             },

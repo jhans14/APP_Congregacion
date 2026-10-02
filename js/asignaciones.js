@@ -144,10 +144,103 @@ const datosVidaYMinisterioCompleto = [
     { id: "ag13", fecha: "2026-08-25", numero: 3, tipo: "Lectura de la Biblia", estudiante: "Atalaya, Leonel", ayudante: "", cumplio: "pendiente", reemplazo: "", ayudanteCumplio: true, reemplazoAyudante: "" },
     { id: "ag14", fecha: "2026-08-25", numero: 4, tipo: "Empiece conversaciones", estudiante: "Diaz, Ruth", ayudante: "Atalaya, Maria", cumplio: "pendiente", reemplazo: "", ayudanteCumplio: true, reemplazoAyudante: "" },
     { id: "ag15", fecha: "2026-08-25", numero: 5, tipo: "Empiece conversaciones", estudiante: "Enriques, Lucero", ayudante: "Benites, Emma", cumplio: "pendiente", reemplazo: "", ayudanteCumplio: true, reemplazoAyudante: "" },
-    { id: "ag16", fecha: "2026-08-25", numero: 6, tipo: "Discurso", estudiante: "Calderon, Carlos", ayudante: "", cumplio: "pendiente", reemplazo: "", ayudanteCumplio: true, reemplazoAyudante: "" }
+    { id: "ag16", fecha: "2026-08-25", numero: 6, tipo: "Discurso", estudiante: "Calderon, Carlos", ayudante: "", cumplio: "pendiente", reemplazo: "", ayudanteCumplio: true, reemplazoAyudante: "" },
+
+    // SEPTIEMBRE 2026
+    { id: "s1", fecha: "2026-09-01", numero: 3, tipo: "Lectura de la Biblia", estudiante: "Peña, Aaron", ayudante: "", cumplio: "pendiente", reemplazo: "", ayudanteCumplio: true, reemplazoAyudante: "" },
+    { id: "s2", fecha: "2026-09-01", numero: 4, tipo: "Empiece conversaciones", estudiante: "Calderon, Erika de", ayudante: "Rios, Jamely", cumplio: "pendiente", reemplazo: "", ayudanteCumplio: true, reemplazoAyudante: "" },
+    { id: "s3", fecha: "2026-09-01", numero: 5, tipo: "Haga Revisitas", estudiante: "Porras, Nahamin", ayudante: "Benites, Emma", cumplio: "pendiente", reemplazo: "", ayudanteCumplio: true, reemplazoAyudante: "" },
+    { id: "s4", fecha: "2026-09-01", numero: 6, tipo: "Discurso", estudiante: "Navarrete, Jeanpier", ayudante: "", cumplio: "pendiente", reemplazo: "", ayudanteCumplio: true, reemplazoAyudante: "" },
+    { id: "s5", fecha: "2026-09-08", numero: 3, tipo: "Lectura de la Biblia", estudiante: "Ubillus, Sebastian", ayudante: "", cumplio: "pendiente", reemplazo: "", ayudanteCumplio: true, reemplazoAyudante: "" },
+    { id: "s6", fecha: "2026-09-08", numero: 4, tipo: "Empiece conversaciones", estudiante: "Cisneros, Vanessa", ayudante: "Vergara, Dorka", cumplio: "pendiente", reemplazo: "", ayudanteCumplio: true, reemplazoAyudante: "" },
+    { id: "s7", fecha: "2026-09-08", numero: 5, tipo: "Haga Revisitas", estudiante: "Atalaya, Ruth", ayudante: "Rojas, Mery", cumplio: "pendiente", reemplazo: "", ayudanteCumplio: true, reemplazoAyudante: "" },
+    { id: "s8", fecha: "2026-09-08", numero: 6, tipo: "Haga discípulos", estudiante: "Enriques, Marvin", ayudante: "Porras, Christhoper", cumplio: "pendiente", reemplazo: "", ayudanteCumplio: true, reemplazoAyudante: "" },
+    { id: "s9", fecha: "2026-09-15", numero: 3, tipo: "Lectura de la Biblia", estudiante: "Perfecto, Indalecio", ayudante: "", cumplio: "pendiente", reemplazo: "", ayudanteCumplio: true, reemplazoAyudante: "" },
+    { id: "s10", fecha: "2026-09-15", numero: 4, tipo: "Empiece conversaciones", estudiante: "Rosales, Valentina", ayudante: "Rios, Amelia", cumplio: "pendiente", reemplazo: "", ayudanteCumplio: true, reemplazoAyudante: "" },
+    { id: "s11", fecha: "2026-09-15", numero: 5, tipo: "Haga Revisitas", estudiante: "Sulca, Carmen", ayudante: "Paredes, Lucia", cumplio: "pendiente", reemplazo: "", ayudanteCumplio: true, reemplazoAyudante: "" },
+    { id: "s12", fecha: "2026-09-15", numero: 6, tipo: "Explique sus creencias", estudiante: "Mayker Crispin", ayudante: "Calderon, Carlos", cumplio: "pendiente", reemplazo: "", ayudanteCumplio: true, reemplazoAyudante: "" },
+    { id: "s13", fecha: "2026-09-22", numero: 3, tipo: "Lectura de la Biblia", estudiante: "Atalaya, Leonel", ayudante: "", cumplio: "pendiente", reemplazo: "", ayudanteCumplio: true, reemplazoAyudante: "" },
+    { id: "s14", fecha: "2026-09-22", numero: 4, tipo: "Empiece conversaciones", estudiante: "Jimenez, Carmen", ayudante: "Atalaya, Maria", cumplio: "pendiente", reemplazo: "", ayudanteCumplio: true, reemplazoAyudante: "" },
+    { id: "s15", fecha: "2026-09-22", numero: 5, tipo: "Haga Revisitas", estudiante: "Bances, Magali", ayudante: "Olano, Daynee", cumplio: "pendiente", reemplazo: "", ayudanteCumplio: true, reemplazoAyudante: "" },
+    { id: "s16", fecha: "2026-09-22", numero: 6, tipo: "Discurso", estudiante: "Rosales, Victor", ayudante: "", cumplio: "pendiente", reemplazo: "", ayudanteCumplio: true, reemplazoAyudante: "" },
+    { id: "s17", fecha: "2026-09-29", numero: 3, tipo: "Lectura de la Biblia", estudiante: "Cortez, Guisella", ayudante: "", cumplio: "pendiente", reemplazo: "", ayudanteCumplio: true, reemplazoAyudante: "" },
+    { id: "s18", fecha: "2026-09-29", numero: 4, tipo: "Empiece conversaciones", estudiante: "Diaz, Ruth", ayudante: "Chipana, Maria", cumplio: "pendiente", reemplazo: "", ayudanteCumplio: true, reemplazoAyudante: "" },
+    { id: "s19", fecha: "2026-09-29", numero: 5, tipo: "Haga Revisitas", estudiante: "Arias, Rossmery", ayudante: "Cruz, Betza", cumplio: "pendiente", reemplazo: "", ayudanteCumplio: true, reemplazoAyudante: "" },
+    { id: "s20", fecha: "2026-09-29", numero: 6, tipo: "Haga discípulos", estudiante: "Ubillus, Percy", ayudante: "Davila, Enoc", cumplio: "pendiente", reemplazo: "", ayudanteCumplio: true, reemplazoAyudante: "" },
+
+    // OCTUBRE 2026
+    { id: "o1", fecha: "2026-10-06", numero: 3, tipo: "Lectura de la Biblia", estudiante: "Gutierrez Ch, Thiago", ayudante: "", cumplio: "pendiente", reemplazo: "", ayudanteCumplio: true, reemplazoAyudante: "" },
+    { id: "o2", fecha: "2026-10-06", numero: 4, tipo: "Empiece conversaciones", estudiante: "Benites, Emma", ayudante: "Benites, Estelita", cumplio: "pendiente", reemplazo: "", ayudanteCumplio: true, reemplazoAyudante: "" },
+    { id: "o3", fecha: "2026-10-06", numero: 5, tipo: "Haga Revisitas", estudiante: "Horna, Roxana", ayudante: "Avendaño, Mabel", cumplio: "pendiente", reemplazo: "", ayudanteCumplio: true, reemplazoAyudante: "" },
+    { id: "o4", fecha: "2026-10-06", numero: 6, tipo: "Discurso", estudiante: "Arias, Erickon", ayudante: "", cumplio: "pendiente", reemplazo: "", ayudanteCumplio: true, reemplazoAyudante: "" },
+    { id: "o5", fecha: "2026-10-13", numero: 3, tipo: "Lectura de la Biblia", estudiante: "Diaz, Carlos", ayudante: "", cumplio: "pendiente", reemplazo: "", ayudanteCumplio: true, reemplazoAyudante: "" },
+    { id: "o6", fecha: "2026-10-13", numero: 4, tipo: "Empiece conversaciones", estudiante: "Crispin, Lili", ayudante: "Vergara, Dorka", cumplio: "pendiente", reemplazo: "", ayudanteCumplio: true, reemplazoAyudante: "" },
+    { id: "o7", fecha: "2026-10-13", numero: 5, tipo: "Haga Revisitas", estudiante: "Venancio, Stephanie", ayudante: "Pantoja, Carmen", cumplio: "pendiente", reemplazo: "", ayudanteCumplio: true, reemplazoAyudante: "" },
+    { id: "o8", fecha: "2026-10-13", numero: 6, tipo: "Explique sus creencias", estudiante: "Atalaya, Braulio", ayudante: "", cumplio: "pendiente", reemplazo: "", ayudanteCumplio: true, reemplazoAyudante: "" },
+    { id: "o9", fecha: "2026-10-20", numero: 3, tipo: "Lectura de la Biblia", estudiante: "Peña, Aaron", ayudante: "", cumplio: "pendiente", reemplazo: "", ayudanteCumplio: true, reemplazoAyudante: "" },
+    { id: "o10", fecha: "2026-10-20", numero: 4, tipo: "Empiece conversaciones", estudiante: "Bances, Alejandra", ayudante: "Paredes, Lucia", cumplio: "pendiente", reemplazo: "", ayudanteCumplio: true, reemplazoAyudante: "" },
+    { id: "o11", fecha: "2026-10-20", numero: 5, tipo: "Haga Revisitas", estudiante: "Rios, Amelia", ayudante: "Perfecto, Jannet", cumplio: "pendiente", reemplazo: "", ayudanteCumplio: true, reemplazoAyudante: "" },
+    { id: "o12", fecha: "2026-10-20", numero: 6, tipo: "Haga discípulos", estudiante: "Ubillus, Sebastian", ayudante: "Calderon, Carlos", cumplio: "pendiente", reemplazo: "", ayudanteCumplio: true, reemplazoAyudante: "" },
+    { id: "o13", fecha: "2026-10-27", numero: 3, tipo: "Lectura de la Biblia", estudiante: "Perfecto, Indalecio", ayudante: "", cumplio: "pendiente", reemplazo: "", ayudanteCumplio: true, reemplazoAyudante: "" },
+    { id: "o14", fecha: "2026-10-27", numero: 4, tipo: "Empiece conversaciones", estudiante: "Reyes, Lilia", ayudante: "Horna, Roxana", cumplio: "pendiente", reemplazo: "", ayudanteCumplio: true, reemplazoAyudante: "" },
+    { id: "o15", fecha: "2026-10-27", numero: 5, tipo: "Haga Revisitas", estudiante: "Davila, Luz", ayudante: "Rojas, Rosse Mary", cumplio: "pendiente", reemplazo: "", ayudanteCumplio: true, reemplazoAyudante: "" },
+    { id: "o16", fecha: "2026-10-27", numero: 6, tipo: "Discurso", estudiante: "Benites, Josue", ayudante: "", cumplio: "pendiente", reemplazo: "", ayudanteCumplio: true, reemplazoAyudante: "" },
+
+    // NOVIEMBRE 2026
+    { id: "n1", fecha: "2026-11-03", numero: 3, tipo: "Lectura de la Biblia", estudiante: "Ubillus, Sebastian", ayudante: "", cumplio: "pendiente", reemplazo: "", ayudanteCumplio: true, reemplazoAyudante: "" },
+    { id: "n2", fecha: "2026-11-03", numero: 4, tipo: "Empiece conversaciones", estudiante: "Calderon, Erika de", ayudante: "Rios, Jamely", cumplio: "pendiente", reemplazo: "", ayudanteCumplio: true, reemplazoAyudante: "" },
+    { id: "n3", fecha: "2026-11-03", numero: 5, tipo: "Haga Revisitas", estudiante: "Sulca, Carmen", ayudante: "Atalaya, Ruth", cumplio: "pendiente", reemplazo: "", ayudanteCumplio: true, reemplazoAyudante: "" },
+    { id: "n4", fecha: "2026-11-03", numero: 6, tipo: "Explique sus creencias", estudiante: "Mayker Crispin", ayudante: "Porras, Christhoper", cumplio: "pendiente", reemplazo: "", ayudanteCumplio: true, reemplazoAyudante: "" },
+    { id: "n5", fecha: "2026-11-10", numero: 3, tipo: "Lectura de la Biblia", estudiante: "Atalaya, Leonel", ayudante: "", cumplio: "pendiente", reemplazo: "", ayudanteCumplio: true, reemplazoAyudante: "" },
+    { id: "n6", fecha: "2026-11-10", numero: 4, tipo: "Empiece conversaciones", estudiante: "Jimenez, Carmen", ayudante: "Crispin, Lili", cumplio: "pendiente", reemplazo: "", ayudanteCumplio: true, reemplazoAyudante: "" },
+    { id: "n7", fecha: "2026-11-10", numero: 5, tipo: "Haga Revisitas", estudiante: "Porras, Nahamin", ayudante: "Rios, Amelia", cumplio: "pendiente", reemplazo: "", ayudanteCumplio: true, reemplazoAyudante: "" },
+    { id: "n8", fecha: "2026-11-10", numero: 6, tipo: "Discurso", estudiante: "Rosales, Victor", ayudante: "", cumplio: "pendiente", reemplazo: "", ayudanteCumplio: true, reemplazoAyudante: "" },
+    { id: "n9", fecha: "2026-11-17", numero: 3, tipo: "Lectura de la Biblia", estudiante: "Gutierrez Ch, Thiago", ayudante: "", cumplio: "pendiente", reemplazo: "", ayudanteCumplio: true, reemplazoAyudante: "" },
+    { id: "n10", fecha: "2026-11-17", numero: 4, tipo: "Empiece conversaciones", estudiante: "Avendaño, Katherine", ayudante: "Cisneros, Vanessa", cumplio: "pendiente", reemplazo: "", ayudanteCumplio: true, reemplazoAyudante: "" },
+    { id: "n11", fecha: "2026-11-17", numero: 5, tipo: "Haga Revisitas", estudiante: "Cruz, Betza", ayudante: "Paredes, Lucia", cumplio: "pendiente", reemplazo: "", ayudanteCumplio: true, reemplazoAyudante: "" },
+    { id: "n12", fecha: "2026-11-17", numero: 6, tipo: "Haga discípulos", estudiante: "Enriques, Marvin", ayudante: "Diaz, Carlos", cumplio: "pendiente", reemplazo: "", ayudanteCumplio: true, reemplazoAyudante: "" },
+    { id: "n13", fecha: "2026-11-24", numero: 3, tipo: "Lectura de la Biblia", estudiante: "Cortez, Guisella", ayudante: "", cumplio: "pendiente", reemplazo: "", ayudanteCumplio: true, reemplazoAyudante: "" },
+    { id: "n14", fecha: "2026-11-24", numero: 4, tipo: "Empiece conversaciones", estudiante: "Diaz, Ruth", ayudante: "Huatuco, Elena", cumplio: "pendiente", reemplazo: "", ayudanteCumplio: true, reemplazoAyudante: "" },
+    { id: "n15", fecha: "2026-11-24", numero: 5, tipo: "Haga Revisitas", estudiante: "Maliqui, Antonia", ayudante: "Jimenez, Carmen", cumplio: "pendiente", reemplazo: "", ayudanteCumplio: true, reemplazoAyudante: "" },
+    { id: "n16", fecha: "2026-11-24", numero: 6, tipo: "Discurso", estudiante: "Ubillus, Percy", ayudante: "", cumplio: "pendiente", reemplazo: "", ayudanteCumplio: true, reemplazoAyudante: "" },
+
+    // DICIEMBRE 2026
+    { id: "d1", fecha: "2026-12-01", numero: 3, tipo: "Lectura de la Biblia", estudiante: "Peña, Aaron", ayudante: "", cumplio: "pendiente", reemplazo: "", ayudanteCumplio: true, reemplazoAyudante: "" },
+    { id: "d2", fecha: "2026-12-01", numero: 4, tipo: "Empiece conversaciones", estudiante: "Rosales, Valentina", ayudante: "Benites, Emma", cumplio: "pendiente", reemplazo: "", ayudanteCumplio: true, reemplazoAyudante: "" },
+    { id: "d3", fecha: "2026-12-01", numero: 5, tipo: "Haga Revisitas", estudiante: "Atalaya, Maria", ayudante: "Arias, Rossmery", cumplio: "pendiente", reemplazo: "", ayudanteCumplio: true, reemplazoAyudante: "" },
+    { id: "d4", fecha: "2026-12-01", numero: 6, tipo: "Haga discípulos", estudiante: "Davila, Enoc", ayudante: "Rosales, Victor", cumplio: "pendiente", reemplazo: "", ayudanteCumplio: true, reemplazoAyudante: "" },
+    { id: "d5", fecha: "2026-12-08", numero: 3, tipo: "Lectura de la Biblia", estudiante: "Perfecto, Indalecio", ayudante: "", cumplio: "pendiente", reemplazo: "", ayudanteCumplio: true, reemplazoAyudante: "" },
+    { id: "d6", fecha: "2026-12-08", numero: 4, tipo: "Empiece conversaciones", estudiante: "Villegas, Mercedes", ayudante: "Avendaño, Katherine", cumplio: "pendiente", reemplazo: "", ayudanteCumplio: true, reemplazoAyudante: "" },
+    { id: "d7", fecha: "2026-12-08", numero: 5, tipo: "Haga Revisitas", estudiante: "Diaz, Karina", ayudante: "Rios, Jamely", cumplio: "pendiente", reemplazo: "", ayudanteCumplio: true, reemplazoAyudante: "" },
+    { id: "d8", fecha: "2026-12-08", numero: 6, tipo: "Discurso", estudiante: "Arias, Erickon", ayudante: "", cumplio: "pendiente", reemplazo: "", ayudanteCumplio: true, reemplazoAyudante: "" },
+    { id: "d9", fecha: "2026-12-15", numero: 3, tipo: "Lectura de la Biblia", estudiante: "Atalaya, Leonel", ayudante: "", cumplio: "pendiente", reemplazo: "", ayudanteCumplio: true, reemplazoAyudante: "" },
+    { id: "d10", fecha: "2026-12-15", numero: 4, tipo: "Empiece conversaciones", estudiante: "Bances, Magali", ayudante: "Olano, Daynee", cumplio: "pendiente", reemplazo: "", ayudanteCumplio: true, reemplazoAyudante: "" },
+    { id: "d11", fecha: "2026-12-15", numero: 5, tipo: "Haga Revisitas", estudiante: "Sulca, Carmen", ayudante: "Paredes, Lucia", cumplio: "pendiente", reemplazo: "", ayudanteCumplio: true, reemplazoAyudante: "" },
+    { id: "d12", fecha: "2026-12-15", numero: 6, tipo: "Explique sus creencias", estudiante: "Ubillus, Sebastian", ayudante: "", cumplio: "pendiente", reemplazo: "", ayudanteCumplio: true, reemplazoAyudante: "" },
+    { id: "d13", fecha: "2026-12-22", numero: 3, tipo: "Lectura de la Biblia", estudiante: "Diaz, Carlos", ayudante: "", cumplio: "pendiente", reemplazo: "", ayudanteCumplio: true, reemplazoAyudante: "" },
+    { id: "d14", fecha: "2026-12-22", numero: 4, tipo: "Empiece conversaciones", estudiante: "Crispin, Lili", ayudante: "Vergara, Dorka", cumplio: "pendiente", reemplazo: "", ayudanteCumplio: true, reemplazoAyudante: "" },
+    { id: "d15", fecha: "2026-12-22", numero: 5, tipo: "Haga Revisitas", estudiante: "Porras, Nahamin", ayudante: "Rios, Amelia", cumplio: "pendiente", reemplazo: "", ayudanteCumplio: true, reemplazoAyudante: "" },
+    { id: "d16", fecha: "2026-12-22", numero: 6, tipo: "Discurso", estudiante: "Benites, Josue", ayudante: "", cumplio: "pendiente", reemplazo: "", ayudanteCumplio: true, reemplazoAyudante: "" },
+    { id: "d17", fecha: "2026-12-29", numero: 3, tipo: "Lectura de la Biblia", estudiante: "Ubillus, Sebastian", ayudante: "", cumplio: "pendiente", reemplazo: "", ayudanteCumplio: true, reemplazoAyudante: "" },
+    { id: "d18", fecha: "2026-12-29", numero: 4, tipo: "Empiece conversaciones", estudiante: "Calderon, Erika de", ayudante: "Bances, Magali", cumplio: "pendiente", reemplazo: "", ayudanteCumplio: true, reemplazoAyudante: "" },
+    { id: "d19", fecha: "2026-12-29", numero: 5, tipo: "Haga Revisitas", estudiante: "Horna, Roxana", ayudante: "Rosales, Valentina", cumplio: "pendiente", reemplazo: "", ayudanteCumplio: true, reemplazoAyudante: "" },
+    { id: "d20", fecha: "2026-12-29", numero: 6, tipo: "Haga discípulos", estudiante: "Mayker Crispin", ayudante: "Crispin, Jhans", cumplio: "pendiente", reemplazo: "", ayudanteCumplio: true, reemplazoAyudante: "" }
 ];
 
-let dbAsignaciones = JSON.parse(localStorage.getItem('bd_asignaciones_v16')) || datosVidaYMinisterioCompleto;
+// Carga con fusión automática de meses faltantes para garantizar disponibilidad inmediata de todo el año 2026
+let rawStoredAsignaciones = JSON.parse(localStorage.getItem('bd_asignaciones_v16'));
+let dbAsignaciones;
+if (!rawStoredAsignaciones || !Array.isArray(rawStoredAsignaciones) || rawStoredAsignaciones.length === 0) {
+    dbAsignaciones = [...datosVidaYMinisterioCompleto];
+} else {
+    const existingIds = new Set(rawStoredAsignaciones.map(a => a.id));
+    const faltantes = datosVidaYMinisterioCompleto.filter(a => !existingIds.has(a.id));
+    if (faltantes.length > 0) {
+        dbAsignaciones = rawStoredAsignaciones.concat(faltantes);
+    } else {
+        dbAsignaciones = rawStoredAsignaciones;
+    }
+}
 localStorage.setItem('bd_asignaciones_v16', JSON.stringify(dbAsignaciones));
 
 let estadosHermanos = JSON.parse(localStorage.getItem('bd_estados_hermanos_v2')) || {};
@@ -158,9 +251,6 @@ function inicializarModuloAsignaciones() {
     modalRapidoAsig = new bootstrap.Modal(document.getElementById('modalAgregadoRapido'));
     modalCumplimientoInstancia = new bootstrap.Modal(document.getElementById('modalControlCumplimiento'));
     actualizarSelectoresAsignaciones();
-    renderizarVistaGeneralAsignaciones();
-    renderizarProgramaMensual();
-    renderizarPlanificacionMeses();
 }
 
 function obtenerEstructuraGruposDesdeBD() {
@@ -290,13 +380,14 @@ function renderizarVistaGeneralAsignaciones() {
 
         contenedor.innerHTML += `
             <div class="col-md-6 mb-4">
-                <div class="card shadow-sm h-100 border-secondary">
-                    <div class="card-header bg-dark text-white fw-bold">
-                        <span>GRUPO ${grupoObj.grupo}</span>
+                <div class="card card-grupo shadow-sm h-100 border-0 rounded-4 overflow-hidden">
+                    <div class="card-header bg-slate-navy text-white fw-bold d-flex justify-content-between align-items-center py-2 px-3">
+                        <span class="d-flex align-items-center gap-2"><span>👥</span> GRUPO ${grupoObj.grupo}</span>
+                        <span class="badge bg-white-subtle text-white rounded-pill px-2 py-1" style="font-size:0.75rem;">${grupoObj.integrantes.length} Hermanos</span>
                     </div>
                     <div class="table-responsive">
                         <table class="table table-hover table-sm mb-0 tabla-grupos">
-                            <thead>
+                            <thead class="table-light">
                                 <tr><th>Nombre</th><th>Última Asign. / Estado</th><th class="text-center">Restricción</th></tr>
                             </thead>
                             <tbody>${filasHtml}</tbody>
@@ -342,7 +433,7 @@ function renderizarPlanificacionMeses() {
             
             let filasTabla = "";
             if (partesSemana.length === 0) {
-                filasTabla = `<tr><td colspan="4" class="text-center text-muted fst-italic py-1" style="font-size:0.85em;">Sin asignaciones</td></tr>`;
+                filasTabla = `<tr><td colspan="4" class="text-center text-muted fst-italic py-2 small bg-light-subtle">Sin asignaciones registradas</td></tr>`;
             } else {
                 partesSemana.sort((a,b) => a.numero - b.numero).forEach(a => {
                     let infoEstudiante = invertirNombre(a.estudiante);
@@ -373,10 +464,10 @@ function renderizarPlanificacionMeses() {
             }
 
             semanasHtml += `
-                <table class="table table-bordered table-sm mb-2 bg-white align-middle">
-                    <thead class="table-dark" style="font-size:0.8em;">
-                        <tr><th colspan="4" class="d-flex justify-content-between align-items-center"><span>${rango.texto}</span> <button class="btn btn-xs btn-outline-light py-0 px-1" style="font-size:0.75em;" onclick="abrirModalAdd('${rango.martesIso}')">➕</button></th></tr>
-                        <tr><th style="width:38%;">Asignación</th><th>Estudiante</th><th>Ayudante</th><th class="text-center">⚙️</th></tr>
+                <table class="table table-bordered table-sm mb-2 bg-white align-middle shadow-2xs rounded-3 overflow-hidden">
+                    <thead class="table-header-navy" style="font-size:0.8em;">
+                        <tr><th colspan="4" class="d-flex justify-content-between align-items-center py-1 px-2"><span>${rango.texto}</span> <button class="btn btn-xs btn-outline-light rounded-pill py-0 px-2" style="font-size:0.75em;" onclick="abrirModalAdd('${rango.martesIso}')">➕</button></th></tr>
+                        <tr class="table-light text-muted"><th>Asignación</th><th>Estudiante</th><th>Ayudante</th><th class="text-center">⚙️</th></tr>
                     </thead>
                     <tbody>${filasTabla}</tbody>
                 </table>
@@ -385,11 +476,12 @@ function renderizarPlanificacionMeses() {
 
         htmlMeses += `
             <div class="col-lg-6 mb-4">
-                <div class="card shadow-sm border-secondary h-100">
-                    <div class="card-header bg-secondary text-white fw-bold text-uppercase">
-                        📅 ${mes} ${anioSeleccionado}
+                <div class="card card-planif shadow-sm border-0 rounded-4 overflow-hidden h-100">
+                    <div class="card-header bg-gradient-navy text-white fw-bold text-uppercase d-flex justify-content-between align-items-center py-2 px-3">
+                        <span>📅 ${mes} ${anioSeleccionado}</span>
+                        <span class="badge bg-white-subtle text-white rounded-pill px-2 py-1" style="font-size:0.75rem;">${asignacionesMes.length} Partes</span>
                     </div>
-                    <div class="card-body p-2 bg-light">
+                    <div class="card-body p-2 bg-light-subtle">
                         ${semanasHtml}
                     </div>
                 </div>
@@ -442,15 +534,20 @@ function obtenerTodosLunesDelMes(mesSeleccionado) {
     let mesIdx = meses.indexOf(mesStr);
     let anio = parseInt(anioStr);
     
-    let lunesArray = [];
+    let semanasLunes = [];
+    // Encontrar todos los martes del mes (día habitual de reunión entre semana)
     let d = new Date(anio, mesIdx, 1);
-    while (d.getDay() !== 1) d.setDate(d.getDate() + 1); 
-    
     while (d.getMonth() === mesIdx) {
-        lunesArray.push(`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`);
-        d.setDate(d.getDate() + 7);
+        if (d.getDay() === 2) { // 2 = Martes
+            let dMartes = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+            let rango = calcularRangoSemana(dMartes);
+            if (!semanasLunes.includes(rango.lunesIso)) {
+                semanasLunes.push(rango.lunesIso);
+            }
+        }
+        d.setDate(d.getDate() + 1);
     }
-    return lunesArray;
+    return semanasLunes;
 }
 
 function actualizarSelectoresAsignaciones() {
@@ -516,8 +613,15 @@ function cambiarAnioAsignaciones() {
     selectMes.value = mesDeseado;
 
     renderizarProgramaMensual();
-    renderizarPlanificacionMeses();
     renderizarVistaGeneralAsignaciones();
+    
+    const tabPlanif = document.getElementById('modulo-planificacion');
+    if (tabPlanif && tabPlanif.classList.contains('active')) {
+        renderizarPlanificacionMeses();
+    } else {
+        // Carga en segundo plano sin congelar la animación de entrada
+        setTimeout(renderizarPlanificacionMeses, 120);
+    }
 }
 
 function renderizarProgramaMensual() {
@@ -537,9 +641,14 @@ function renderizarProgramaMensual() {
         agrupado[lunesIso] = { textoHead: rango.texto, fechaMartes: rango.martesIso, partes: [] };
     });
 
+    // Asegurar que toda asignación del mes aparezca en su semana correspondiente
     dbMes.forEach(a => {
-        let idSemana = calcularRangoSemana(a.fecha).lunesIso;
-        if(agrupado[idSemana]) agrupado[idSemana].partes.push(a);
+        let rango = calcularRangoSemana(a.fecha);
+        let idSemana = rango.lunesIso;
+        if (!agrupado[idSemana]) {
+            agrupado[idSemana] = { textoHead: rango.texto, fechaMartes: rango.martesIso, partes: [] };
+        }
+        agrupado[idSemana].partes.push(a);
     });
 
     let htmlSemanal = "";
@@ -550,15 +659,27 @@ function renderizarProgramaMensual() {
         let tienePartes = objSemana.partes.length > 0;
         
         htmlSemanal += `
-        <div class="card mb-4 shadow-sm border-dark">
+        <div class="card card-semana mb-4 shadow-sm">
             <div class="semana-header">
-                <span>SEMANA DEL ${objSemana.textoHead}</span>
-                <button class="btn-add-quick" onclick="abrirModalAdd('${objSemana.fechaMartes}')">➕ Agregar</button>
+                <div class="d-flex align-items-center gap-2">
+                    <span class="semana-header-badge">SEMANA</span>
+                    <span class="semana-header-title">${objSemana.textoHead}</span>
+                </div>
+                <button class="btn-add-quick" onclick="abrirModalAdd('${objSemana.fechaMartes}')">➕ Programar</button>
             </div>
-            <div class="card-body p-0 pb-2">`;
+            <div class="card-body p-2 p-md-3">`;
         
         if(!tienePartes) {
-            htmlSemanal += `<div class="p-3 text-center text-muted fst-italic">Semana sin asignaciones programadas</div>`;
+            htmlSemanal += `
+                <div class="empty-semana-card text-center py-4 px-3">
+                    <div class="empty-semana-icon">📋</div>
+                    <h6 class="fw-bold text-dark mt-2 mb-1">Semana sin asignaciones programadas</h6>
+                    <p class="text-muted small mb-3">Puedes programar a los estudiantes haciendo clic en el botón inferior.</p>
+                    <button class="btn btn-sm btn-outline-primary rounded-pill px-3 py-1 fw-bold" onclick="abrirModalAdd('${objSemana.fechaMartes}')">
+                        ➕ Programar Asignaciones
+                    </button>
+                </div>
+            `;
         } else {
             let partesSemana = objSemana.partes.sort((a, b) => a.numero - b.numero);
             let mostroBannerMaestros = false;
@@ -566,48 +687,67 @@ function renderizarProgramaMensual() {
             partesSemana.forEach(a => {
                 let esLectura = (a.tipo.toLowerCase().includes('lectura'));
                 if (!esLectura && !mostroBannerMaestros) {
-                    htmlSemanal += `<div class="franja-maestros"><span>SEAMOS MEJORES MAESTROS</span></div>`;
+                    htmlSemanal += `
+                    <div class="franja-maestros">
+                        <span class="d-flex align-items-center gap-2">
+                            <span>📖</span> SEAMOS MEJORES MAESTROS
+                        </span>
+                        <span class="franja-sub">Intervenciones Estudiantiles</span>
+                    </div>`;
                     mostroBannerMaestros = true;
                 }
 
                 let claseColor = esLectura ? "texto-azul" : "texto-dorado";
-                let etiquetaRol = a.ayudante ? "Estudiante / Ayudante:" : "Estudiante:";
+                let etiquetaRol = a.ayudante ? "Estudiante / Ayudante" : "Estudiante";
                 let nombreEstudiante = invertirNombre(a.estudiante);
                 let nombreAyudante = a.ayudante ? invertirNombre(a.ayudante) : "";
                 
                 if (a.cumplio === "no_cumplio" && a.reemplazo) {
-                    nombreEstudiante = `<del class="text-muted">${invertirNombre(a.estudiante)}</del> <span class="text-danger fw-bold">(Reemplazo: ${invertirNombre(a.reemplazo)})</span>`;
+                    nombreEstudiante = `<del class="text-muted">${invertirNombre(a.estudiante)}</del> <span class="badge bg-danger-subtle text-danger border border-danger-subtle ms-1">Reemplazo: ${invertirNombre(a.reemplazo)}</span>`;
                 }
                 
                 if (a.ayudante && a.ayudanteCumplio === false && a.reemplazoAyudante) {
-                    nombreAyudante = `<del class="text-muted">${invertirNombre(a.ayudante)}</del> <span class="text-danger fw-bold">(Reemplazo: ${invertirNombre(a.reemplazoAyudante)})</span>`;
+                    nombreAyudante = `<del class="text-muted">${invertirNombre(a.ayudante)}</del> <span class="badge bg-danger-subtle text-danger border border-danger-subtle ms-1">Reemplazo: ${invertirNombre(a.reemplazoAyudante)}</span>`;
                 }
 
-                let textoNombres = nombreAyudante ? `${nombreEstudiante} / ${nombreAyudante}` : nombreEstudiante;
+                let textoNombres = nombreAyudante 
+                    ? `<span class="fw-semibold text-dark">${nombreEstudiante}</span> <span class="text-muted mx-1">/</span> <span class="text-secondary">${nombreAyudante}</span>` 
+                    : `<span class="fw-semibold text-dark">${nombreEstudiante}</span>`;
 
-                let iconoEstadoBadge = "⏳";
+                let iconoEstadoBadge = "⏳ Pendiente";
+                let badgeClass = "badge-estado-pendiente";
                 let estOk = a.cumplio === "cumplio" || (a.cumplio === "pendiente" && !a.reemplazo);
                 let ayuOk = a.ayudanteCumplio !== false;
-                if (estOk && ayuOk) iconoEstadoBadge = "✅";
-                else if (!estOk || !ayuOk) iconoEstadoBadge = "❌";
+                if (estOk && ayuOk) {
+                    iconoEstadoBadge = "✅ Cumplió";
+                    badgeClass = "badge-estado-cumplio";
+                } else if (!estOk || !ayuOk) {
+                    iconoEstadoBadge = "❌ No Cumplió";
+                    badgeClass = "badge-estado-fallo";
+                }
 
                 htmlSemanal += `
                 <div class="fila-programa">
-                    <div class="prog-titulo">
-                        <span class="${claseColor}">${a.numero}. ${a.tipo}</span> 
-                    </div>
-                    <div class="prog-rol">${etiquetaRol}</div>
-                    <div class="prog-nombres">${textoNombres} <span class="ms-1" title="Estado">${iconoEstadoBadge}</span></div>
-                    
-                    <div class="d-flex align-items-center gap-1 ms-auto">
-                        <button class="btn btn-sm btn-outline-dark border py-0 px-2" style="font-size:0.85em;" onclick="abrirModalCumplimiento('${a.id}')" title="Control de Cumplimiento">🎯</button>
-                        
-                        <div class="acciones-iconos d-flex gap-1 ms-2">
-                            <button class="btn btn-sm btn-light border" onclick="abrirModalEdit('${a.id}')" title="Editar">✏️</button>
-                            <button class="btn btn-sm btn-light border" onclick="copiarMensajeAsignacion('${a.id}', 'aviso')" title="Copiar Aviso">📝</button>
-                            <button class="btn btn-sm btn-light border" onclick="copiarMensajeAsignacion('${a.id}', 'recordatorio')" title="Copiar Recordatorio">🔔</button>
-                            <button class="btn btn-sm btn-light border text-danger fw-bold" onclick="eliminarAsignacion('${a.id}')" title="Eliminar">✕</button>
+                    <div class="prog-numero-tipo">
+                        <span class="badge-numero-parte">${a.numero}</span>
+                        <div class="prog-titulo">
+                            <span class="${claseColor}">${a.tipo}</span> 
                         </div>
+                    </div>
+                    <div class="prog-rol">
+                        <span class="badge-rol-pill">${etiquetaRol}</span>
+                    </div>
+                    <div class="prog-nombres">
+                        ${textoNombres}
+                        <span class="ms-2 ${badgeClass}">${iconoEstadoBadge}</span>
+                    </div>
+                    
+                    <div class="prog-acciones ms-auto">
+                        <button class="btn-icon-action btn-cumplimiento" onclick="abrirModalCumplimiento('${a.id}')" title="Control de Cumplimiento">🎯</button>
+                        <button class="btn-icon-action" onclick="abrirModalEdit('${a.id}')" title="Editar Asignación">✏️</button>
+                        <button class="btn-icon-action" onclick="copiarMensajeAsignacion('${a.id}', 'aviso')" title="Copiar Aviso">📝</button>
+                        <button class="btn-icon-action" onclick="copiarMensajeAsignacion('${a.id}', 'recordatorio')" title="Copiar Recordatorio">🔔</button>
+                        <button class="btn-icon-action btn-delete-asig" onclick="eliminarAsignacion('${a.id}')" title="Eliminar Asignación">✕</button>
                     </div>
                 </div>`;
             });

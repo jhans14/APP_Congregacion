@@ -105,46 +105,71 @@ function normalizarHermano(h) {
     };
 }
 
+let _cacheHermanos = null;
+let _cacheInactivos = null;
+
+function invalidarCacheHermanos() {
+    _cacheHermanos = null;
+    _cacheInactivos = null;
+}
+
 function obtenerHermanos() {
+    if (_cacheHermanos) return _cacheHermanos;
     const datos = localStorage.getItem('bd_congregacion');
     const lista = datos ? JSON.parse(datos) : dbHermanosIniciales;
-    return lista.map(normalizarHermano);
+    _cacheHermanos = lista.map(normalizarHermano);
+    return _cacheHermanos;
 }
 
 function obtenerHermanosInactivos() {
+    if (_cacheInactivos) return _cacheInactivos;
     const datos = localStorage.getItem('bd_congregacion_inactivos');
     const lista = datos ? JSON.parse(datos) : dbHermanosInactivos;
-    return lista.map(normalizarHermano);
+    _cacheInactivos = lista.map(normalizarHermano);
+    return _cacheInactivos;
 }
 
 function guardarHermano(nuevoHermano, index) {
-    let lista = obtenerHermanos();
+    let lista = [...obtenerHermanos()];
     if (index === -1) {
         lista.push(nuevoHermano);
     } else {
         lista[index] = nuevoHermano;
     }
     localStorage.setItem('bd_congregacion', JSON.stringify(lista));
+    invalidarCacheHermanos();
 }
 
 function guardarHermanoInactivo(nuevoHermano, index) {
-    let lista = obtenerHermanosInactivos();
+    let lista = [...obtenerHermanosInactivos()];
     if (index === -1) {
         lista.push(nuevoHermano);
     } else {
         lista[index] = nuevoHermano;
     }
     localStorage.setItem('bd_congregacion_inactivos', JSON.stringify(lista));
+    invalidarCacheHermanos();
 }
 
 function borrarHermano(index) {
-    let lista = obtenerHermanos();
+    let lista = [...obtenerHermanos()];
     lista.splice(index, 1);
     localStorage.setItem('bd_congregacion', JSON.stringify(lista));
+    invalidarCacheHermanos();
 }
 
 function borrarHermanoInactivo(index) {
-    let lista = obtenerHermanosInactivos();
+    let lista = [...obtenerHermanosInactivos()];
     lista.splice(index, 1);
     localStorage.setItem('bd_congregacion_inactivos', JSON.stringify(lista));
+    invalidarCacheHermanos();
+}
+
+function invertirNombre(nc) {
+    if (!nc) return "";
+    if (nc.includes(',')) { 
+        let p = nc.split(','); 
+        return p[1].trim() + " " + p[0].trim(); 
+    }
+    return nc;
 }

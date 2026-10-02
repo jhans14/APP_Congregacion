@@ -2,6 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestor Congregación</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="css/styles.css">
@@ -11,78 +12,36 @@
     <!-- Toast de notificaciones global para el copiado de mensajes -->
     <div id="toast-copiado">✅ Mensaje copiado al portapapeles</div>
 
-    <button class="btn btn-dark btn-menu" onclick="toggleSidebar()">☰</button>
+    <!-- Fondo oscuro al abrir el sidebar -->
+    <div id="sidebar-backdrop" class="sidebar-backdrop" onclick="toggleSidebar(false)"></div>
+
+    <button class="btn btn-dark btn-menu" onclick="toggleSidebar()" aria-label="Abrir menú">☰</button>
 
     <div class="sidebar-izquierda" id="sidebarMenu">
-        <h5 class="text-white text-center py-3">Menú</h5>
+        <div class="d-flex justify-content-between align-items-center px-3 py-3 border-bottom border-secondary">
+            <h5 class="text-white m-0">Menú</h5>
+            <button class="btn btn-sm btn-outline-light py-0 px-2" onclick="toggleSidebar(false)" aria-label="Cerrar menú">✕</button>
+        </div>
         <a class="sidebar-link" onclick="cargarModulo('inicio')">🏠 Inicio</a>
         <a class="sidebar-link" onclick="cargarModulo('informes')">📊 Informes</a>
         <a class="sidebar-link" onclick="cargarModulo('asignaciones')">📅 Asignaciones</a>
         <a class="sidebar-link" onclick="cargarModulo('territorios')">📦 Territorios</a>
         <a class="sidebar-link" onclick="cargarModulo('asistencia')">👥 Asistencia</a>
-        <a class="sidebar-link" onclick="cargarModulo('hermanos')"> Base de datos</a>
+        <a class="sidebar-link" onclick="cargarModulo('hermanos')">🗃️ Base de datos</a>
+        <a class="sidebar-link" onclick="cargarModulo('ajustes')">⚙️ Ajustes</a>
     </div>
 
     <div class="contenido-principal" id="app-container">
         <div id="area-tabla" class="container mt-4"></div>
     </div>
 
-    <div class="modal fade" id="modalHermano" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Gestionar Hermano</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <input type="hidden" id="editIndex" value="-1">
-                    <input type="hidden" id="editTipo" value="activo">
-                    
-                    <label>Apellido y Nombre</label>
-                    <input type="text" id="inNombre" class="form-control mb-2">
-                    
-                    <label>Cargo</label>
-                    <select id="inCargo" class="form-select mb-2" onchange="sincronizarCargoFormulario()">
-                        <option value="Anciano">Anciano</option>
-                        <option value="Siervo Ministerial">Siervo Ministerial</option>
-                        <option value="Publicador Bautizado">Publicador Bautizado</option>
-                        <option value="Publicador No Bautizado">Publicador No Bautizado</option>
-                        <option value="Inactivo">Inactivo</option>
-                    </select>
-
-                    <label>Precursorado</label>
-                    <select id="inPrecursorado" class="form-select mb-2">
-                        <option value="Ninguno">Ninguno</option>
-                        <option value="Precursor Regular">Precursor Regular</option>
-                        <option value="Precursor Auxiliar">Precursor Auxiliar</option>
-                    </select>
-
-                    <label>Grupo</label>
-                    <input type="number" id="inGrupo" class="form-control mb-2">
-                    
-                    <label>Género</label>
-                    <select id="inGenero" class="form-select mb-2">
-                        <option value="M">Masculino</option>
-                        <option value="F">Femenino</option>
-                    </select>
-
-                    <label>¿Es mayor de edad?</label>
-                    <select id="inMayorEdad" class="form-select">
-                        <option value="Sí">Sí</option>
-                        <option value="No">No</option>
-                    </select>
-                </div>
-                <div class="modal-footer">
-                    <button class="btn btn-primary" onclick="guardarDatos()">Guardar</button>
-                </div>
-            </div>
-        </div>
-    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.1/dist/xlsx.full.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="js/db.js"></script>
+    <script src="js/hermanos.js"></script>
+    <script src="js/ajustes.js"></script>
     <script src="js/informes.js"></script>
     <script src="js/asignaciones.js"></script>
     <script src="js/territorios.js"></script>
