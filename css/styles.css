@@ -90,19 +90,81 @@ body {
 
 .btn-menu { 
     position: fixed; 
-    top: 12px; 
-    left: 12px; 
+    top: 50%; 
+    left: 0; 
+    transform: translateY(-50%);
     z-index: 1050;
-    border-radius: var(--radius-md);
+    border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
     background-color: var(--navy-900);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    box-shadow: var(--shadow-card);
-    transition: all 0.2s ease;
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-left: none;
+    box-shadow: 2px 4px 16px rgba(0, 0, 0, 0.25);
+    padding: 13px 12px 13px 9px;
+    font-size: 1.25rem;
+    line-height: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: transform 0.22s cubic-bezier(0.25, 1, 0.5, 1), left 0.22s cubic-bezier(0.25, 1, 0.5, 1), background-color 0.2s, opacity 0.2s;
+    user-select: none;
 }
 
 .btn-menu:hover {
     background-color: var(--navy-800);
-    transform: scale(1.05);
+    transform: translateY(-50%) translateX(3px);
+    box-shadow: 3px 6px 20px rgba(0, 0, 0, 0.35);
+}
+
+.btn-menu.active {
+    left: 280px;
+    background-color: var(--navy-800);
+}
+
+@media (max-width: 480px) {
+    .btn-menu.active {
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+    }
+}
+
+.btn-menu-icon {
+    display: inline-block;
+    transition: transform 0.2s ease;
+}
+
+/* Banner flotante de instalación PWA */
+.banner-pwa-instalacion {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1060;
+    background: linear-gradient(135deg, var(--navy-900) 0%, var(--navy-800) 100%);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: var(--radius-lg);
+    padding: 12px 20px;
+    box-shadow: 0 12px 36px rgba(0, 0, 0, 0.35);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    min-width: 320px;
+    max-width: 92vw;
+    animation: slideUpFade 0.3s ease;
+}
+
+@keyframes slideUpFade {
+    from {
+        opacity: 0;
+        transform: translate(-50%, 20px);
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, 0);
+    }
 }
 
 .sidebar-link { 
@@ -830,4 +892,15 @@ body.modo-oscuro .badge-db-status {
 
 body.modo-oscuro tr.fila-alerta-60 {
     background-color: #450a0a !important;
+}
+
+body.modo-oscuro .btn-menu {
+    background-color: #1e293b !important;
+    color: #60a5fa !important;
+    border-color: rgba(255, 255, 255, 0.15) !important;
+}
+
+body.modo-oscuro .banner-pwa-instalacion {
+    background: linear-gradient(135deg, #151e2e 0%, #1e293b 100%) !important;
+    border-color: #243046 !important;
 }

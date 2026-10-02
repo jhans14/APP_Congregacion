@@ -3,19 +3,42 @@ window.onload = () => cargarModulo('inicio');
 function toggleSidebar(forceState) {
     const sidebar = document.getElementById('sidebarMenu');
     const backdrop = document.getElementById('sidebar-backdrop');
+    const btnMenu = document.getElementById('btnMenuSidebar');
     if (!sidebar) return;
 
+    let isActive;
     if (forceState !== undefined) {
+        isActive = forceState;
         if (forceState) {
             sidebar.classList.add('active');
             if (backdrop) backdrop.classList.add('active');
+            if (btnMenu) {
+                btnMenu.classList.add('active');
+                btnMenu.innerHTML = '<span class="btn-menu-icon">◀</span>';
+                btnMenu.setAttribute('title', 'Cerrar menú');
+            }
+            document.body.classList.add('sidebar-open');
         } else {
             sidebar.classList.remove('active');
             if (backdrop) backdrop.classList.remove('active');
+            if (btnMenu) {
+                btnMenu.classList.remove('active');
+                btnMenu.innerHTML = '<span class="btn-menu-icon">☰</span>';
+                btnMenu.setAttribute('title', 'Abrir menú');
+            }
+            document.body.classList.remove('sidebar-open');
         }
     } else {
-        const isActive = sidebar.classList.toggle('active');
+        isActive = sidebar.classList.toggle('active');
         if (backdrop) backdrop.classList.toggle('active', isActive);
+        if (btnMenu) {
+            btnMenu.classList.toggle('active', isActive);
+            btnMenu.innerHTML = isActive 
+                ? '<span class="btn-menu-icon">◀</span>' 
+                : '<span class="btn-menu-icon">☰</span>';
+            btnMenu.setAttribute('title', isActive ? 'Cerrar menú' : 'Abrir menú');
+        }
+        document.body.classList.toggle('sidebar-open', isActive);
     }
 }
 
@@ -1076,6 +1099,18 @@ function ejecutarCargaModulo(modulo) {
                                 </div>
                             </div>
 
+                            <!-- Tarjeta de PWA y Modo Offline -->
+                            <div class="mb-4 p-3 bg-light-subtle border rounded-3">
+                                <div class="d-flex align-items-center justify-content-between mb-2">
+                                    <h6 class="fw-bold text-dark mb-0 small">📱 App Progresiva (PWA)</h6>
+                                    <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-2 py-1" style="font-size:0.72rem;">Offline Activo</span>
+                                </div>
+                                <p class="text-muted small mb-2">Instálala en tu dispositivo para abrirla directamente desde la pantalla de inicio y usarla sin conexión a internet.</p>
+                                <button class="btn btn-outline-primary btn-sm w-100 fw-bold rounded-pill" id="btnInstalarPWA" onclick="ejecutarInstalacionPWA()">
+                                    📲 Instalar en este Dispositivo
+                                </button>
+                            </div>
+
                             <div class="mt-auto">
                                 <div class="border-top pt-3">
                                     <div class="d-flex justify-content-between align-items-center">
@@ -1203,3 +1238,57 @@ function guardarDatos() {
     bootstrap.Modal.getInstance(document.getElementById('modalHermano')).hide();
     renderizarTablaHermanos();
 }
+
+/* ==========================================================================
+   PWA - EVENTOS DE INSTALACIÓN Y MANEJO DE PROMPT
+   ========================================================================== */
+let deferredPromptPWA = null;
+
+window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPromptPWA = e;
+    
+    // Mostrar banner flotante si no ha sido descartado en la sesión
+    if (!sessionStorage.getItem('pwa_prompt_dismissed')) {
+        const banner = document.getElementById('banner-pwa-instalacion');
+        if (banner) banner.classList.remove('d-none');
+    }
+
+    const btnInstalar = document.getElementById('btnInstalarPWA');
+    if (btnInstalar) {
+        btnInstalar.classList.remove('btn-outline-primary');
+        btnInstalar.classList.add('btn-primary');
+    }
+});
+
+function ejecutarInstalacionPWA() {
+    const banner = document.getElementById('banner-pwa-instalacion');
+    if (banner) banner.classList.add('d-none');
+
+    if (deferredPromptPWA) {
+        deferredPromptPWA.prompt();
+        deferredPromptPWA.userChoice.then((choiceResult) => {
+            if (choiceResult.outcome === 'accepted') {
+                console.log('✅ El usuario aceptó instalar la PWA');
+            } else {
+                console.log('ℹ️ El usuario canceló la instalación');
+            }
+            deferredPromptPWA = null;
+        });
+    } else {
+        alert('ℹ️ Para instalar esta aplicación en tu dispositivo:\n\n• En Chrome / Edge (PC o Mac): Haz clic en el botón de instalación (💻 o ➕) en la barra de direcciones o en el menú de tres puntos (...) > "Instalar Gestor Congregación".\n• En Android (Chrome): Abre el menú (...) > "Instalar aplicación" o "Añadir a pantalla principal".\n• En iPhone / iPad (Safari): Pulsa el botón "Compartir" (cuadrado con flecha hacia arriba) y selecciona "Añadir a la pantalla de inicio".');
+    }
+}
+
+function descartarPromptPWA() {
+    const banner = document.getElementById('banner-pwa-instalacion');
+    if (banner) banner.classList.add('d-none');
+    sessionStorage.setItem('pwa_prompt_dismissed', 'true');
+}
+
+window.addEventListener('appinstalled', () => {
+    console.log('🎉 ¡PWA instalada satisfactoriamente!');
+    const banner = document.getElementById('banner-pwa-instalacion');
+    if (banner) banner.classList.add('d-none');
+    deferredPromptPWA = null;
+});

@@ -4,6 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestor Congregación</title>
+    
+    <!-- PWA y Metadatos de Aplicación -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0f172a">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Congregación">
+    <meta name="description" content="Gestión integral de congregación: asignaciones, territorios, asistencia y publicadores.">
+    <link rel="apple-touch-icon" href="icons/icon-apple-180.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+    <link rel="icon" type="image/png" sizes="48x48" href="icons/favicon-48.png">
+
+    <!-- Estilos Externos y Locales -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="css/styles.css">
 </head>
@@ -12,29 +25,52 @@
     <!-- Toast de notificaciones global para el copiado de mensajes -->
     <div id="toast-copiado">✅ Mensaje copiado al portapapeles</div>
 
+    <!-- Banner flotante de instalación PWA -->
+    <div id="banner-pwa-instalacion" class="banner-pwa-instalacion d-none">
+        <div class="d-flex align-items-center gap-3">
+            <img src="icons/favicon-48.png" width="36" height="36" alt="App Icon" class="rounded">
+            <div>
+                <strong class="d-block text-white" style="font-size:0.92rem;">Instalar Aplicación</strong>
+                <small class="text-white-50">Accede sin conexión y desde tu pantalla de inicio</small>
+            </div>
+        </div>
+        <div class="d-flex gap-2">
+            <button class="btn btn-sm btn-outline-light rounded-pill px-3" onclick="descartarPromptPWA()">Ahora no</button>
+            <button class="btn btn-sm btn-primary rounded-pill px-3 fw-bold" onclick="ejecutarInstalacionPWA()">Instalar</button>
+        </div>
+    </div>
+
     <!-- Fondo oscuro al abrir el sidebar -->
     <div id="sidebar-backdrop" class="sidebar-backdrop" onclick="toggleSidebar(false)"></div>
 
-    <button class="btn btn-dark btn-menu" onclick="toggleSidebar()" aria-label="Abrir menú">☰</button>
+    <!-- Botón desplegable flotante centrado verticalmente al medio -->
+    <button class="btn-menu" id="btnMenuSidebar" onclick="toggleSidebar()" aria-label="Abrir menú" title="Menú de navegación">
+        <span class="btn-menu-icon">☰</span>
+    </button>
 
+    <!-- Barra Lateral (Sidebar) -->
     <div class="sidebar-izquierda" id="sidebarMenu">
-        <div class="d-flex justify-content-between align-items-center px-3 py-3 border-bottom border-secondary">
-            <h5 class="text-white m-0">Menú</h5>
-            <button class="btn btn-sm btn-outline-light py-0 px-2" onclick="toggleSidebar(false)" aria-label="Cerrar menú">✕</button>
+        <div class="sidebar-header d-flex justify-content-between align-items-center px-3 py-3 border-bottom border-secondary">
+            <div class="d-flex align-items-center gap-2">
+                <img src="icons/favicon-48.png" width="26" height="26" alt="Logo" class="rounded shadow-sm">
+                <h5 class="text-white m-0 fw-bold" style="font-size: 1.1rem; letter-spacing: -0.01em;">Menú Principal</h5>
+            </div>
+            <button class="btn btn-sm btn-outline-light py-0 px-2 rounded-pill" onclick="toggleSidebar(false)" aria-label="Cerrar menú">✕</button>
         </div>
-        <a class="sidebar-link" onclick="cargarModulo('inicio')">🏠 Inicio</a>
-        <a class="sidebar-link" onclick="cargarModulo('informes')">📊 Informes</a>
-        <a class="sidebar-link" onclick="cargarModulo('asignaciones')">📅 Asignaciones</a>
-        <a class="sidebar-link" onclick="cargarModulo('territorios')">📦 Territorios</a>
-        <a class="sidebar-link" onclick="cargarModulo('asistencia')">👥 Asistencia</a>
-        <a class="sidebar-link" onclick="cargarModulo('hermanos')">🗃️ Base de datos</a>
-        <a class="sidebar-link" onclick="cargarModulo('ajustes')">⚙️ Ajustes</a>
+        <div class="sidebar-links-container py-2">
+            <a class="sidebar-link" onclick="cargarModulo('inicio')">🏠 Inicio</a>
+            <a class="sidebar-link" onclick="cargarModulo('informes')">📊 Informes</a>
+            <a class="sidebar-link" onclick="cargarModulo('asignaciones')">📅 Asignaciones</a>
+            <a class="sidebar-link" onclick="cargarModulo('territorios')">📦 Territorios</a>
+            <a class="sidebar-link" onclick="cargarModulo('asistencia')">👥 Asistencia</a>
+            <a class="sidebar-link" onclick="cargarModulo('hermanos')">🗃️ Base de datos</a>
+            <a class="sidebar-link" onclick="cargarModulo('ajustes')">⚙️ Ajustes</a>
+        </div>
     </div>
 
     <div class="contenido-principal" id="app-container">
         <div id="area-tabla" class="container mt-4"></div>
     </div>
-
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.1/dist/xlsx.full.min.js"></script>
@@ -48,5 +84,16 @@
     <script src="js/asistencia.js"></script>
     <script src="js/ui.js"></script>
     <script src="js/main.js"></script>
+
+    <!-- Registro del Service Worker PWA -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(reg => console.log('✅ ServiceWorker registrado correctamente:', reg.scope))
+                    .catch(err => console.warn('❌ Error al registrar ServiceWorker:', err));
+            });
+        }
+    </script>
 </body>
 </html>
