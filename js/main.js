@@ -141,342 +141,7 @@ function cargarModulo(modulo) {
             </div>
         `;
     } 
-    else if (modulo === 'hermanos') {
-        areaTabla.innerHTML = `
-            <div class="d-flex justify-content-between align-items-center mb-3 gap-2 flex-wrap">
-                <h3 class="mb-0" id="titulo-hermanos">Congregación Paraíso de Carabayllo</h3>
-                <div class="d-flex gap-2">
-                    <button class="btn btn-outline-primary btn-sm" onclick="exportarTablaExcel()">📊 Excel</button>
-                    <button class="btn btn-outline-secondary btn-sm" onclick="limpiarFiltrosTabla()">Limpiar filtros</button>
-                    <button class="btn btn-success" onclick="abrirEdicion(-1)">+ Nuevo</button>
-                </div>
-            </div>
-
-            <table class="table table-striped table-bordered" id="tabla-hermanos">
-                <thead>
-                    <tr>
-                        <th>
-                            <div class="column-header">
-                                <span>Nombre</span>
-                                <button class="column-toggle" type="button" onclick="toggleColumnMenu('menu-nombre')">☰</button>
-                            </div>
-                            <div id="menu-nombre" class="column-menu">
-                                <select id="orden-nombre" class="form-select form-select-sm mb-2" onchange="aplicarFiltrosTabla()">
-                                    <option value="">Sin orden</option>
-                                    <option value="asc">A-Z</option>
-                                    <option value="desc">Z-A</option>
-                                </select>
-                            </div>
-                        </th>
-                        <th>
-                            <div class="column-header">
-                                <span>Cargo</span>
-                                <button class="column-toggle" type="button" onclick="toggleColumnMenu('menu-privilegio')">☰</button>
-                            </div>
-                            <div id="menu-privilegio" class="column-menu">
-                                <select id="filtro-privilegio" class="form-select form-select-sm" onchange="aplicarFiltrosTabla()">
-                                    <option value="">Todos</option>
-                                </select>
-                            </div>
-                        </th>
-                        <th>
-                            <div class="column-header">
-                                <span>Precursorado</span>
-                                <button class="column-toggle" type="button" onclick="toggleColumnMenu('menu-precursorado')">☰</button>
-                            </div>
-                            <div id="menu-precursorado" class="column-menu">
-                                <select id="filtro-precursorado" class="form-select form-select-sm" onchange="aplicarFiltrosTabla()">
-                                    <option value="">Todos</option>
-                                </select>
-                            </div>
-                        </th>
-                        <th>
-                            <div class="column-header">
-                                <span>Grupo</span>
-                                <button class="column-toggle" type="button" onclick="toggleColumnMenu('menu-grupo')">☰</button>
-                            </div>
-                            <div id="menu-grupo" class="column-menu">
-                                <select id="filtro-grupo" class="form-select form-select-sm" onchange="aplicarFiltrosTabla()">
-                                    <option value="">Todos</option>
-                                </select>
-                            </div>
-                        </th>
-                        <th>
-                            <div class="column-header">
-                                <span>Género</span>
-                                <button class="column-toggle" type="button" onclick="toggleColumnMenu('menu-genero')">☰</button>
-                            </div>
-                            <div id="menu-genero" class="column-menu">
-                                <select id="filtro-genero" class="form-select form-select-sm" onchange="aplicarFiltrosTabla()">
-                                    <option value="">Todos</option>
-                                </select>
-                            </div>
-                        </th>
-                        <th>
-                            <div class="column-header">
-                                <span>Mayor Edad</span>
-                                <button class="column-toggle" type="button" onclick="toggleColumnMenu('menu-mayor')">☰</button>
-                            </div>
-                            <div id="menu-mayor" class="column-menu">
-                                <select id="filtro-mayor-edad" class="form-select form-select-sm" onchange="aplicarFiltrosTabla()">
-                                    <option value="">Todos</option>
-                                    <option value="si">Sí</option>
-                                    <option value="no">No</option>
-                                </select>
-                            </div>
-                        </th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
-            <div class="mt-5">
-                <h5 class="mb-3">Inactivos</h5>
-                <table class="table table-striped table-bordered" id="tabla-inactivos">
-                    <thead>
-                        <tr>
-                            <th>Nombre</th>
-                            <th>Cargo</th>
-                            <th>Grupo</th>
-                            <th>Género</th>
-                            <th>Mayor Edad</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody></tbody>
-                </table>
-            </div>
-        `;
-        renderizarTablaHermanos();
-    } 
-    else if (modulo === 'territorios') {
-        areaTabla.innerHTML = `
-            <div class="card p-4 shadow-sm bg-white mb-4">
-                <div class="border-bottom pb-3 mb-3 d-flex justify-content-between align-items-center flex-wrap gap-2">
-                    <div>
-                        <h4 class="fw-bold" style="color: #2c3e50; margin: 0;">🗺️ Sistema de Gestión de Territorios</h4>
-                        <small class="text-muted">Congregación Paraíso de Carabayllo — Módulos Independientes</small>
-                    </div>
-                </div>
-
-                <ul class="nav nav-pills justify-content-center mb-4 bg-light p-2 rounded border shadow-sm" id="pills-tab" role="tablist">
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link active" id="pills-control-tab" data-bs-toggle="pill" data-bs-target="#moduloControl" type="button" role="tab" aria-controls="moduloControl" aria-selected="true">🎮 Control de Tarjetas</button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="pills-info-tab" data-bs-toggle="pill" data-bs-target="#moduloInfo" type="button" role="tab" aria-controls="moduloInfo" aria-selected="false">📋 Información Territorios</button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="pills-resumen-tab" data-bs-toggle="pill" data-bs-target="#moduloResumen" type="button" role="tab" aria-controls="moduloResumen" aria-selected="false" onclick="inicializarGraficosTerritorios()">📊 Resumen Territorio</button>
-                    </li>
-                </ul>
-
-                <div class="tab-content" id="pills-tabContent">
-                    
-                    <div class="tab-pane fade show active" id="moduloControl" role="tabpanel" aria-labelledby="pills-control-tab">
-                        <div class="row">
-                            <div class="col-lg-6 border-end">
-                                <h6 class="fw-bold text-muted mb-3">📦 Casillero General (Tarretero)</h6>
-                                <div class="table-responsive border rounded" style="max-height: 520px; overflow-y: auto;">
-                                    <table class="table table-sm table-hover table-bordered align-middle mb-0">
-                                        <thead class="table-light position-sticky" style="top: 0; z-index: 2;">
-                                            <tr>
-                                                <th class="text-center" style="width: 120px;">Territorio</th>
-                                                <th>Puntos de Encuentro</th>
-                                                <th class="text-center" style="width: 120px;">Estado</th>
-                                                <th class="text-center" style="width: 100px;">Acción</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="tablaControlTodos"></tbody>
-                                    </table>
-                                </div>
-                            </div>
-
-                            <div class="col-lg-6 mt-4 mt-lg-0">
-                                <h6 class="fw-bold text-danger mb-3">🚗 Tarjetas en la Calle (Asignadas)</h6>
-                                <div class="table-responsive border rounded" style="max-height: 520px; overflow-y: auto;">
-                                    <table class="table table-sm table-hover table-bordered align-middle mb-0">
-                                        <thead class="table-light position-sticky" style="top: 0; z-index: 2;">
-                                            <tr>
-                                                <th class="text-center" style="width: 120px;">Territorio</th>
-                                                <th>Hermano Responsable</th>
-                                                <th class="text-center" style="width: 120px;">Fecha Asig.</th>
-                                                <th class="text-center" style="width: 100px;">Acción</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="tablaControlCalle"></tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="tab-pane fade" id="moduloInfo" role="tabpanel" aria-labelledby="pills-info-tab">
-                        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-3">
-                            <h6 class="fw-bold text-muted m-0">🗃️ Registro General y Observaciones de No Visita</h6>
-                            <div class="d-flex gap-2 w-100 w-md-auto" style="max-width: 500px;">
-                                <input type="text" id="buscadorInfo" class="form-control" placeholder="🔍 Buscar territorio o punto..." oninput="filtrarTablaInfo()">
-                                <button class="btn btn-primary text-nowrap" onclick="abrirModalNuevoTerritorio()">+ Agregar Territorio</button>
-                            </div>
-                        </div>
-
-                        <div class="table-responsive border rounded" style="max-height: 520px; overflow-y: auto;">
-                            <table class="table table-sm table-hover table-bordered align-middle mb-0">
-                                <thead class="table-light position-sticky" style="top: 0; z-index: 2;">
-                                    <tr>
-                                        <th class="text-center" style="width: 120px;">Territorio</th>
-                                        <th>Puntos de Encuentro</th>
-                                        <th class="text-center" style="width: 130px;">Asignado (Veces)</th>
-                                        <th>Observaciones (Casas que no desean ser visitadas)</th>
-                                        <th class="text-center" style="width: 90px;">Acción</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="tablaInfoMaestra"></tbody>
-                            </table>
-                        </div>
-                    </div>
-
-                    <div class="tab-pane fade" id="moduloResumen" role="tabpanel" aria-labelledby="pills-resumen-tab">
-                        
-                        <!-- BARRA DE FILTROS GLOBALES (DENTRO DE LA PESTAÑA RESUMEN) -->
-                        <div class="bg-light p-3 rounded border mb-4 shadow-sm">
-                            <div class="row align-items-center g-3">
-                                <div class="col-md-4">
-                                    <label class="form-label small fw-bold text-secondary mb-1">Filtrar por Territorio (Zoom):</label>
-                                    <select id="filtroGlobalTerritorio" class="form-select form-select-sm fw-bold" onchange="aplicarFiltrosGlobalesYRenderizar()"></select>
-                                </div>
-                                <div class="col-md-4">
-                                    <label class="form-label small fw-bold text-secondary mb-1">Filtrar por Mes:</label>
-                                    <select id="filtroGlobalMes" class="form-select form-select-sm fw-bold" onchange="aplicarFiltrosGlobalesYRenderizar()"></select>
-                                </div>
-                                <div class="col-md-4">
-                                    <label class="form-label small fw-bold text-secondary mb-1">Filtrar por Año:</label>
-                                    <select id="filtroGlobalAnio" class="form-select form-select-sm fw-bold" onchange="aplicarFiltrosGlobalesYRenderizar()"></select>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-12 mb-4">
-                                <div class="card p-3 bg-white shadow-sm border">
-                                    <h6 class="fw-bold text-muted text-center mb-3">📊 Vista General del Tarretero</h6>
-                                    <div style="position: relative; height: 250px; width: 100%;">
-                                        <canvas id="chartGlobalTerritorios"></canvas>
-                                    </div>
-                                    <div class="text-center mt-3 small text-secondary" id="leyendaGlobalTexto"></div>
-                                </div>
-                            </div>
-                            
-                            <div class="col-md-12 mb-4">
-                                <div class="card p-3 bg-white shadow-sm border">
-                                    <h6 class="fw-bold text-muted text-center mb-2">📈 Gráfico Comparativo y Zoom de Uso</h6>
-                                    <div style="position: relative; height: 350px; width: 100%;" class="mb-3">
-                                        <canvas id="chartIndividualTerritorio"></canvas>
-                                    </div>
-                                    <div id="contenedorTablaFechasAsignadas" class="px-3"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-
-            <!-- MODAL ASIGNAR TERRITORIO -->
-            <div class="modal fade" id="modalAsignarTerritorio" tabindex="-1" aria-hidden="true">
-              <div class="modal-dialog">
-                <div class="modal-content">
-                  <div class="modal-header bg-dark text-white">
-                    <h5 class="modal-title">Asignar Tarjeta de Territorio</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                  </div>
-                  <div class="modal-body">
-                    <form id="formAsignarTerritorio" onsubmit="guardarSalidaTerritorio(event)">
-                         <input type="hidden" id="modalTerritorioNum">
-                         <div class="mb-3 bg-light p-3 border rounded fw-bold text-center text-primary" id="modalTerritorioTexto"></div>
-                         <div class="mb-3">
-                             <label class="form-label fw-bold text-muted">Hermano Responsable</label>
-                             <input type="text" id="inputResponsableTerritorio" class="form-control" list="listaHermanosGlobal" required placeholder="Apellidos, Nombres">
-                         </div>
-                         <div class="mb-3">
-                             <label class="form-label fw-bold text-muted">Fecha de Entrega</label>
-                             <input type="date" id="inputFechaTerritorio" class="form-control" required>
-                         </div>
-                         <button type="submit" class="btn btn-primary w-100 py-2">Confirmar Salida</button>
-                    </form>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- MODAL NUEVO TERRITORIO -->
-            <div class="modal fade" id="modalNuevoTerritorio" tabindex="-1" aria-hidden="true">
-              <div class="modal-dialog">
-                <div class="modal-content">
-                  <div class="modal-header bg-dark text-white">
-                    <h5 class="modal-title">Añadir Nueva Tarjeta</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                  </div>
-                  <div class="modal-body">
-                    <form id="formNuevoTerritorio" onsubmit="guardarNuevoTerritorio(event)">
-                         <div class="mb-3">
-                             <label class="form-label fw-bold text-muted">Número de Territorio</label>
-                             <input type="number" id="inputNuevoNum" class="form-control" readonly>
-                         </div>
-                         <div class="mb-3">
-                             <div class="d-flex justify-content-between align-items-center mb-1">
-                                 <label class="form-label fw-bold text-muted m-0">Puntos de Encuentro</label>
-                                 <button type="button" class="btn btn-sm btn-outline-primary py-0" onclick="agregarPuntoEncuentroInput()">+ Añadir Punto</button>
-                             </div>
-                             <div id="contenedorPuntosDinamicos">
-                                 <div class="input-group mb-2">
-                                     <input type="text" class="form-control input-punto-encuentro" required placeholder="Ej. Esquina Av. Paraíso con Mz. C">
-                                     <button type="button" class="btn btn-outline-danger" onclick="this.parentElement.remove()">✕</button>
-                                 </div>
-                             </div>
-                         </div>
-                         <div class="mb-3">
-                             <label class="form-label fw-bold text-muted">Observaciones de No Visita (Opcional)</label>
-                             <textarea id="inputNuevoObs" class="form-control" rows="2" placeholder="Ej. Mz. B Lote 5 no desean visitas."></textarea>
-                         </div>
-                         <button type="submit" class="btn btn-primary w-100 py-2">Dar de Alta Territorio</button>
-                    </form>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- MODAL EDITAR TERRITORIO -->
-            <div class="modal fade" id="modalEditarTerritorio" tabindex="-1" aria-hidden="true">
-              <div class="modal-dialog">
-                <div class="modal-content">
-                  <div class="modal-header bg-dark text-white">
-                    <h5 class="modal-title">✏️ Editar Información de Tarjeta</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                  </div>
-                  <div class="modal-body">
-                    <form id="formEditarTerritorio" onsubmit="guardarEdicionTerritorio(event)">
-                         <input type="hidden" id="editTerritorioNum">
-                         <div class="mb-3">
-                             <div class="d-flex justify-content-between align-items-center mb-1">
-                                 <label class="form-label fw-bold text-muted m-0">Puntos de Encuentro</label>
-                                 <button type="button" class="btn btn-sm btn-outline-primary py-0" onclick="editarAgregarPuntoInput()">+ Añadir Punto</button>
-                             </div>
-                             <div id="editContenedorPuntos"></div>
-                         </div>
-                         <div class="mb-3">
-                             <label class="form-label fw-bold text-muted">Observaciones (Casas que no desean ser visitadas)</label>
-                             <textarea id="editObservaciones" class="form-control" rows="3" placeholder="Ninguna observación registrada"></textarea>
-                         </div>
-                         <button type="submit" class="btn btn-primary w-100 py-2">Guardar Cambios</button>
-                    </form>
-                  </div>
-                </div>
-              </div>
-            </div>
-        `;
-        inicializarModuloTerritorios();
-    }
+    
     else if (modulo === 'asignaciones') {
         areaTabla.innerHTML = `
             <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap">
@@ -813,61 +478,106 @@ function cargarModulo(modulo) {
         `;
         inicializarModuloServicio();
     }
-   else if (modulo === 'asistencia') {
+    else if (modulo === 'asistencia') {
         let hoyIso = new Date().toISOString().split('T')[0];
         areaTabla.innerHTML = `
             <div class="card p-4 shadow-sm bg-white mb-4">
-                <div class="border-bottom pb-3 mb-4 d-flex justify-content-between align-items-center flex-wrap gap-2">
-                    <div>
-                        <h4 class="fw-bold" style="color: #2c3e50; margin: 0;">🎟️ Control Rápido de Asistencia</h4>
-                        <small class="text-muted">Congregación Paraíso de Carabayllo — Registro por Fechas</small>
-                    </div>
-                    <div class="d-flex align-items-center gap-2 flex-wrap">
-                        <label class="fw-bold text-muted small mb-0">Fecha de Reunión:</label>
-                        <input type="date" id="inputFechaAsistencia" class="form-control form-control-sm fw-bold border-primary text-primary" value="${hoyIso}" style="width: 140px;" onchange="cambiarFechaAsistencia()">
-                        <button class="btn btn-primary btn-sm fw-bold" onclick="abrirModalGuardarAsistencia()">💾 Guardar Asistencia</button>
-                    </div>
+                <!-- CABECERA DEL MÓDULO -->
+                <div class="border-bottom pb-3 mb-4">
+                    <h4 class="fw-bold" style="color: #2c3e50; margin: 0;">🗺️ Sistema de Control de Asistencia</h4>
+                    <small class="text-muted">Congregación Paraíso de Carabayllo — Registro por Fechas</small>
                 </div>
 
-                <!-- PANEL DE ESTADÍSTICAS RÁPIDAS -->
-                <div class="row g-3 mb-4 text-center">
-                    <div class="col-md-4">
-                        <div class="card bg-light p-3 border-0 shadow-sm">
-                            <span class="text-muted small fw-bold">Asientos Ocupados</span>
-                            <h2 class="fw-bold text-danger mb-0" id="contadorOcupados">0</h2>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="card bg-light p-3 border-0 shadow-sm">
-                            <span class="text-muted small fw-bold">Asientos Disponibles</span>
-                            <h2 class="fw-bold text-success mb-0" id="contadorLibres">0</h2>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="card bg-light p-3 border-0 shadow-sm">
-                            <span class="text-muted small fw-bold">Total aforo</span>
-                            <h2 class="fw-bold text-dark mb-0" id="contadorTotal">0</h2>
-                        </div>
-                    </div>
+                <!-- NAVEGACIÓN TIPO BOTONERA CENTRADA -->
+                <div class="card p-2 bg-light border mb-4">
+                    <ul class="nav nav-pills gap-2 justify-content-center" id="asistenciaTabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active fw-bold px-3 py-2" id="tab-plano-btn" data-bs-toggle="tab" data-bs-target="#tab-plano" type="button" role="tab" aria-selected="true">🗺️ Mapa de Asientos</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link fw-bold px-3 py-2 text-dark" id="tab-resumen-btn" data-bs-toggle="tab" data-bs-target="#tab-resumen" type="button" role="tab" aria-selected="false" onclick="cargarDatosResumenEstadisticas()">📊 Resumen y Gráficas</button>
+                        </li>
+                    </ul>
                 </div>
 
-                <!-- LEYENDA -->
-                <div class="d-flex justify-content-center align-items-center gap-4 mb-4 text-secondary small fw-bold">
-                    <div class="d-flex align-items-center gap-2"><div style="width: 20px; height: 20px; background: #198754; border-radius: 4px;"></div> Disponible</div>
-                    <div class="d-flex align-items-center gap-2"><div style="width: 20px; height: 20px; background: #dc3545; border-radius: 4px;"></div> Ocupado</div>
-                </div>
+                <div class="tab-content" id="asistenciaTabContent">
+                    <!-- CONTENIDO 1: MAPA DE ASIENTOS -->
+                    <div class="tab-pane fade show active" id="tab-plano" role="tabpanel">
+                        <div class="border-bottom pb-3 mb-4 d-flex justify-content-between align-items-center flex-wrap gap-2">
+                            <div>
+                                <h5 class="fw-bold text-dark m-0">🎟️ Distribución y Aforo</h5>
+                            </div>
+                            <div class="d-flex align-items-center gap-2 flex-wrap">
+                                <label class="fw-bold text-muted small mb-0">Fecha de Reunión:</label>
+                                <input type="date" id="inputFechaAsistencia" class="form-control form-control-sm fw-bold border-primary text-primary" value="${hoyIso}" style="width: 140px;" onchange="cambiarFechaAsistencia()">
+                                <button class="btn btn-primary btn-sm fw-bold" onclick="abrirModalGuardarAsistencia()">💾 Guardar Asistencia</button>
+                            </div>
+                        </div>
 
-                <!-- CONTENEDOR DE ASIENTOS -->
-                <div class="row justify-content-center overflow-auto">
-                    <div class="col-12" style="min-width: 800px;">
-                        <div class="card border p-4 bg-white shadow-sm">
-                            <div id="mapaAsientosContainer" class="d-flex flex-column align-items-center gap-3"></div>
+                        <!-- Panel de Estadísticas Rápidas -->
+                        <div class="row g-3 mb-4 text-center">
+                            <div class="col-md-4"><div class="card bg-light p-3 border-0 shadow-sm"><span class="text-muted small fw-bold">Asientos Ocupados</span><h2 class="fw-bold text-danger mb-0" id="contadorOcupados">0</h2></div></div>
+                            <div class="col-md-4"><div class="card bg-light p-3 border-0 shadow-sm"><span class="text-muted small fw-bold">Asientos Disponibles</span><h2 class="fw-bold text-success mb-0" id="contadorLibres">0</h2></div></div>
+                            <div class="col-md-4"><div class="card bg-light p-3 border-0 shadow-sm"><span class="text-muted small fw-bold">Total aforo</span><h2 class="fw-bold text-dark mb-0" id="contadorTotal">0</h2></div></div>
+                        </div>
+
+                        <!-- Leyenda -->
+                        <div class="d-flex justify-content-center align-items-center gap-4 mb-4 text-secondary small fw-bold">
+                            <div class="d-flex align-items-center gap-2"><div style="width: 20px; height: 20px; background: #198754; border-radius: 4px;"></div> Disponible</div>
+                            <div class="d-flex align-items-center gap-2"><div style="width: 20px; height: 20px; background: #dc3545; border-radius: 4px;"></div> Ocupado</div>
+                        </div>
+
+                        <!-- Contenedor del Mapa -->
+                        <div class="row justify-content-center overflow-auto">
+                            <div class="col-12" style="min-width: 800px;">
+                                <div class="card border p-4 bg-white shadow-sm">
+                                    <div id="mapaAsientosContainer" class="d-flex flex-column align-items-center gap-3"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- CONTENIDO 2: RESUMEN Y ESTADÍSTICAS -->
+                    <div class="tab-pane fade" id="tab-resumen" role="tabpanel">
+                        <div class="border-bottom pb-3 mb-4 d-flex justify-content-between align-items-center flex-wrap gap-2">
+                            <div>
+                                <h5 class="fw-bold text-dark m-0">📈 Análisis y Tendencias de Asistencia</h5>
+                                <small class="text-muted">Evolución histórica y comparativa general</small>
+                            </div>
+                            <div class="d-flex align-items-center gap-2">
+                                <label class="fw-bold text-muted small mb-0">Agrupar por:</label>
+                                <select id="filtroTiempoResumen" class="form-select form-select-sm fw-bold border-primary text-primary" style="width: 160px;" onchange="actualizarGraficasEstadisticas()">
+                                    <option value="dia">Vista por Días</option>
+                                    <option value="mes">Agrupado por Meses</option>
+                                    <option value="ano">Agrupado por Años</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Gráficas Estadísticas -->
+                        <div class="row g-4">
+                            <div class="col-lg-6">
+                                <div class="card border p-3 shadow-sm h-100 bg-light">
+                                    <h6 class="fw-bold text-secondary text-center mb-3">📊 Comparativa: Presencial vs Parados vs Zoom</h6>
+                                    <div style="position: relative; height: 320px;">
+                                        <canvas id="graficoBarrasAsistencia"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="card border p-3 shadow-sm h-100 bg-light">
+                                    <h6 class="fw-bold text-secondary text-center mb-3">📈 Tendencia General de Asistencia</h6>
+                                    <div style="position: relative; height: 320px;">
+                                        <canvas id="graficoLineasAsistencia"></canvas>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- MODAL VENTANA EMERGENTE PARA GUARDAR ASISTENCIA (CON PARADOS Y ZOOM) -->
+            <!-- Modal para Guardar Asistencia -->
             <div class="modal fade" id="modalGuardarAsistencia" tabindex="-1" aria-hidden="true">
               <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
@@ -878,16 +588,13 @@ function cargarModulo(modulo) {
                   <div class="modal-body py-4">
                     <p class="text-muted mb-1 text-center">Fecha de la reunión:</p>
                     <h4 class="fw-bold text-primary mb-3 text-center" id="modalTextoFechaGuardar">--</h4>
-                    
                     <div class="alert alert-secondary py-2 mb-3 text-center">
                       Asientos Ocupados: <strong id="modalResumenOcupados">0</strong> | Libres: <strong id="modalResumenLibres">0</strong>
                     </div>
-
                     <div class="mb-3">
                         <label class="form-label fw-bold text-muted small">👥 Hermanos Parados (De pie):</label>
                         <input type="number" id="inputParados" class="form-control" value="0" min="0">
                     </div>
-
                     <div class="mb-2">
                         <label class="form-label fw-bold text-muted small">💻 Conectados por Zoom:</label>
                         <input type="number" id="inputZoom" class="form-control" value="0" min="0">
@@ -903,6 +610,342 @@ function cargarModulo(modulo) {
         `;
         setTimeout(() => { inicializarModuloAsistencia(); }, 100);
     }
+    else if (modulo === 'territorios') {
+        areaTabla.innerHTML = `
+            <div class="card p-4 shadow-sm bg-white mb-4">
+                <div class="border-bottom pb-3 mb-3 d-flex justify-content-between align-items-center flex-wrap gap-2">
+                    <div>
+                        <h4 class="fw-bold" style="color: #2c3e50; margin: 0;">🗺️ Sistema de Gestión de Territorios</h4>
+                        <small class="text-muted">Congregación Paraíso de Carabayllo — Módulos Independientes</small>
+                    </div>
+                </div>
+
+                <ul class="nav nav-pills justify-content-center mb-4 bg-light p-2 rounded border shadow-sm" id="pills-tab" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="pills-control-tab" data-bs-toggle="pill" data-bs-target="#moduloControl" type="button" role="tab" aria-controls="moduloControl" aria-selected="true">🎮 Control de Tarjetas</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="pills-info-tab" data-bs-toggle="pill" data-bs-target="#moduloInfo" type="button" role="tab" aria-controls="moduloInfo" aria-selected="false">📋 Información Territorios</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="pills-resumen-tab" data-bs-toggle="pill" data-bs-target="#moduloResumen" type="button" role="tab" aria-controls="moduloResumen" aria-selected="false" onclick="inicializarGraficosTerritorios()">📊 Resumen Territorio</button>
+                    </li>
+                </ul>
+
+                <div class="tab-content" id="pills-tabContent">
+                    
+                    <div class="tab-pane fade show active" id="moduloControl" role="tabpanel" aria-labelledby="pills-control-tab">
+                        <div class="row">
+                            <div class="col-lg-6 border-end">
+                                <h6 class="fw-bold text-muted mb-3">📦 Casillero General (Tarretero)</h6>
+                                <div class="table-responsive border rounded" style="max-height: 520px; overflow-y: auto;">
+                                    <table class="table table-sm table-hover table-bordered align-middle mb-0">
+                                        <thead class="table-light position-sticky" style="top: 0; z-index: 2;">
+                                            <tr>
+                                                <th class="text-center" style="width: 120px;">Territorio</th>
+                                                <th>Puntos de Encuentro</th>
+                                                <th class="text-center" style="width: 120px;">Estado</th>
+                                                <th class="text-center" style="width: 100px;">Acción</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="tablaControlTodos"></tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-6 mt-4 mt-lg-0">
+                                <h6 class="fw-bold text-danger mb-3">🚗 Tarjetas en la Calle (Asignadas)</h6>
+                                <div class="table-responsive border rounded" style="max-height: 520px; overflow-y: auto;">
+                                    <table class="table table-sm table-hover table-bordered align-middle mb-0">
+                                        <thead class="table-light position-sticky" style="top: 0; z-index: 2;">
+                                            <tr>
+                                                <th class="text-center" style="width: 120px;">Territorio</th>
+                                                <th>Hermano Responsable</th>
+                                                <th class="text-center" style="width: 120px;">Fecha Asig.</th>
+                                                <th class="text-center" style="width: 100px;">Acción</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="tablaControlCalle"></tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane fade" id="moduloInfo" role="tabpanel" aria-labelledby="pills-info-tab">
+                        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-3">
+                            <h6 class="fw-bold text-muted m-0">🗃️ Registro General y Observaciones de No Visita</h6>
+                            <div class="d-flex gap-2 w-100 w-md-auto" style="max-width: 500px;">
+                                <input type="text" id="buscadorInfo" class="form-control" placeholder="🔍 Buscar territorio o punto..." oninput="filtrarTablaInfo()">
+                                <button class="btn btn-primary text-nowrap" onclick="abrirModalNuevoTerritorio()">+ Agregar Territorio</button>
+                            </div>
+                        </div>
+
+                        <div class="table-responsive border rounded" style="max-height: 520px; overflow-y: auto;">
+                            <table class="table table-sm table-hover table-bordered align-middle mb-0">
+                                <thead class="table-light position-sticky" style="top: 0; z-index: 2;">
+                                    <tr>
+                                        <th class="text-center" style="width: 120px;">Territorio</th>
+                                        <th>Puntos de Encuentro</th>
+                                        <th class="text-center" style="width: 130px;">Asignado (Veces)</th>
+                                        <th>Observaciones (Casas que no desean ser visitadas)</th>
+                                        <th class="text-center" style="width: 90px;">Acción</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tablaInfoMaestra"></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane fade" id="moduloResumen" role="tabpanel" aria-labelledby="pills-resumen-tab">
+                        
+                        <!-- BARRA DE FILTROS GLOBALES (DENTRO DE LA PESTAÑA RESUMEN) -->
+                        <div class="bg-light p-3 rounded border mb-4 shadow-sm">
+                            <div class="row align-items-center g-3">
+                                <div class="col-md-4">
+                                    <label class="form-label small fw-bold text-secondary mb-1">Filtrar por Territorio (Zoom):</label>
+                                    <select id="filtroGlobalTerritorio" class="form-select form-select-sm fw-bold" onchange="aplicarFiltrosGlobalesYRenderizar()"></select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label small fw-bold text-secondary mb-1">Filtrar por Mes:</label>
+                                    <select id="filtroGlobalMes" class="form-select form-select-sm fw-bold" onchange="aplicarFiltrosGlobalesYRenderizar()"></select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label small fw-bold text-secondary mb-1">Filtrar por Año:</label>
+                                    <select id="filtroGlobalAnio" class="form-select form-select-sm fw-bold" onchange="aplicarFiltrosGlobalesYRenderizar()"></select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-12 mb-4">
+                                <div class="card p-3 bg-white shadow-sm border">
+                                    <h6 class="fw-bold text-muted text-center mb-3">📊 Vista General del Tarretero</h6>
+                                    <div style="position: relative; height: 250px; width: 100%;">
+                                        <canvas id="chartGlobalTerritorios"></canvas>
+                                    </div>
+                                    <div class="text-center mt-3 small text-secondary" id="leyendaGlobalTexto"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-12 mb-4">
+                                <div class="card p-3 bg-white shadow-sm border">
+                                    <h6 class="fw-bold text-muted text-center mb-2">📈 Gráfico Comparativo y Zoom de Uso</h6>
+                                    <div style="position: relative; height: 350px; width: 100%;" class="mb-3">
+                                        <canvas id="chartIndividualTerritorio"></canvas>
+                                    </div>
+                                    <div id="contenedorTablaFechasAsignadas" class="px-3"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- MODAL ASIGNAR TERRITORIO -->
+            <div class="modal fade" id="modalAsignarTerritorio" tabindex="-1" aria-hidden="true">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header bg-dark text-white">
+                    <h5 class="modal-title">Asignar Tarjeta de Territorio</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                    <form id="formAsignarTerritorio" onsubmit="guardarSalidaTerritorio(event)">
+                         <input type="hidden" id="modalTerritorioNum">
+                         <div class="mb-3 bg-light p-3 border rounded fw-bold text-center text-primary" id="modalTerritorioTexto"></div>
+                         <div class="mb-3">
+                             <label class="form-label fw-bold text-muted">Hermano Responsable</label>
+                             <input type="text" id="inputResponsableTerritorio" class="form-control" list="listaHermanosGlobal" required placeholder="Apellidos, Nombres">
+                         </div>
+                         <div class="mb-3">
+                             <label class="form-label fw-bold text-muted">Fecha de Entrega</label>
+                             <input type="date" id="inputFechaTerritorio" class="form-control" required>
+                         </div>
+                         <button type="submit" class="btn btn-primary w-100 py-2">Confirmar Salida</button>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- MODAL NUEVO TERRITORIO -->
+            <div class="modal fade" id="modalNuevoTerritorio" tabindex="-1" aria-hidden="true">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header bg-dark text-white">
+                    <h5 class="modal-title">Añadir Nueva Tarjeta</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                    <form id="formNuevoTerritorio" onsubmit="guardarNuevoTerritorio(event)">
+                         <div class="mb-3">
+                             <label class="form-label fw-bold text-muted">Número de Territorio</label>
+                             <input type="number" id="inputNuevoNum" class="form-control" readonly>
+                         </div>
+                         <div class="mb-3">
+                             <div class="d-flex justify-content-between align-items-center mb-1">
+                                 <label class="form-label fw-bold text-muted m-0">Puntos de Encuentro</label>
+                                 <button type="button" class="btn btn-sm btn-outline-primary py-0" onclick="agregarPuntoEncuentroInput()">+ Añadir Punto</button>
+                             </div>
+                             <div id="contenedorPuntosDinamicos">
+                                 <div class="input-group mb-2">
+                                     <input type="text" class="form-control input-punto-encuentro" required placeholder="Ej. Esquina Av. Paraíso con Mz. C">
+                                     <button type="button" class="btn btn-outline-danger" onclick="this.parentElement.remove()">✕</button>
+                                 </div>
+                             </div>
+                         </div>
+                         <div class="mb-3">
+                             <label class="form-label fw-bold text-muted">Observaciones de No Visita (Opcional)</label>
+                             <textarea id="inputNuevoObs" class="form-control" rows="2" placeholder="Ej. Mz. B Lote 5 no desean visitas."></textarea>
+                         </div>
+                         <button type="submit" class="btn btn-primary w-100 py-2">Dar de Alta Territorio</button>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- MODAL EDITAR TERRITORIO -->
+            <div class="modal fade" id="modalEditarTerritorio" tabindex="-1" aria-hidden="true">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header bg-dark text-white">
+                    <h5 class="modal-title">✏️ Editar Información de Tarjeta</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                    <form id="formEditarTerritorio" onsubmit="guardarEdicionTerritorio(event)">
+                         <input type="hidden" id="editTerritorioNum">
+                         <div class="mb-3">
+                             <div class="d-flex justify-content-between align-items-center mb-1">
+                                 <label class="form-label fw-bold text-muted m-0">Puntos de Encuentro</label>
+                                 <button type="button" class="btn btn-sm btn-outline-primary py-0" onclick="editarAgregarPuntoInput()">+ Añadir Punto</button>
+                             </div>
+                             <div id="editContenedorPuntos"></div>
+                         </div>
+                         <div class="mb-3">
+                             <label class="form-label fw-bold text-muted">Observaciones (Casas que no desean ser visitadas)</label>
+                             <textarea id="editObservaciones" class="form-control" rows="3" placeholder="Ninguna observación registrada"></textarea>
+                         </div>
+                         <button type="submit" class="btn btn-primary w-100 py-2">Guardar Cambios</button>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+        `;
+        inicializarModuloTerritorios();
+    }
+    else if (modulo === 'hermanos') {
+        areaTabla.innerHTML = `
+            <div class="d-flex justify-content-between align-items-center mb-3 gap-2 flex-wrap">
+                <h3 class="mb-0" id="titulo-hermanos">Congregación Paraíso de Carabayllo</h3>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-outline-primary btn-sm" onclick="exportarTablaExcel()">📊 Excel</button>
+                    <button class="btn btn-outline-secondary btn-sm" onclick="limpiarFiltrosTabla()">Limpiar filtros</button>
+                    <button class="btn btn-success" onclick="abrirEdicion(-1)">+ Nuevo</button>
+                </div>
+            </div>
+
+            <table class="table table-striped table-bordered" id="tabla-hermanos">
+                <thead>
+                    <tr>
+                        <th>
+                            <div class="column-header">
+                                <span>Nombre</span>
+                                <button class="column-toggle" type="button" onclick="toggleColumnMenu('menu-nombre')">☰</button>
+                            </div>
+                            <div id="menu-nombre" class="column-menu">
+                                <select id="orden-nombre" class="form-select form-select-sm mb-2" onchange="aplicarFiltrosTabla()">
+                                    <option value="">Sin orden</option>
+                                    <option value="asc">A-Z</option>
+                                    <option value="desc">Z-A</option>
+                                </select>
+                            </div>
+                        </th>
+                        <th>
+                            <div class="column-header">
+                                <span>Cargo</span>
+                                <button class="column-toggle" type="button" onclick="toggleColumnMenu('menu-privilegio')">☰</button>
+                            </div>
+                            <div id="menu-privilegio" class="column-menu">
+                                <select id="filtro-privilegio" class="form-select form-select-sm" onchange="aplicarFiltrosTabla()">
+                                    <option value="">Todos</option>
+                                </select>
+                            </div>
+                        </th>
+                        <th>
+                            <div class="column-header">
+                                <span>Precursorado</span>
+                                <button class="column-toggle" type="button" onclick="toggleColumnMenu('menu-precursorado')">☰</button>
+                            </div>
+                            <div id="menu-precursorado" class="column-menu">
+                                <select id="filtro-precursorado" class="form-select form-select-sm" onchange="aplicarFiltrosTabla()">
+                                    <option value="">Todos</option>
+                                </select>
+                            </div>
+                        </th>
+                        <th>
+                            <div class="column-header">
+                                <span>Grupo</span>
+                                <button class="column-toggle" type="button" onclick="toggleColumnMenu('menu-grupo')">☰</button>
+                            </div>
+                            <div id="menu-grupo" class="column-menu">
+                                <select id="filtro-grupo" class="form-select form-select-sm" onchange="aplicarFiltrosTabla()">
+                                    <option value="">Todos</option>
+                                </select>
+                            </div>
+                        </th>
+                        <th>
+                            <div class="column-header">
+                                <span>Género</span>
+                                <button class="column-toggle" type="button" onclick="toggleColumnMenu('menu-genero')">☰</button>
+                            </div>
+                            <div id="menu-genero" class="column-menu">
+                                <select id="filtro-genero" class="form-select form-select-sm" onchange="aplicarFiltrosTabla()">
+                                    <option value="">Todos</option>
+                                </select>
+                            </div>
+                        </th>
+                        <th>
+                            <div class="column-header">
+                                <span>Mayor Edad</span>
+                                <button class="column-toggle" type="button" onclick="toggleColumnMenu('menu-mayor')">☰</button>
+                            </div>
+                            <div id="menu-mayor" class="column-menu">
+                                <select id="filtro-mayor-edad" class="form-select form-select-sm" onchange="aplicarFiltrosTabla()">
+                                    <option value="">Todos</option>
+                                    <option value="si">Sí</option>
+                                    <option value="no">No</option>
+                                </select>
+                            </div>
+                        </th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+            <div class="mt-5">
+                <h5 class="mb-3">Inactivos</h5>
+                <table class="table table-striped table-bordered" id="tabla-inactivos">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Cargo</th>
+                            <th>Grupo</th>
+                            <th>Género</th>
+                            <th>Mayor Edad</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        `;
+        renderizarTablaHermanos();
+    } 
 }
 
 function sincronizarCargoFormulario() {

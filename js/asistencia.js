@@ -1,10 +1,22 @@
-// --- MÓDULO DE ASISTENCIA INTERACTIVA POR FECHAS (PLANO EXACTO Y LIMPIO) ---
+// --- MÓDULO DE ASISTENCIA INTERACTIVA POR FECHAS, PLANO Y ESTADÍSTICAS ---
 
 let baseDatosAsistenciasPorFecha = JSON.parse(localStorage.getItem('bd_asistencia_fechas_v1')) || {};
 let modalGuardarInstancia = null;
+let myChartBarras = null;
+let myChartLineas = null;
 
 function inicializarModuloAsistencia() {
-    modalGuardarInstancia = new bootstrap.Modal(document.getElementById('modalGuardarAsistencia'));
+    let modalEl = document.getElementById('modalGuardarAsistencia');
+    if (modalEl) {
+        modalGuardarInstancia = new bootstrap.Modal(modalEl);
+    }
+    
+    // Establecer la fecha actual por defecto si el input está vacío
+    const inputFecha = document.getElementById('inputFechaAsistencia');
+    if (inputFecha && !inputFecha.value) {
+        inputFecha.value = new Date().toISOString().split('T')[0];
+    }
+
     renderizarMapaAsientos();
     actualizarContadoresAsistencia();
 }
@@ -33,10 +45,16 @@ function renderizarMapaAsientos() {
     let estadoDia = obtenerEstadoAsientosActuales();
 
     // Contenedor general del auditorio centrado
+
     let auditorioDiv = document.createElement('div');
     auditorioDiv.className = "d-flex flex-column align-items-center gap-2 p-3 bg-light border rounded shadow-sm mb-4 w-100";
     auditorioDiv.style.maxWidth = "750px";
     auditorioDiv.style.margin = "0 auto";
+
+    let tituloSuperior = document.createElement('span');
+    tituloSuperior.className = "small fw-bold text-muted mb-2";
+    tituloSuperior.textContent = "AUDITORIO PRINCIPAL";
+    auditorioDiv.appendChild(tituloSuperior);
 
     // 1. FILA SUPERIOR (PLATAFORMA): Asientos en columna 1 y columna 5
     let filaPlat = document.createElement('div');
@@ -75,7 +93,6 @@ function renderizarMapaAsientos() {
             colDiv.style.display = "flex";
             colDiv.style.justifyContent = "center";
 
-            // En la última fila (10), agregamos un asiento extra aislado en la primera columna izquierda
             if (fila === 10 && c === 1) {
                 let idIsla = `F10-EXT-IZQ`;
                 totalCalculado++;
@@ -89,13 +106,9 @@ function renderizarMapaAsientos() {
         }
         contenedorFila.appendChild(secIzq);
 
-        // --- SECCIÓN CENTRAL (8 columnas perfectamente separadas) ---
+        // --- SECCIÓN CENTRAL (8 columnas - Fila 10 con solo un asiento central en columna 5) ---
         let secCent = document.createElement('div');
         secCent.className = "d-flex gap-1";
-        
-        // Si estamos en la última fila (10), solo pintamos 1 asiento en la columna 5
-        let totalColumnasCentro = (fila === 10) ? 8 : 8; 
-
         for (let c = 1; c <= 8; c++) {
             let colDiv = document.createElement('div');
             colDiv.style.width = "34px";
@@ -104,7 +117,6 @@ function renderizarMapaAsientos() {
 
             let pintarAsiento = true;
             if (fila === 10) {
-                // En la fila 10, solo se dibuja el asiento si es exactamente la columna 5
                 pintarAsiento = (c === 5);
             }
 
@@ -126,7 +138,6 @@ function renderizarMapaAsientos() {
             colDiv.style.display = "flex";
             colDiv.style.justifyContent = "center";
 
-            // En la última fila (10), colocamos 2 asientos en las últimas columnas separadas
             if (fila === 10 && (c === 3 || c === 4)) {
                 let idExtDer = `F10-EXT-DER-${c}`;
                 totalCalculado++;
@@ -212,7 +223,7 @@ function toggleAsiento(idUnico, botonEl) {
 function actualizarContadoresAsistencia() {
     let total = window._totalAsientosAforo || 0;
     let estadoDia = obtenerEstadoAsientosActuales();
-    let ocupados = Object.values(estadoDia).filter(val => val === true).length;
+    let ocupados = Object.values(estadoDia).filter((val, key) => val === true && !key.toString().startsWith('_')).length;
     let libres = total - ocupados;
 
     let elOcupados = document.getElementById('contadorOcupados');
@@ -229,20 +240,26 @@ function abrirModalGuardarAsistencia() {
     let [y, m, d] = fecha.split('-');
     let fechaFormateada = `${d}/${m}/${y}`;
 
-    document.getElementById('modalTextoFechaGuardar').textContent = fechaFormateada;
+    let elTextoFecha = document.getElementById('modalTextoFechaGuardar');
+    if (elTextoFecha) elTextoFecha.textContent = fechaFormateada;
     
     let total = window._totalAsientosAforo || 0;
     let estadoDia = obtenerEstadoAsientosActuales();
-    let ocupados = Object.values(estadoDia).filter(val => val === true).length;
+    let ocupados = Object.keys(estadoDia).filter(k => !k.startsWith('_') && estadoDia[k] === true).length;
     
-    document.getElementById('modalResumenOcupados').textContent = ocupados;
-    document.getElementById('modalResumenLibres').textContent = total - ocupados;
+    let elResOcupados = document.getElementById('modalResumenOcupados');
+    let elResLibres = document.getElementById('modalResumenLibres');
+    if (elResOcupados) elResOcupados.textContent = ocupados;
+    if (elResLibres) elResLibres.textContent = total - ocupados;
 
-    // Cargar datos de parados y zoom si ya se habían registrado para esta fecha
-    document.getElementById('inputParados').value = estadoDia._parados || 0;
-    document.getElementById('inputZoom').value = estadoDia._zoom || 0;
+    let inputParados = document.getElementById('inputParados');
+    let inputZoom = document.getElementById('inputZoom');
+    if (inputParados) inputParados.value = estadoDia._parados || 0;
+    if (inputZoom) inputZoom.value = estadoDia._zoom || 0;
 
-    modalGuardarInstancia.show();
+    if (modalGuardarInstancia) {
+        modalGuardarInstancia.show();
+    }
 }
 
 function confirmarGuardadoAsistenciaHistorial() {
@@ -251,18 +268,169 @@ function confirmarGuardadoAsistenciaHistorial() {
         baseDatosAsistenciasPorFecha[fecha] = {};
     }
 
-    // Guardar también los valores adicionales ingresados
-    baseDatosAsistenciasPorFecha[fecha]._parados = parseInt(document.getElementById('inputParados').value) || 0;
-    baseDatosAsistenciasPorFecha[fecha]._zoom = parseInt(document.getElementById('inputZoom').value) || 0;
+    let inputParados = document.getElementById('inputParados');
+    let inputZoom = document.getElementById('inputZoom');
+
+    baseDatosAsistenciasPorFecha[fecha]._parados = inputParados ? parseInt(inputParados.value) || 0 : 0;
+    baseDatosAsistenciasPorFecha[fecha]._zoom = inputZoom ? parseInt(inputZoom.value) || 0 : 0;
 
     localStorage.setItem('bd_asistencia_fechas_v1', JSON.stringify(baseDatosAsistenciasPorFecha));
-    modalGuardarInstancia.hide();
+    
+    if (modalGuardarInstancia) {
+        modalGuardarInstancia.hide();
+    }
 
     alert("✅ ¡Asistencia guardada correctamente con éxito!");
     
-    // Limpieza automática de la pantalla para un nuevo conteo limpio
-    delete baseDatosAsistenciasPorFecha[fecha];
+    // Limpieza automática tras guardar para iniciar un nuevo conteo limpio
+    let asientosPresencialesGuardados = {};
+    // Conservar los valores adicionales (_parados y _zoom) para el historial estadístico
+    asientosPresencialesGuardados._parados = baseDatosAsistenciasPorFecha[fecha]._parados;
+    asientosPresencialesGuardados._zoom = baseDatosAsistenciasPorFecha[fecha]._zoom;
+    
+    // Dejar los asientos en falso (limpios) para el siguiente registro diario
+    baseDatosAsistenciasPorFecha[fecha] = asientosPresencialesGuardados;
     localStorage.setItem('bd_asistencia_fechas_v1', JSON.stringify(baseDatosAsistenciasPorFecha));
+    
     renderizarMapaAsientos();
     actualizarContadoresAsistencia();
+}
+
+// --- FUNCIONES PARA LAS GRÁFICAS Y RESUMEN ESTADÍSTICO ---
+
+function cargarDatosResumenEstadisticas() {
+    setTimeout(() => {
+        actualizarGraficasEstadisticas();
+    }, 200);
+}
+
+function actualizarGraficasEstadisticas() {
+    let selectFiltro = document.getElementById('filtroTiempoResumen');
+    let tipoFiltro = selectFiltro ? selectFiltro.value : 'dia';
+    let datosCrudos = JSON.parse(localStorage.getItem('bd_asistencia_fechas_v1')) || {};
+    
+    let etiquetas = [];
+    let presencialArr = [];
+    let paradosArr = [];
+    let zoomArr = [];
+    let totalGeneralArr = [];
+
+    let fechasOrdenadas = Object.keys(datosCrudos).sort();
+
+    if (tipoFiltro === 'dia') {
+        fechasOrdenadas = fechasOrdenadas.slice(-10); // Últimos 10 días
+        fechasOrdenadas.forEach(fecha => {
+            let registro = datosCrudos[fecha];
+            let presencial = Object.keys(registro).filter(k => !k.startsWith('_') && registro[k] === true).length;
+            let parados = registro._parados || 0;
+            let zoom = registro._zoom || 0;
+
+            etiquetas.push(fecha);
+            presencialArr.push(presencial);
+            paradosArr.push(parados);
+            zoomArr.push(zoom);
+            totalGeneralArr.push(presencial + parados + zoom);
+        });
+    } else if (tipoFiltro === 'mes') {
+        let agrupadoMes = {};
+        fechasOrdenadas.forEach(fecha => {
+            let mesAno = fecha.substring(0, 7); // YYYY-MM
+            if (!agrupadoMes[mesAno]) agrupadoMes[mesAno] = { presencial: 0, parados: 0, zoom: 0, total: 0 };
+            
+            let registro = datosCrudos[fecha];
+            let presencial = Object.keys(registro).filter(k => !k.startsWith('_') && registro[k] === true).length;
+            let parados = registro._parados || 0;
+            let zoom = registro._zoom || 0;
+
+            agrupadoMes[mesAno].presencial += presencial;
+            agrupadoMes[mesAno].parados += parados;
+            agrupadoMes[mesAno].zoom += zoom;
+            agrupadoMes[mesAno].total += (presencial + parados + zoom);
+        });
+
+        Object.keys(agrupadoMes).sort().forEach(mes => {
+            etiquetas.push(mes);
+            presencialArr.push(agrupadoMes[mes].presencial);
+            paradosArr.push(agrupadoMes[mes].parados);
+            zoomArr.push(agrupadoMes[mes].zoom);
+            totalGeneralArr.push(agrupadoMes[mes].total);
+        });
+    } else if (tipoFiltro === 'ano') {
+        let agrupadoAno = {};
+        fechasOrdenadas.forEach(fecha => {
+            let ano = fecha.substring(0, 4); // YYYY
+            if (!agrupadoAno[ano]) agrupadoAno[ano] = { presencial: 0, parados: 0, zoom: 0, total: 0 };
+            
+            let registro = datosCrudos[fecha];
+            let presencial = Object.keys(registro).filter(k => !k.startsWith('_') && registro[k] === true).length;
+            let parados = registro._parados || 0;
+            let zoom = registro._zoom || 0;
+
+            agrupadoAno[ano].presencial += presencial;
+            agrupadoAno[ano].parados += parados;
+            agrupadoAno[ano].zoom += zoom;
+            agrupadoAno[ano].total += (presencial + parados + zoom);
+        });
+
+        Object.keys(agrupadoAno).sort().forEach(ano => {
+            etiquetas.push(ano);
+            presencialArr.push(agrupadoAno[ano].presencial);
+            paradosArr.push(agrupadoAno[ano].parados);
+            zoomArr.push(agrupadoAno[ano].zoom);
+            totalGeneralArr.push(agrupadoAno[ano].total);
+        });
+    }
+
+    // --- RENDERIZAR GRÁFICA DE BARRAS ---
+    const elBarras = document.getElementById('graficoBarrasAsistencia');
+    if (elBarras) {
+        const ctxBarras = elBarras.getContext('2d');
+        if (myChartBarras) myChartBarras.destroy();
+
+        myChartBarras = new Chart(ctxBarras, {
+            type: 'bar',
+            data: {
+                labels: etiquetas.length > 0 ? etiquetas : ['Sin registros'],
+                datasets: [
+                    { label: 'Presencial (Asientos)', data: etiquetas.length > 0 ? presencialArr : [0], backgroundColor: '#198754' },
+                    { label: 'Parados', data: etiquetas.length > 0 ? paradosArr : [0], backgroundColor: '#ffc107' },
+                    { label: 'Zoom', data: etiquetas.length > 0 ? zoomArr : [0], backgroundColor: '#0d6efd' }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: { x: { stacked: false }, y: { beginAtZero: true } }
+            }
+        });
+    }
+
+    // --- RENDERIZAR GRÁFICA DE LÍNEAS ---
+    const elLineas = document.getElementById('graficoLineasAsistencia');
+    if (elLineas) {
+        const ctxLineas = elLineas.getContext('2d');
+        if (myChartLineas) myChartLineas.destroy();
+
+        myChartLineas = new Chart(ctxLineas, {
+            type: 'line',
+            data: {
+                labels: etiquetas.length > 0 ? etiquetas : ['Sin registros'],
+                datasets: [
+                    {
+                        label: 'Asistencia General Total',
+                        data: etiquetas.length > 0 ? totalGeneralArr : [0],
+                        borderColor: '#6f42c1',
+                        backgroundColor: 'rgba(111, 66, 193, 0.1)',
+                        fill: true,
+                        tension: 0.3
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: { y: { beginAtZero: true } }
+            }
+        });
+    }
 }
