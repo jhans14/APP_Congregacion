@@ -62,6 +62,7 @@ function renderizarMapaAsientos() {
     
     for (let col = 1; col <= 8; col++) {
         let colDiv = document.createElement('div');
+        colDiv.className = "col-asiento-wrapper";
         colDiv.style.width = "34px";
         colDiv.style.display = "flex";
         colDiv.style.justifyContent = "center";
@@ -89,6 +90,7 @@ function renderizarMapaAsientos() {
         secIzq.className = "d-flex gap-1";
         for (let c = 1; c <= 4; c++) {
             let colDiv = document.createElement('div');
+            colDiv.className = "col-asiento-wrapper";
             colDiv.style.width = "34px";
             colDiv.style.display = "flex";
             colDiv.style.justifyContent = "center";
@@ -111,6 +113,7 @@ function renderizarMapaAsientos() {
         secCent.className = "d-flex gap-1";
         for (let c = 1; c <= 8; c++) {
             let colDiv = document.createElement('div');
+            colDiv.className = "col-asiento-wrapper";
             colDiv.style.width = "34px";
             colDiv.style.display = "flex";
             colDiv.style.justifyContent = "center";
@@ -134,6 +137,7 @@ function renderizarMapaAsientos() {
         secDer.className = "d-flex gap-1";
         for (let c = 1; c <= 4; c++) {
             let colDiv = document.createElement('div');
+            colDiv.className = "col-asiento-wrapper";
             colDiv.style.width = "34px";
             colDiv.style.display = "flex";
             colDiv.style.justifyContent = "center";
@@ -185,7 +189,7 @@ function renderizarMapaAsientos() {
 function crearBotonAsiento(idUnico, etiqueta, ocupado) {
     let btnAsiento = document.createElement('button');
     btnAsiento.type = "button";
-    btnAsiento.className = `btn btn-sm text-white ${ocupado ? 'bg-danger' : 'bg-success'}`;
+    btnAsiento.className = `btn btn-sm btn-asiento text-white ${ocupado ? 'bg-danger' : 'bg-success'}`;
     btnAsiento.style.width = "30px";
     btnAsiento.style.height = "30px";
     btnAsiento.style.borderRadius = "4px";

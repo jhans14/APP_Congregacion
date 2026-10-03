@@ -1,9 +1,27 @@
-window.onload = () => cargarModulo('inicio');
+window.onload = () => {
+    cargarModulo('inicio');
+    actualizarIconoTemaTop();
+};
+
+function alternarModoOscuroTop() {
+    let activo = !document.body.classList.contains('modo-oscuro');
+    aplicarEstiloModoOscuro(activo);
+    localStorage.setItem('app_modo_oscuro', activo);
+    let check = document.getElementById('checkModoOscuro');
+    if (check) check.checked = activo;
+    actualizarIconoTemaTop();
+}
+
+function actualizarIconoTemaTop() {
+    let icon = document.getElementById('iconoTemaTop');
+    if (icon) {
+        icon.textContent = document.body.classList.contains('modo-oscuro') ? '☀️' : '🌙';
+    }
+}
 
 function toggleSidebar(forceState) {
     const sidebar = document.getElementById('sidebarMenu');
     const backdrop = document.getElementById('sidebar-backdrop');
-    const btnMenu = document.getElementById('btnMenuSidebar');
     if (!sidebar) return;
 
     let isActive;
@@ -12,32 +30,15 @@ function toggleSidebar(forceState) {
         if (forceState) {
             sidebar.classList.add('active');
             if (backdrop) backdrop.classList.add('active');
-            if (btnMenu) {
-                btnMenu.classList.add('active');
-                btnMenu.innerHTML = '<span class="btn-menu-icon">◀</span>';
-                btnMenu.setAttribute('title', 'Cerrar menú');
-            }
             document.body.classList.add('sidebar-open');
         } else {
             sidebar.classList.remove('active');
             if (backdrop) backdrop.classList.remove('active');
-            if (btnMenu) {
-                btnMenu.classList.remove('active');
-                btnMenu.innerHTML = '<span class="btn-menu-icon">☰</span>';
-                btnMenu.setAttribute('title', 'Abrir menú');
-            }
             document.body.classList.remove('sidebar-open');
         }
     } else {
         isActive = sidebar.classList.toggle('active');
         if (backdrop) backdrop.classList.toggle('active', isActive);
-        if (btnMenu) {
-            btnMenu.classList.toggle('active', isActive);
-            btnMenu.innerHTML = isActive 
-                ? '<span class="btn-menu-icon">◀</span>' 
-                : '<span class="btn-menu-icon">☰</span>';
-            btnMenu.setAttribute('title', isActive ? 'Cerrar menú' : 'Abrir menú');
-        }
         document.body.classList.toggle('sidebar-open', isActive);
     }
 }
@@ -578,12 +579,13 @@ function ejecutarCargaModulo(modulo) {
                             <div class="d-flex align-items-center gap-2"><div style="width: 20px; height: 20px; background: #dc3545; border-radius: 4px;"></div> Ocupado</div>
                         </div>
 
-                        <!-- Contenedor del Mapa -->
-                        <div class="row justify-content-center overflow-auto">
-                            <div class="col-12" style="min-width: 800px;">
-                                <div class="card border p-4 bg-white shadow-sm">
-                                    <div id="mapaAsientosContainer" class="d-flex flex-column align-items-center gap-3"></div>
-                                </div>
+                        <!-- Contenedor del Mapa con Scroll Táctil Optimizado -->
+                        <div class="mapa-scroll-wrapper">
+                            <div class="mapa-scroll-hint d-md-none text-center py-2 px-3 mb-3 rounded-pill">
+                                ↔️ Desliza con el dedo para ver todas las filas y asientos
+                            </div>
+                            <div class="mapa-scroll-inner">
+                                <div id="mapaAsientosContainer" class="d-flex flex-column align-items-center gap-3"></div>
                             </div>
                         </div>
                     </div>

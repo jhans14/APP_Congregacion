@@ -418,9 +418,36 @@ function renderizarPlanificacionMeses() {
     let anioSeleccionado = selectAnio.value || new Date().getFullYear();
     const mesesNombres = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
 
-    let htmlMeses = `<div class="row">`;
+    let selectorMesFiltro = document.getElementById('filtroMesPlanifRapido');
+    let mesFiltroValor = selectorMesFiltro ? selectorMesFiltro.value : 'todos';
 
-    mesesNombres.forEach((mes) => {
+    let opcionesMesesSelect = `<option value="todos" ${mesFiltroValor === 'todos' ? 'selected' : ''}>📅 Todos los Meses del Año</option>` + 
+        mesesNombres.map(m => `<option value="${m}" ${mesFiltroValor === m ? 'selected' : ''}>${m} ${anioSeleccionado}</option>`).join('');
+
+    let htmlMeses = `
+        <div class="card p-3 shadow-sm bg-white mb-4 border-0 rounded-4">
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                <div class="d-flex align-items-center gap-2">
+                    <span class="fs-5">📂</span>
+                    <div>
+                        <h6 class="mb-0 fw-bold text-dark">Planificación del Año ${anioSeleccionado}</h6>
+                        <small class="text-muted">Vista panorámica de semanas y asignaciones programadas</small>
+                    </div>
+                </div>
+                <div class="d-flex align-items-center gap-2">
+                    <label class="fw-bold text-muted small mb-0">Filtrar Mes:</label>
+                    <select id="filtroMesPlanifRapido" class="form-select form-select-sm fw-bold border-primary text-primary" style="width: 175px;" onchange="renderizarPlanificacionMeses()">
+                        ${opcionesMesesSelect}
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+    `;
+
+    let mesesAProcesar = mesFiltroValor === 'todos' ? mesesNombres : [mesFiltroValor];
+
+    mesesAProcesar.forEach((mes) => {
         let nombreMesAnio = `${mes} ${anioSeleccionado}`;
         let asignacionesMes = dbAsignaciones.filter(a => obtenerMesAnio(a.fecha) === nombreMesAnio);
         
@@ -464,13 +491,15 @@ function renderizarPlanificacionMeses() {
             }
 
             semanasHtml += `
-                <table class="table table-bordered table-sm mb-2 bg-white align-middle shadow-2xs rounded-3 overflow-hidden">
-                    <thead class="table-header-navy" style="font-size:0.8em;">
-                        <tr><th colspan="4" class="d-flex justify-content-between align-items-center py-1 px-2"><span>${rango.texto}</span> <button class="btn btn-xs btn-outline-light rounded-pill py-0 px-2" style="font-size:0.75em;" onclick="abrirModalAdd('${rango.martesIso}')">➕</button></th></tr>
-                        <tr class="table-light text-muted"><th>Asignación</th><th>Estudiante</th><th>Ayudante</th><th class="text-center">⚙️</th></tr>
-                    </thead>
-                    <tbody>${filasTabla}</tbody>
-                </table>
+                <div class="table-responsive mb-2 shadow-2xs rounded-3 overflow-hidden">
+                    <table class="table table-bordered table-sm mb-0 bg-white align-middle">
+                        <thead class="table-header-navy" style="font-size:0.8em;">
+                            <tr><th colspan="4" class="d-flex justify-content-between align-items-center py-1 px-2"><span>${rango.texto}</span> <button class="btn btn-xs btn-outline-light rounded-pill py-0 px-2" style="font-size:0.75em;" onclick="abrirModalAdd('${rango.martesIso}')">➕</button></th></tr>
+                            <tr class="table-light text-muted"><th>Asignación</th><th>Estudiante</th><th>Ayudante</th><th class="text-center">⚙️</th></tr>
+                        </thead>
+                        <tbody>${filasTabla}</tbody>
+                    </table>
+                </div>
             `;
         });
 

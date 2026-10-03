@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
     <title>Gestor Congregación</title>
     
     <!-- PWA y Metadatos de Aplicación -->
@@ -43,10 +43,25 @@
     <!-- Fondo oscuro al abrir el sidebar -->
     <div id="sidebar-backdrop" class="sidebar-backdrop" onclick="toggleSidebar(false)"></div>
 
-    <!-- Botón desplegable flotante centrado verticalmente al medio -->
-    <button class="btn-menu" id="btnMenuSidebar" onclick="toggleSidebar()" aria-label="Abrir menú" title="Menú de navegación">
-        <span class="btn-menu-icon">☰</span>
-    </button>
+    <!-- Barra Superior de Navegación (App Topbar) -->
+    <header class="app-topbar">
+        <div class="topbar-inner">
+            <div class="d-flex align-items-center gap-2">
+                <button class="btn-topbar-menu" id="btnMenuSidebar" onclick="toggleSidebar()" aria-label="Abrir menú" title="Menú de navegación">
+                    <span class="btn-menu-icon">☰</span>
+                </button>
+                <div class="topbar-brand" onclick="cargarModulo('inicio')" role="button" title="Ir al Inicio">
+                    <img src="icons/favicon-48.png" width="30" height="30" alt="Logo" class="rounded shadow-2xs">
+                    <span class="topbar-title">Congregación</span>
+                </div>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+                <button class="btn-topbar-action" id="btnThemeToggle" onclick="alternarModoOscuroTop()" title="Cambiar Tema (Claro/Oscuro)">
+                    <span id="iconoTemaTop">🌙</span>
+                </button>
+            </div>
+        </div>
+    </header>
 
     <!-- Barra Lateral (Sidebar) -->
     <div class="sidebar-izquierda" id="sidebarMenu">

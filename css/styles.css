@@ -41,22 +41,110 @@ body {
 }
 
 /* ==========================================================================
-   2. NAVEGACIÓN LATERAL (SIDEBAR) Y BACKDROP
+   2. BARRA SUPERIOR DE NAVEGACIÓN (APP TOPBAR) Y SIDEBAR
    ========================================================================== */
+.app-topbar {
+    position: sticky;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1030;
+    background: linear-gradient(135deg, var(--navy-900) 0%, var(--navy-800) 100%);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.18);
+    padding-top: env(safe-area-inset-top, 0px);
+}
+
+.topbar-inner {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 8px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 56px;
+}
+
+.btn-topbar-menu {
+    background: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-md);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    line-height: 1;
+    cursor: pointer;
+    transition: background-color 0.18s ease, transform 0.18s ease;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.btn-topbar-menu:hover,
+.btn-topbar-menu:active {
+    background: rgba(255, 255, 255, 0.22);
+    transform: scale(0.96);
+}
+
+.topbar-brand {
+    cursor: pointer;
+    user-select: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.topbar-title {
+    color: #ffffff;
+    font-size: 1.08rem;
+    letter-spacing: -0.01em;
+}
+
+.btn-topbar-action {
+    background: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    width: 38px;
+    height: 38px;
+    border-radius: var(--radius-md);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.btn-topbar-action:hover,
+.btn-topbar-action:active {
+    background: rgba(255, 255, 255, 0.22);
+    transform: scale(0.96);
+}
+
+/* Sidebar Drawer - Elevado por encima de todo */
 .sidebar-izquierda { 
     position: fixed; 
     top: 0; 
-    left: 0;
-    width: 280px; 
+    left: 0; 
+    width: 290px; 
+    max-width: 85vw;
     height: 100vh; 
+    height: 100dvh;
     background-color: var(--navy-900); 
     color: white; 
     transform: translateX(-100%);
-    transition: transform 0.22s cubic-bezier(0.25, 1, 0.5, 1);
+    transition: transform 0.24s cubic-bezier(0.25, 1, 0.5, 1);
     will-change: transform;
-    z-index: 1040; 
-    box-shadow: 4px 0 20px rgba(0, 0, 0, 0.35);
+    z-index: 1070; 
+    box-shadow: 8px 0 30px rgba(0, 0, 0, 0.45);
     overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
 }
 
 .sidebar-izquierda.active { 
@@ -70,7 +158,7 @@ body {
     width: 100vw;
     height: 100vh;
     background: rgba(15, 23, 42, 0.5);
-    z-index: 1035;
+    z-index: 1060;
     backdrop-filter: blur(3px);
     opacity: 0;
     visibility: hidden;
@@ -85,54 +173,15 @@ body {
 }
 
 .contenido-principal { 
-    padding: 20px; 
+    padding: 20px 16px; 
+    max-width: 100vw;
+    overflow-x: hidden;
 }
 
-.btn-menu { 
-    position: fixed; 
-    top: 50%; 
-    left: 0; 
-    transform: translateY(-50%);
-    z-index: 1050;
-    border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
-    background-color: var(--navy-900);
-    color: #ffffff;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-left: none;
-    box-shadow: 2px 4px 16px rgba(0, 0, 0, 0.25);
-    padding: 13px 12px 13px 9px;
-    font-size: 1.25rem;
-    line-height: 1;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: transform 0.22s cubic-bezier(0.25, 1, 0.5, 1), left 0.22s cubic-bezier(0.25, 1, 0.5, 1), background-color 0.2s, opacity 0.2s;
-    user-select: none;
-}
-
-.btn-menu:hover {
-    background-color: var(--navy-800);
-    transform: translateY(-50%) translateX(3px);
-    box-shadow: 3px 6px 20px rgba(0, 0, 0, 0.35);
-}
-
-.btn-menu.active {
-    left: 280px;
-    background-color: var(--navy-800);
-}
-
-@media (max-width: 480px) {
-    .btn-menu.active {
-        opacity: 0;
-        visibility: hidden;
-        pointer-events: none;
+@media (max-width: 768px) {
+    .contenido-principal {
+        padding: 12px 6px;
     }
-}
-
-.btn-menu-icon {
-    display: inline-block;
-    transition: transform 0.2s ease;
 }
 
 /* Banner flotante de instalación PWA */
@@ -347,13 +396,26 @@ body {
 /* ==========================================================================
    6. GESTOR DE ASIGNACIONES (PROGRAMA GENERAL Y PLANIFICACIÓN)
    ========================================================================== */
-/* Segmented Nav Pills */
+/* Segmented Nav Pills (Con scroll táctil horizontal en móviles) */
 .nav-pills { 
     background: #f1f5f9; 
     border-radius: var(--radius-lg); 
     padding: 6px; 
     gap: 6px; 
     border: 1px solid var(--slate-200); 
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+}
+
+.nav-pills::-webkit-scrollbar {
+    display: none;
+}
+
+.nav-pills .nav-item {
+    flex-shrink: 0;
 }
 
 .nav-pills .nav-link { 
@@ -364,6 +426,7 @@ body {
     padding: 8px 18px; 
     transition: all 0.2s ease;
     border: none;
+    white-space: nowrap;
 }
 
 .nav-pills .nav-link.active { 
@@ -656,6 +719,158 @@ body {
 }
 
 /* ==========================================================================
+   MÓDULO DE ASIGNACIONES: RESPONSIVIDAD Y FORMATO TARJETA MÓVIL
+   ========================================================================== */
+@media (max-width: 768px) {
+    .fila-programa {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+        padding: 12px 10px;
+        margin: 8px 0;
+        border-radius: var(--radius-md);
+        box-shadow: 0 2px 6px rgba(15, 23, 42, 0.04);
+        border: 1px solid var(--slate-200);
+    }
+
+    .fila-programa:hover {
+        transform: none;
+    }
+
+    .prog-numero-tipo {
+        min-width: 100%;
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .prog-rol {
+        min-width: auto;
+        text-align: left;
+    }
+
+    .prog-nombres {
+        min-width: 100%;
+        width: 100%;
+        padding: 8px 0;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 6px;
+        border-top: 1px solid var(--slate-100);
+        border-bottom: 1px solid var(--slate-100);
+    }
+
+    .prog-acciones {
+        width: 100%;
+        justify-content: flex-end;
+        gap: 8px;
+        padding-top: 4px;
+        margin-left: 0 !important;
+    }
+
+    .btn-icon-action {
+        width: 38px;
+        height: 38px;
+        font-size: 1.05rem;
+        border-radius: var(--radius-md);
+    }
+
+    .select-mes-gigante {
+        font-size: 1rem;
+        padding: 8px 36px 8px 16px;
+    }
+
+    .semana-header {
+        padding: 10px 14px;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+    .semana-header > div {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .semana-header .btn-add-quick {
+        align-self: flex-end;
+    }
+}
+
+/* ==========================================================================
+   MÓDULO DE ASISTENCIA: SCROLL TÁCTIL HORIZONTAL Y ASIENTOS ADAPTABLES
+   ========================================================================== */
+.mapa-scroll-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-x pan-y;
+    border-radius: var(--radius-lg);
+    background: #ffffff;
+    border: 1px solid var(--slate-200);
+    padding: 16px 12px;
+    box-shadow: var(--shadow-card);
+    margin-bottom: 20px;
+}
+
+.mapa-scroll-hint {
+    background: #eff6ff;
+    color: var(--primary-dark);
+    border: 1px dashed #bfdbfe;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.mapa-scroll-inner {
+    min-width: 620px;
+    width: max-content;
+    margin: 0 auto;
+}
+
+.btn-asiento {
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.12s ease;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.btn-asiento:active {
+    transform: scale(0.9);
+}
+
+@media (max-width: 576px) {
+    .mapa-scroll-inner {
+        min-width: 540px;
+    }
+    
+    .btn-asiento {
+        width: 26px !important;
+        height: 26px !important;
+        font-size: 0.72rem !important;
+    }
+
+    .col-asiento-wrapper {
+        width: 28px !important;
+    }
+}
+
+/* Tablas con scroll táctil suave */
+.table-responsive {
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-x: contain;
+}
+
+/* ==========================================================================
    7. COMPONENTES VISUALES AUXILIARES (Ajustes, Métricas, Toasts)
    ========================================================================== */
 #toast-copiado { 
@@ -894,10 +1109,27 @@ body.modo-oscuro tr.fila-alerta-60 {
     background-color: #450a0a !important;
 }
 
-body.modo-oscuro .btn-menu {
-    background-color: #1e293b !important;
-    color: #60a5fa !important;
-    border-color: rgba(255, 255, 255, 0.15) !important;
+body.modo-oscuro .app-topbar {
+    background: linear-gradient(135deg, #0b0f19 0%, #151e2e 100%) !important;
+    border-color: #243046 !important;
+}
+
+body.modo-oscuro .btn-topbar-menu,
+body.modo-oscuro .btn-topbar-action {
+    background: rgba(255, 255, 255, 0.08) !important;
+    border-color: #243046 !important;
+    color: #f1f5f9 !important;
+}
+
+body.modo-oscuro .mapa-scroll-wrapper {
+    background-color: #151e2e !important;
+    border-color: #243046 !important;
+}
+
+body.modo-oscuro .mapa-scroll-hint {
+    background: #1e293b !important;
+    color: #93c5fd !important;
+    border-color: #334155 !important;
 }
 
 body.modo-oscuro .banner-pwa-instalacion {
