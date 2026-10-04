@@ -1,0 +1,1682 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prototipo Figma - Gestor Congregación</title>
+    <!-- Bootstrap CSS CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* CSS BASE DE LA APLICACIÓN */
+        /* ==========================================================================
+   1. ESTILOS BASE, VARIABLES Y SISTEMA DE DISEÑO
+   ========================================================================== */
+:root {
+    --primary: #2563eb;
+    --primary-dark: #1d4ed8;
+    --primary-light: #eff6ff;
+    --navy-900: #0f172a;
+    --navy-800: #1e293b;
+    --navy-700: #334155;
+    --slate-600: #475569;
+    --slate-400: #94a3b8;
+    --slate-200: #e2e8f0;
+    --slate-100: #f1f5f9;
+    --slate-50: #f8fafc;
+    --amber-600: #d97706;
+    --amber-700: #b45309;
+    --emerald-600: #059669;
+    --rose-600: #e11d48;
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 14px;
+    --radius-xl: 18px;
+    --radius-full: 9999px;
+    --shadow-subtle: 0 1px 3px rgba(0, 0, 0, 0.05);
+    --shadow-card: 0 4px 14px rgba(15, 23, 42, 0.06);
+    --shadow-hover: 0 8px 24px rgba(15, 23, 42, 0.1);
+}
+
+body { 
+    background-color: var(--slate-50);
+    color: var(--navy-900);
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+}
+
+.header-title-primary {
+    color: #1e3a8a;
+    letter-spacing: -0.02em;
+}
+
+/* ==========================================================================
+   2. BARRA SUPERIOR DE NAVEGACIÓN (APP TOPBAR) Y SIDEBAR
+   ========================================================================== */
+.app-topbar {
+    position: sticky;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1030;
+    background: linear-gradient(135deg, var(--navy-900) 0%, var(--navy-800) 100%);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.18);
+    padding-top: env(safe-area-inset-top, 0px);
+}
+
+.topbar-inner {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 8px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 56px;
+}
+
+.btn-topbar-menu {
+    background: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-md);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    line-height: 1;
+    cursor: pointer;
+    transition: background-color 0.18s ease, transform 0.18s ease;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.btn-topbar-menu:hover,
+.btn-topbar-menu:active {
+    background: rgba(255, 255, 255, 0.22);
+    transform: scale(0.96);
+}
+
+.topbar-brand {
+    cursor: pointer;
+    user-select: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.topbar-title {
+    color: #ffffff;
+    font-size: 1.08rem;
+    letter-spacing: -0.01em;
+}
+
+.btn-topbar-action {
+    background: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    width: 38px;
+    height: 38px;
+    border-radius: var(--radius-md);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.btn-topbar-action:hover,
+.btn-topbar-action:active {
+    background: rgba(255, 255, 255, 0.22);
+    transform: scale(0.96);
+}
+
+/* Sidebar Drawer - Elevado por encima de todo */
+.sidebar-izquierda { 
+    position: fixed; 
+    top: 0; 
+    left: 0; 
+    width: 290px; 
+    max-width: 85vw;
+    height: 100vh; 
+    height: 100dvh;
+    background-color: var(--navy-900); 
+    color: white; 
+    transform: translateX(-100%);
+    transition: transform 0.24s cubic-bezier(0.25, 1, 0.5, 1);
+    will-change: transform;
+    z-index: 1070; 
+    box-shadow: 8px 0 30px rgba(0, 0, 0, 0.45);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.sidebar-izquierda.active { 
+    transform: translateX(0);
+}
+
+.sidebar-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(15, 23, 42, 0.5);
+    z-index: 1060;
+    backdrop-filter: blur(3px);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.22s ease, visibility 0.22s ease;
+    pointer-events: none;
+}
+
+.sidebar-backdrop.active {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+}
+
+.contenido-principal { 
+    padding: 20px 16px; 
+    max-width: 100vw;
+    overflow-x: hidden;
+}
+
+@media (max-width: 768px) {
+    .contenido-principal {
+        padding: 12px 6px;
+    }
+}
+
+/* Banner flotante de instalación PWA */
+.banner-pwa-instalacion {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1060;
+    background: linear-gradient(135deg, var(--navy-900) 0%, var(--navy-800) 100%);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: var(--radius-lg);
+    padding: 12px 20px;
+    box-shadow: 0 12px 36px rgba(0, 0, 0, 0.35);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    min-width: 320px;
+    max-width: 92vw;
+    animation: slideUpFade 0.3s ease;
+}
+
+@keyframes slideUpFade {
+    from {
+        opacity: 0;
+        transform: translate(-50%, 20px);
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, 0);
+    }
+}
+
+.sidebar-link { 
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 20px; 
+    color: #cbd5e1; 
+    cursor: pointer; 
+    text-decoration: none; 
+    font-weight: 500;
+    font-size: 0.95rem;
+    transition: all 0.18s ease;
+    border-left: 3px solid transparent;
+}
+
+.sidebar-link:hover { 
+    background-color: var(--navy-800);
+    color: #ffffff;
+    border-left-color: var(--primary);
+}
+
+/* ==========================================================================
+   3. TABLAS Y ENCABEZADOS DE COLUMNAS
+   ========================================================================== */
+.table th {
+    vertical-align: middle;
+    font-weight: 600;
+    color: var(--slate-600);
+}
+
+.column-header {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+}
+
+.column-menu {
+    display: none;
+    margin-top: 6px;
+    min-width: 140px;
+}
+
+.column-menu.show {
+    display: block;
+}
+
+.column-toggle {
+    border: none;
+    background: transparent;
+    color: var(--slate-400);
+    padding: 0;
+    font-size: 0.95rem;
+}
+
+.column-toggle:hover {
+    color: var(--primary);
+}
+
+/* ==========================================================================
+   4. ETIQUETAS DE ESTADOS Y PRIVILEGIOS / BADGES
+   ========================================================================== */
+.badge-anciano {
+    background-color: #dbeafe;
+    color: #1e40af;
+    border: 1px solid #bfdbfe;
+    border-radius: var(--radius-full);
+    padding: 4px 12px;
+    font-weight: 600;
+}
+
+.badge-siervo {
+    background-color: #dcfce7;
+    color: #166534;
+    border: 1px solid #bbf7d0;
+    border-radius: var(--radius-full);
+    padding: 4px 12px;
+    font-weight: 600;
+}
+
+.badge-publicador-bautizado {
+    background-color: #e0f2fe;
+    color: #0369a1;
+    border: 1px solid #bae6fd;
+    border-radius: var(--radius-full);
+    padding: 4px 12px;
+    font-weight: 600;
+}
+
+.badge-publicador-no-bautizado {
+    background-color: #fef3c7;
+    color: #b45309;
+    border: 1px solid #fde68a;
+    border-radius: var(--radius-full);
+    padding: 4px 12px;
+    font-weight: 600;
+}
+
+.badge-precursor-auxiliar {
+    background-color: #f3e8ff;
+    color: #7e22ce;
+    border: 1px solid #e9d5ff;
+    border-radius: var(--radius-full);
+    padding: 4px 12px;
+    font-weight: 600;
+}
+
+.badge-precursor-regular {
+    background-color: #ffedd5;
+    color: #c2410c;
+    border: 1px solid #fed7aa;
+    border-radius: var(--radius-full);
+    padding: 4px 12px;
+    font-weight: 600;
+}
+
+.badge-precursor-ninguno {
+    background-color: #f1f5f9;
+    color: #64748b;
+    border: 1px solid #e2e8f0;
+    border-radius: var(--radius-full);
+    padding: 4px 12px;
+    font-weight: 600;
+}
+
+.badge-inactivo {
+    background-color: #fee2e2;
+    color: #b91c1c;
+    border: 1px solid #fecaca;
+    border-radius: var(--radius-full);
+    padding: 4px 12px;
+    font-weight: 600;
+}
+
+/* ==========================================================================
+   5. BOTONES DE ACCIÓN: EDITAR Y ELIMINAR
+   ========================================================================== */
+.btn-action {
+    border: 1px solid transparent;
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(4px);
+    color: #495057;
+    padding: 0.3rem 0.6rem;
+    line-height: 1;
+    min-width: 2rem;
+    border-radius: var(--radius-sm);
+    transition: all 0.2s ease;
+}
+
+.btn-action:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba(31, 41, 55, 0.08);
+}
+
+.btn-edit {
+    border-color: #c4b5fd;
+    background: #f5f3ff;
+    color: #6d28d9;
+}
+.btn-edit:hover {
+    background: #ede9fe;
+}
+
+.btn-delete {
+    border-color: #fecdd3;
+    background: #fff1f2;
+    color: #be185d;
+}
+.btn-delete:hover {
+    background: #ffe4e6;
+}
+
+.estado-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+/* ==========================================================================
+   6. GESTOR DE ASIGNACIONES (PROGRAMA GENERAL Y PLANIFICACIÓN)
+   ========================================================================== */
+/* Segmented Nav Pills (Con scroll táctil horizontal en móviles) */
+.nav-pills { 
+    background: #f1f5f9; 
+    border-radius: var(--radius-lg); 
+    padding: 6px; 
+    gap: 6px; 
+    border: 1px solid var(--slate-200); 
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+}
+
+.nav-pills::-webkit-scrollbar {
+    display: none;
+}
+
+.nav-pills .nav-item {
+    flex-shrink: 0;
+}
+
+.nav-pills .nav-link { 
+    color: var(--slate-600); 
+    font-weight: 600; 
+    font-size: 0.92rem;
+    border-radius: var(--radius-md); 
+    padding: 8px 18px; 
+    transition: all 0.2s ease;
+    border: none;
+    white-space: nowrap;
+}
+
+.nav-pills .nav-link.active { 
+    background-color: #ffffff; 
+    color: var(--primary); 
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    font-weight: 700;
+}
+
+/* Selector Gigante de Mes */
+.select-mes-gigante { 
+    font-size: 1.25rem; 
+    font-weight: 800; 
+    color: #1e3a8a; 
+    border: 2px solid var(--primary); 
+    border-radius: var(--radius-full); 
+    text-transform: uppercase; 
+    background: #ffffff url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%232563eb' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e") no-repeat right 1.25rem center/16px 12px;
+    padding: 10px 45px 10px 25px;
+    box-shadow: 0 4px 14px rgba(37, 99, 235, 0.12);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.select-mes-gigante:focus {
+    outline: none;
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.25);
+}
+
+/* Tarjeta Semanal */
+.card-semana {
+    border: 1px solid var(--slate-200);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    background: #ffffff;
+    box-shadow: var(--shadow-card);
+    transition: box-shadow 0.2s ease;
+}
+
+.card-semana:hover {
+    box-shadow: var(--shadow-hover);
+}
+
+/* Cabecera de la Semana */
+.semana-header { 
+    background: linear-gradient(135deg, var(--navy-800) 0%, var(--navy-700) 100%); 
+    color: white; 
+    padding: 12px 20px; 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.semana-header-badge {
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: var(--radius-full);
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    font-weight: 700;
+    padding: 3px 10px;
+    color: #cbd5e1;
+}
+
+.semana-header-title {
+    font-weight: 700;
+    font-size: 0.98rem;
+    letter-spacing: 0.01em;
+}
+
+.btn-add-quick { 
+    background: rgba(255, 255, 255, 0.16); 
+    backdrop-filter: blur(4px); 
+    border: 1px solid rgba(255, 255, 255, 0.25); 
+    color: white; 
+    border-radius: var(--radius-full); 
+    padding: 4px 14px; 
+    font-weight: 600; 
+    font-size: 0.82rem; 
+    transition: all 0.2s ease; 
+    cursor: pointer;
+}
+
+.btn-add-quick:hover { 
+    background: #ffffff; 
+    color: var(--navy-900); 
+    transform: translateY(-1px);
+}
+
+/* Franja Seamos Mejores Maestros */
+.franja-maestros { 
+    background: linear-gradient(135deg, var(--amber-700) 0%, var(--amber-600) 100%); 
+    color: white; 
+    border-radius: var(--radius-md); 
+    padding: 8px 16px; 
+    margin: 12px 6px 8px 6px; 
+    font-weight: 700; 
+    font-size: 0.82rem; 
+    letter-spacing: 0.05em; 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    box-shadow: 0 2px 8px rgba(180, 83, 9, 0.2);
+}
+
+.franja-sub {
+    font-size: 0.75rem;
+    font-weight: 500;
+    opacity: 0.9;
+    text-transform: none;
+}
+
+/* Fila de Asignación / Programa */
+.fila-programa { 
+    display: flex; 
+    align-items: center; 
+    padding: 10px 14px; 
+    margin: 5px 6px; 
+    border-radius: var(--radius-md); 
+    background: #ffffff; 
+    border: 1px solid var(--slate-100); 
+    transition: all 0.18s ease; 
+}
+
+.fila-programa:hover { 
+    background: var(--slate-50); 
+    border-color: #cbd5e1; 
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04); 
+    transform: translateX(3px);
+}
+
+.badge-numero-parte {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: #eff6ff;
+    color: var(--primary-dark);
+    font-weight: 800;
+    font-size: 0.85rem;
+    margin-right: 10px;
+    flex-shrink: 0;
+    border: 1px solid #dbeafe;
+}
+
+.prog-numero-tipo {
+    display: flex;
+    align-items: center;
+    flex: 1.2;
+    min-width: 230px;
+}
+
+.prog-titulo { 
+    font-size: 0.96rem; 
+}
+
+.prog-rol { 
+    min-width: 160px; 
+    text-align: center; 
+}
+
+.badge-rol-pill {
+    background: #f1f5f9;
+    color: var(--slate-600);
+    border: 1px solid var(--slate-200);
+    border-radius: var(--radius-full);
+    padding: 4px 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.prog-nombres { 
+    flex: 1.5; 
+    font-size: 0.92rem; 
+    min-width: 260px; 
+    display: flex; 
+    align-items: center; 
+    flex-wrap: wrap; 
+}
+
+.badge-estado-cumplio {
+    background: #dcfce7;
+    color: #15803d;
+    border-radius: var(--radius-full);
+    padding: 3px 10px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    border: 1px solid #bbf7d0;
+}
+
+.badge-estado-fallo {
+    background: #fee2e2;
+    color: #b91c1c;
+    border-radius: var(--radius-full);
+    padding: 3px 10px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    border: 1px solid #fecaca;
+}
+
+.badge-estado-pendiente {
+    background: #fef3c7;
+    color: #b45309;
+    border-radius: var(--radius-full);
+    padding: 3px 10px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    border: 1px solid #fde68a;
+}
+
+.prog-acciones {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+}
+
+.btn-icon-action {
+    border: 1px solid var(--slate-200);
+    background: #ffffff;
+    color: var(--slate-600);
+    width: 32px;
+    height: 32px;
+    border-radius: var(--radius-sm);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+    transition: all 0.15s ease;
+    cursor: pointer;
+}
+
+.btn-icon-action:hover {
+    background: var(--slate-100);
+    border-color: #cbd5e1;
+    transform: translateY(-1px);
+}
+
+.btn-cumplimiento {
+    border-color: #bfdbfe;
+    background: #eff6ff;
+    color: #1d4ed8;
+}
+.btn-cumplimiento:hover {
+    background: #dbeafe;
+}
+
+.btn-delete-asig {
+    color: var(--rose-600);
+}
+.btn-delete-asig:hover {
+    background: #fff1f2;
+    border-color: #fecdd3;
+}
+
+/* Tarjeta vacía de semana */
+.empty-semana-card {
+    border: 2px dashed #cbd5e1;
+    border-radius: var(--radius-md);
+    background: var(--slate-50);
+}
+
+.empty-semana-icon {
+    font-size: 2rem;
+    opacity: 0.7;
+}
+
+.texto-azul { color: #1e40af; font-weight: 700; }
+.texto-dorado { color: #b45309; font-weight: 700; }
+
+/* Planificación y Grupos */
+.card-grupo, .card-planif {
+    border: 1px solid var(--slate-200);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-card);
+}
+
+.bg-slate-navy {
+    background: linear-gradient(135deg, var(--navy-900) 0%, var(--navy-800) 100%) !important;
+}
+
+.bg-gradient-navy {
+    background: linear-gradient(135deg, var(--navy-800) 0%, var(--navy-700) 100%) !important;
+}
+
+.table-header-navy {
+    background: var(--navy-800);
+    color: #ffffff;
+}
+
+/* ==========================================================================
+   MÓDULO DE ASIGNACIONES: RESPONSIVIDAD Y FORMATO TARJETA MÓVIL
+   ========================================================================== */
+@media (max-width: 768px) {
+    .fila-programa {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+        padding: 12px 10px;
+        margin: 8px 0;
+        border-radius: var(--radius-md);
+        box-shadow: 0 2px 6px rgba(15, 23, 42, 0.04);
+        border: 1px solid var(--slate-200);
+    }
+
+    .fila-programa:hover {
+        transform: none;
+    }
+
+    .prog-numero-tipo {
+        min-width: 100%;
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .prog-rol {
+        min-width: auto;
+        text-align: left;
+    }
+
+    .prog-nombres {
+        min-width: 100%;
+        width: 100%;
+        padding: 8px 0;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 6px;
+        border-top: 1px solid var(--slate-100);
+        border-bottom: 1px solid var(--slate-100);
+    }
+
+    .prog-acciones {
+        width: 100%;
+        justify-content: flex-end;
+        gap: 8px;
+        padding-top: 4px;
+        margin-left: 0 !important;
+    }
+
+    .btn-icon-action {
+        width: 38px;
+        height: 38px;
+        font-size: 1.05rem;
+        border-radius: var(--radius-md);
+    }
+
+    .select-mes-gigante {
+        font-size: 1rem;
+        padding: 8px 36px 8px 16px;
+    }
+
+    .semana-header {
+        padding: 10px 14px;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+    .semana-header > div {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .semana-header .btn-add-quick {
+        align-self: flex-end;
+    }
+}
+
+/* ==========================================================================
+   MÓDULO DE ASISTENCIA: SCROLL TÁCTIL HORIZONTAL Y ASIENTOS ADAPTABLES
+   ========================================================================== */
+.mapa-scroll-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-x pan-y;
+    border-radius: var(--radius-lg);
+    background: #ffffff;
+    border: 1px solid var(--slate-200);
+    padding: 16px 12px;
+    box-shadow: var(--shadow-card);
+    margin-bottom: 20px;
+}
+
+.mapa-scroll-hint {
+    background: #eff6ff;
+    color: var(--primary-dark);
+    border: 1px dashed #bfdbfe;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.mapa-scroll-inner {
+    min-width: 620px;
+    width: max-content;
+    margin: 0 auto;
+}
+
+.btn-asiento {
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.12s ease;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.btn-asiento:active {
+    transform: scale(0.9);
+}
+
+@media (max-width: 576px) {
+    .mapa-scroll-inner {
+        min-width: 540px;
+    }
+    
+    .btn-asiento {
+        width: 26px !important;
+        height: 26px !important;
+        font-size: 0.72rem !important;
+    }
+
+    .col-asiento-wrapper {
+        width: 28px !important;
+    }
+}
+
+/* Tablas con scroll táctil suave */
+.table-responsive {
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-x: contain;
+}
+
+/* ==========================================================================
+   7. COMPONENTES VISUALES AUXILIARES (Ajustes, Métricas, Toasts)
+   ========================================================================== */
+#toast-copiado { 
+    position: fixed; 
+    top: 20px; 
+    right: 20px; 
+    z-index: 1060; 
+    display: none; 
+    background: #059669; 
+    color: white; 
+    padding: 12px 22px; 
+    border-radius: var(--radius-full); 
+    box-shadow: 0 8px 24px rgba(5, 150, 105, 0.25); 
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.badge-db-status {
+    background: #ecfdf5;
+    color: #047857;
+    border: 1px solid #a7f3d0;
+    border-radius: var(--radius-full);
+    padding: 6px 14px;
+    font-weight: 600;
+    font-size: 0.8rem;
+}
+
+.card-stat-ajustes {
+    border: 1px solid var(--slate-200);
+    border-radius: var(--radius-lg);
+    background: #ffffff;
+    transition: transform 0.2s ease;
+}
+
+.card-stat-ajustes:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-hover);
+}
+
+.card-ajustes-panel {
+    border: 1px solid var(--slate-200);
+    border-radius: var(--radius-lg);
+    background: #ffffff;
+}
+
+/* ==========================================================================
+   8. TABLA DE GRUPOS Y ESTADOS DE INFORME
+   ========================================================================== */
+.tabla-grupos th { 
+    background-color: var(--slate-100); 
+    color: var(--slate-600); 
+}
+
+.estado-btn { 
+    cursor: pointer; 
+    border: none; 
+    font-size: 1rem; 
+    width: 32px; 
+    height: 32px; 
+    border-radius: var(--radius-sm); 
+    display: inline-flex; 
+    align-items: center; 
+    justify-content: center; 
+    font-weight: bold; 
+    transition: 0.2s; 
+}
+
+.bg-estado-ok { background-color: #dcfce7; color: #15803d; border: 1px solid #bbf7d0; }
+.bg-estado-menor { background-color: #fef3c7; color: #b45309; border: 1px solid #fde68a; }
+.bg-estado-no { background-color: #fee2e2; color: #b91c1c; border: 1px solid #fecaca; }
+
+.badge-estado-libre { color: #15803d; font-weight: 600; background: transparent; }
+.badge-estado-asignado { color: #2563eb; font-weight: 600; background: transparent; }
+.badge-estado-alerta { color: #e11d48; font-weight: bold; background: transparent; }
+.badge-estado-normal { color: #64748b; font-weight: 500; background: transparent; }
+
+tr.fila-alerta-60 {
+    background-color: #fff1f2 !important;
+}
+
+/* ==========================================================================
+   9. ESTILOS GLOBALES PARA EL MODO OSCURO
+   ========================================================================== */
+body.modo-oscuro {
+    background-color: #0b0f19 !important;
+    color: #f1f5f9 !important;
+}
+
+body.modo-oscuro .header-title-primary {
+    color: #60a5fa !important;
+}
+
+body.modo-oscuro .card {
+    background-color: #151e2e !important;
+    color: #f1f5f9 !important;
+    border-color: #243046 !important;
+}
+
+body.modo-oscuro .bg-light,
+body.modo-oscuro .bg-white,
+body.modo-oscuro .bg-light-subtle {
+    background-color: #151e2e !important;
+    color: #f1f5f9 !important;
+}
+
+body.modo-oscuro .text-dark {
+    color: #f8fafc !important;
+}
+
+body.modo-oscuro .text-muted {
+    color: #94a3b8 !important;
+}
+
+body.modo-oscuro .table {
+    color: #f1f5f9 !important;
+    background-color: #151e2e !important;
+}
+
+body.modo-oscuro thead.table-light th,
+body.modo-oscuro .table-light {
+    background-color: #1e293b !important;
+    color: #e2e8f0 !important;
+    border-color: #243046 !important;
+}
+
+body.modo-oscuro .modal-content {
+    background-color: #151e2e !important;
+    color: #f1f5f9 !important;
+    border-color: #243046 !important;
+}
+
+body.modo-oscuro .modal-header,
+body.modo-oscuro .modal-footer {
+    border-color: #243046 !important;
+}
+
+body.modo-oscuro .form-control,
+body.modo-oscuro .form-select {
+    background-color: #0b0f19 !important;
+    color: #f1f5f9 !important;
+    border-color: #243046 !important;
+}
+
+body.modo-oscuro .form-control:focus,
+body.modo-oscuro .form-select:focus {
+    background-color: #111827 !important;
+    color: #ffffff !important;
+    border-color: #3b82f6 !important;
+}
+
+body.modo-oscuro .list-group-item {
+    background-color: #151e2e !important;
+    color: #f1f5f9 !important;
+    border-color: #243046 !important;
+}
+
+body.modo-oscuro .card-semana {
+    background-color: #151e2e !important;
+    border-color: #243046 !important;
+}
+
+body.modo-oscuro .fila-programa {
+    background-color: #151e2e !important;
+    color: #f1f5f9 !important;
+    border-color: #243046 !important;
+}
+
+body.modo-oscuro .fila-programa:hover {
+    background-color: #1e293b !important;
+}
+
+body.modo-oscuro .prog-nombres {
+    color: #f1f5f9 !important;
+}
+
+body.modo-oscuro .badge-rol-pill {
+    background-color: #1e293b !important;
+    color: #94a3b8 !important;
+    border-color: #334155 !important;
+}
+
+body.modo-oscuro .badge-numero-parte {
+    background-color: #1e293b !important;
+    color: #60a5fa !important;
+    border-color: #334155 !important;
+}
+
+body.modo-oscuro .select-mes-gigante {
+    background-color: #0b0f19 !important;
+    color: #60a5fa !important;
+    border-color: #3b82f6 !important;
+}
+
+body.modo-oscuro .nav-pills {
+    background-color: #0b0f19 !important;
+    border-color: #243046 !important;
+}
+
+body.modo-oscuro .nav-pills .nav-link {
+    color: #94a3b8;
+}
+
+body.modo-oscuro .nav-pills .nav-link.active {
+    background-color: #1e293b !important;
+    color: #60a5fa !important;
+}
+
+body.modo-oscuro .btn-icon-action {
+    background-color: #1e293b !important;
+    color: #cbd5e1 !important;
+    border-color: #334155 !important;
+}
+
+body.modo-oscuro .btn-icon-action:hover {
+    background-color: #334155 !important;
+}
+
+body.modo-oscuro .empty-semana-card {
+    background-color: #0b0f19 !important;
+    border-color: #334155 !important;
+}
+
+body.modo-oscuro .card-stat-ajustes,
+body.modo-oscuro .card-ajustes-panel {
+    background-color: #151e2e !important;
+    border-color: #243046 !important;
+}
+
+body.modo-oscuro .badge-db-status {
+    background: #064e3b !important;
+    color: #6ee7b7 !important;
+    border-color: #047857 !important;
+}
+
+body.modo-oscuro tr.fila-alerta-60 {
+    background-color: #450a0a !important;
+}
+
+body.modo-oscuro .app-topbar {
+    background: linear-gradient(135deg, #0b0f19 0%, #151e2e 100%) !important;
+    border-color: #243046 !important;
+}
+
+body.modo-oscuro .btn-topbar-menu,
+body.modo-oscuro .btn-topbar-action {
+    background: rgba(255, 255, 255, 0.08) !important;
+    border-color: #243046 !important;
+    color: #f1f5f9 !important;
+}
+
+body.modo-oscuro .mapa-scroll-wrapper {
+    background-color: #151e2e !important;
+    border-color: #243046 !important;
+}
+
+body.modo-oscuro .mapa-scroll-hint {
+    background: #1e293b !important;
+    color: #93c5fd !important;
+    border-color: #334155 !important;
+}
+
+body.modo-oscuro .banner-pwa-instalacion {
+    background: linear-gradient(135deg, #151e2e 0%, #1e293b 100%) !important;
+    border-color: #243046 !important;
+}
+
+        /* ESTILOS DE LIENZO Y PRESENTACIÓN PARA FIGMA */
+        body {
+            background-color: #f1f5f9;
+            padding: 30px 20px;
+        }
+        .figma-toolbar {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: white;
+            border-radius: 14px;
+            padding: 16px 24px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .figma-toolbar h2 {
+            font-size: 1.25rem;
+            margin: 0;
+            font-weight: 800;
+        }
+        .figma-tag {
+            background: #2563eb;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 999px;
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+        .figma-canvas {
+            display: flex;
+            flex-direction: column;
+            gap: 40px;
+        }
+        .figma-frame {
+            background: #ffffff;
+            border-radius: 18px;
+            border: 2px solid #cbd5e1;
+            box-shadow: 0 10px 30px rgba(15,23,42,0.08);
+            overflow: hidden;
+            position: relative;
+        }
+        .figma-frame-header {
+            background: #e2e8f0;
+            border-bottom: 1px solid #cbd5e1;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #334155;
+        }
+        .figma-frame-body {
+            padding: 24px;
+        }
+        .figma-frame-mobile {
+            max-width: 412px;
+            margin: 0 auto;
+            border-radius: 36px;
+            border: 8px solid #0f172a;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.25);
+        }
+        .figma-frame-mobile .figma-frame-body {
+            padding: 14px 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- BARRA GUÍA PARA FIGMA -->
+    <div class="figma-toolbar">
+        <div>
+            <h2>🎨 Prototipo Maestro UI para Figma</h2>
+            <small style="color: #94a3b8;">Congregación Paraíso de Carabayllo • Compatible con importación directa via plugin <code>html.to.design</code></small>
+        </div>
+        <div class="d-flex align-items-center gap-2">
+            <span class="figma-tag">8 Frames Principales</span>
+            <span class="figma-tag" style="background: #059669;">Desktop & Mobile</span>
+        </div>
+    </div>
+
+    <div class="figma-canvas">
+
+        <!-- FRAME 1: DASHBOARD INICIO -->
+        <div class="figma-frame" id="frame-inicio">
+            <div class="figma-frame-header">
+                <span>🖥️ FRAME 1: DASHBOARD DE INICIO (1280px)</span>
+                <span>Componente: Dashboard Principal</span>
+            </div>
+            <!-- Topbar -->
+            <header class="app-topbar">
+                <div class="topbar-inner">
+                    <div class="d-flex align-items-center gap-2">
+                        <button class="btn-topbar-menu"><span class="btn-menu-icon">☰</span></button>
+                        <div class="topbar-brand">
+                            <img src="icons/favicon-48.png" width="30" height="30" class="rounded">
+                            <span class="topbar-title">Congregación</span>
+                        </div>
+                    </div>
+                    <button class="btn-topbar-action"><span>🌙</span></button>
+                </div>
+            </header>
+            <div class="figma-frame-body">
+                <div class="card shadow-sm p-4 bg-white mb-4 border-0 rounded-4">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap">
+                        <div>
+                            <h2 class="fw-bold mb-1 header-title-primary">Bienvenido Jhans</h2>
+                            <p class="text-muted mb-0">Congregación Paraíso de Carabayllo</p>
+                        </div>
+                        <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-3 py-2 rounded-pill fw-bold">Año Teocrático 2026</span>
+                    </div>
+                    <div class="row g-3 mt-3">
+                        <div class="col-md-3">
+                            <div class="card border-0 shadow-sm p-3 text-center bg-light-subtle rounded-3">
+                                <h6 class="text-muted small fw-bold">Total Publicadores</h6>
+                                <div class="display-6 fw-bold text-dark">77</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card border-0 shadow-sm p-3 text-center bg-light-subtle rounded-3">
+                                <h6 class="text-muted small fw-bold">Publicadores Bautizados</h6>
+                                <div class="display-6 fw-bold text-primary">72</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card border-0 shadow-sm p-3 text-center bg-light-subtle rounded-3">
+                                <h6 class="text-muted small fw-bold">Precursores Regulares</h6>
+                                <div class="display-6 fw-bold text-success">14</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card border-0 shadow-sm p-3 text-center bg-light-subtle rounded-3">
+                                <h6 class="text-muted small fw-bold">Precursores Auxiliares</h6>
+                                <div class="display-6 fw-bold text-warning">17</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tareas Pendientes -->
+                <div class="card shadow-sm p-4 bg-white border-0 rounded-4">
+                    <div class="d-flex justify-content-between align-items-center mb-3 border-bottom pb-2">
+                        <h5 class="fw-bold text-dark m-0">📌 Tareas Pendientes y Vencimientos del Calendario</h5>
+                        <span class="badge bg-primary rounded-pill">Sincronizado con Asignaciones y Territorios</span>
+                    </div>
+                    <ul class="list-group list-group-flush gap-2">
+                        <li class="list-group-item d-flex justify-content-between align-items-center rounded-3 border p-3">
+                            <div>
+                                <strong class="d-block text-primary">📖 Asignación (Lectura bíblica) - Estudiante: Thiago Gutierrez Ch</strong>
+                                <small class="text-muted">Fecha del evento: Martes 06 de Octubre de 2026</small>
+                            </div>
+                            <span class="badge bg-warning-subtle text-warning border px-3 py-2 rounded-pill">Pendiente</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center rounded-3 border p-3">
+                            <div>
+                                <strong class="d-block text-dark">💬 Asignación (Empiece conversaciones) - Estudiante: Emma Benites</strong>
+                                <small class="text-muted">Ayudante: Estelita Benites • Martes 06 de Octubre de 2026</small>
+                            </div>
+                            <span class="badge bg-warning-subtle text-warning border px-3 py-2 rounded-pill">Pendiente</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- FRAME 2: ASIGNACIONES (PROGRAMA GENERAL) -->
+        <div class="figma-frame" id="frame-asignaciones">
+            <div class="figma-frame-header">
+                <span>📅 FRAME 2: GESTOR DE ASIGNACIONES (PROGRAMA SEMANAL)</span>
+                <span>Componente: Intervenciones y Tarjetas Semanales</span>
+            </div>
+            <div class="figma-frame-body">
+                <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+                    <div>
+                        <h3 class="mb-1 fw-bold header-title-primary">📅 Gestor de Asignaciones</h3>
+                        <p class="text-muted small mb-0">Programa semanal de Vida y Ministerio Cristianos, estado de publicadores y planeación</p>
+                    </div>
+                    <div class="d-flex align-items-center gap-2 bg-white p-2 rounded-pill shadow-sm border">
+                        <label class="fw-bold text-muted mb-0 ps-2 small">Año:</label>
+                        <select class="form-select form-select-sm fw-bold border-0 bg-transparent" style="width: 85px;"><option>2026</option></select>
+                    </div>
+                </div>
+
+                <!-- Nav Pills -->
+                <ul class="nav nav-pills justify-content-center mb-4 shadow-sm">
+                    <li class="nav-item"><button class="nav-link active">📅 Programa General</button></li>
+                    <li class="nav-item"><button class="nav-link">👥 Disponibilidad y Grupos</button></li>
+                    <li class="nav-item"><button class="nav-link">📂 Planificación Anual</button></li>
+                    <li class="nav-item"><button class="nav-link">🕒 Historial Personal</button></li>
+                </ul>
+
+                <!-- Selector de Mes -->
+                <div class="row justify-content-center mb-4">
+                    <div class="col-md-6 text-center">
+                        <select class="form-select select-mes-gigante text-center">
+                            <option>OCTUBRE 2026</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Tarjeta Semanal -->
+                <div class="card card-semana mb-3 shadow-sm">
+                    <div class="semana-header">
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="semana-header-badge">SEMANA</span>
+                            <span class="semana-header-title">5 - 11 OCTUBRE</span>
+                        </div>
+                        <button class="btn-add-quick">➕ Programar</button>
+                    </div>
+                    <div class="card-body p-3">
+                        <!-- Fila 1 -->
+                        <div class="fila-programa">
+                            <div class="prog-numero-tipo">
+                                <span class="badge-numero-parte">3</span>
+                                <div class="prog-titulo"><span class="texto-azul">Lectura de la Biblia</span></div>
+                            </div>
+                            <div class="prog-rol"><span class="badge-rol-pill">Estudiante</span></div>
+                            <div class="prog-nombres">
+                                <span class="fw-semibold text-dark">Thiago Gutierrez Ch</span>
+                                <span class="ms-2 badge-estado-cumplio">✅ Cumplió</span>
+                            </div>
+                            <div class="prog-acciones ms-auto">
+                                <button class="btn-icon-action btn-cumplimiento">🎯</button>
+                                <button class="btn-icon-action">✏️</button>
+                                <button class="btn-icon-action">📝</button>
+                                <button class="btn-icon-action">🔔</button>
+                                <button class="btn-icon-action btn-delete-asig">✕</button>
+                            </div>
+                        </div>
+
+                        <!-- Franja Seamos Maestros -->
+                        <div class="franja-maestros">
+                            <span class="d-flex align-items-center gap-2"><span>📖</span> SEAMOS MEJORES MAESTROS</span>
+                            <span class="franja-sub">Intervenciones Estudiantiles</span>
+                        </div>
+
+                        <!-- Fila 2 -->
+                        <div class="fila-programa">
+                            <div class="prog-numero-tipo">
+                                <span class="badge-numero-parte">4</span>
+                                <div class="prog-titulo"><span class="texto-dorado">Empiece conversaciones</span></div>
+                            </div>
+                            <div class="prog-rol"><span class="badge-rol-pill">Estudiante / Ayudante</span></div>
+                            <div class="prog-nombres">
+                                <span class="fw-semibold text-dark">Emma Benites</span> <span class="text-muted mx-1">/</span> <span class="text-secondary">Estelita Benites</span>
+                                <span class="ms-2 badge-estado-cumplio">✅ Cumplió</span>
+                            </div>
+                            <div class="prog-acciones ms-auto">
+                                <button class="btn-icon-action btn-cumplimiento">🎯</button>
+                                <button class="btn-icon-action">✏️</button>
+                                <button class="btn-icon-action">📝</button>
+                                <button class="btn-icon-action">🔔</button>
+                                <button class="btn-icon-action btn-delete-asig">✕</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- FRAME 3: TERRITORIOS -->
+        <div class="figma-frame" id="frame-territorios">
+            <div class="figma-frame-header">
+                <span>📦 FRAME 3: GESTIÓN DE TERRITORIOS (54 ZONAS)</span>
+                <span>Componente: Casillero y Tarjetas en Calle</span>
+            </div>
+            <div class="figma-frame-body">
+                <div class="border-bottom pb-3 mb-4">
+                    <h4 class="fw-bold header-title-primary m-0">🗺️ Sistema de Gestión de Territorios</h4>
+                    <small class="text-muted">Congregación Paraíso de Carabayllo — Módulos Independientes</small>
+                </div>
+
+                <div class="row g-4">
+                    <!-- Casillero General -->
+                    <div class="col-lg-6">
+                        <div class="card p-3 shadow-sm border-0 rounded-4 h-100">
+                            <h6 class="fw-bold text-dark mb-3">📦 Casillero General (Tarretero)</h6>
+                            <div class="table-responsive">
+                                <table class="table table-hover align-middle table-sm">
+                                    <thead class="table-light">
+                                        <tr><th>Territorio</th><th>Puntos de Encuentro</th><th>Estado</th><th class="text-end">Acción</th></tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td class="fw-bold">Territorio 1</td>
+                                            <td class="small">Paradero Los Olivos Mz. E</td>
+                                            <td><span class="badge bg-success rounded-pill">Disponible</span></td>
+                                            <td class="text-end"><button class="btn btn-xs btn-primary rounded-pill px-3">Asignar</button></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="fw-bold">Territorio 2</td>
+                                            <td class="small">Frente al Colegio Las Casitas</td>
+                                            <td><span class="badge bg-success rounded-pill">Disponible</span></td>
+                                            <td class="text-end"><button class="btn btn-xs btn-primary rounded-pill px-3">Asignar</button></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="fw-bold">Territorio 3</td>
+                                            <td class="small">Entrada Principal Av. Carabayllo</td>
+                                            <td><span class="badge bg-danger rounded-pill">En la Calle</span></td>
+                                            <td class="text-end"><button class="btn btn-xs btn-outline-secondary rounded-pill px-3" disabled>Asignar</button></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tarjetas en la Calle -->
+                    <div class="col-lg-6">
+                        <div class="card p-3 shadow-sm border-0 rounded-4 h-100">
+                            <h6 class="fw-bold text-danger mb-3">🚗 Tarjetas en la Calle (Asignadas)</h6>
+                            <div class="table-responsive">
+                                <table class="table table-hover align-middle table-sm">
+                                    <thead class="table-light">
+                                        <tr><th>Territorio</th><th>Hermano Responsable</th><th>Fecha Asig.</th><th class="text-end">Acción</th></tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td class="fw-bold text-danger">Territorio 3</td>
+                                            <td class="fw-semibold">Eder Segura</td>
+                                            <td class="small">12/05/2026</td>
+                                            <td class="text-end"><button class="btn btn-xs btn-success rounded-pill px-3">🟢 Recibir</button></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="fw-bold text-danger">Territorio 8</td>
+                                            <td class="fw-semibold">Carlos Diaz</td>
+                                            <td class="small">26/05/2026</td>
+                                            <td class="text-end"><button class="btn btn-xs btn-success rounded-pill px-3">🟢 Recibir</button></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- FRAME 4: CONTROL DE ASISTENCIA -->
+        <div class="figma-frame" id="frame-asistencia">
+            <div class="figma-frame-header">
+                <span>🎟️ FRAME 4: CONTROL DE ASISTENCIA Y PLANO DEL AUDITORIO</span>
+                <span>Componente: Butacas del Salón del Reino</span>
+            </div>
+            <div class="figma-frame-body">
+                <div class="border-bottom pb-3 mb-4 d-flex justify-content-between align-items-center flex-wrap gap-2">
+                    <div>
+                        <h4 class="fw-bold header-title-primary m-0">🎟️ Distribución y Aforo del Auditorio</h4>
+                        <small class="text-muted">Registro interactivo presencial y conexiones</small>
+                    </div>
+                    <div class="d-flex align-items-center gap-2">
+                        <label class="fw-bold text-muted small mb-0">Fecha:</label>
+                        <input type="date" class="form-control form-control-sm fw-bold text-primary" value="2026-10-06" style="width: 140px;">
+                        <button class="btn btn-primary btn-sm rounded-pill fw-bold px-3">💾 Guardar Asistencia</button>
+                    </div>
+                </div>
+
+                <div class="row g-3 mb-4 text-center">
+                    <div class="col-md-4"><div class="card bg-light p-3 border-0 shadow-sm rounded-3"><span class="text-muted small fw-bold">Asientos Ocupados</span><h2 class="fw-bold text-danger mb-0">84</h2></div></div>
+                    <div class="col-md-4"><div class="card bg-light p-3 border-0 shadow-sm rounded-3"><span class="text-muted small fw-bold">Asientos Disponibles</span><h2 class="fw-bold text-success mb-0">82</h2></div></div>
+                    <div class="col-md-4"><div class="card bg-light p-3 border-0 shadow-sm rounded-3"><span class="text-muted small fw-bold">Total Aforo</span><h2 class="fw-bold text-dark mb-0">166</h2></div></div>
+                </div>
+
+                <!-- Mapa Container -->
+                <div class="mapa-scroll-wrapper">
+                    <div class="mapa-scroll-inner text-center">
+                        <span class="small fw-bold text-muted d-block mb-3">PLATAFORMA / DISCURSANTE</span>
+                        <div class="d-flex justify-content-center gap-4 mb-4">
+                            <button class="btn btn-sm btn-asiento bg-success text-white">1</button>
+                            <button class="btn btn-sm btn-asiento bg-success text-white">5</button>
+                        </div>
+                        <span class="small fw-bold text-muted d-block mb-2">AUDITORIO PRINCIPAL (COLUMNAS 4 - 8 - 4)</span>
+                        <!-- Fila muestra -->
+                        <div class="d-flex justify-content-center gap-3 mb-2">
+                            <div class="d-flex gap-1">
+                                <button class="btn btn-sm btn-asiento bg-danger text-white">1</button>
+                                <button class="btn btn-sm btn-asiento bg-danger text-white">2</button>
+                                <button class="btn btn-sm btn-asiento bg-success text-white">3</button>
+                                <button class="btn btn-sm btn-asiento bg-success text-white">4</button>
+                            </div>
+                            <div class="d-flex gap-1">
+                                <button class="btn btn-sm btn-asiento bg-danger text-white">1</button>
+                                <button class="btn btn-sm btn-asiento bg-danger text-white">2</button>
+                                <button class="btn btn-sm btn-asiento bg-danger text-white">3</button>
+                                <button class="btn btn-sm btn-asiento bg-success text-white">4</button>
+                                <button class="btn btn-sm btn-asiento bg-success text-white">5</button>
+                                <button class="btn btn-sm btn-asiento bg-success text-white">6</button>
+                                <button class="btn btn-sm btn-asiento bg-danger text-white">7</button>
+                                <button class="btn btn-sm btn-asiento bg-danger text-white">8</button>
+                            </div>
+                            <div class="d-flex gap-1">
+                                <button class="btn btn-sm btn-asiento bg-success text-white">1</button>
+                                <button class="btn btn-sm btn-asiento bg-success text-white">2</button>
+                                <button class="btn btn-sm btn-asiento bg-danger text-white">3</button>
+                                <button class="btn btn-sm btn-asiento bg-danger text-white">4</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- FRAME 5: DIRECTORIO DE HERMANOS -->
+        <div class="figma-frame" id="frame-hermanos">
+            <div class="figma-frame-header">
+                <span>🗃️ FRAME 5: DIRECTORIO OFICIAL Y BASE DE DATOS</span>
+                <span>Componente: Tablas Relacionales y Filtros</span>
+            </div>
+            <div class="figma-frame-body">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h4 class="fw-bold header-title-primary m-0">Congregación Paraíso de Carabayllo</h4>
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-sm btn-outline-primary rounded-pill">📊 Excel</button>
+                        <button class="btn btn-sm btn-outline-secondary rounded-pill">Limpiar filtros</button>
+                        <button class="btn btn-sm btn-success rounded-pill fw-bold">➕ Nuevo Publicador</button>
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Nombre</th><th>Cargo</th><th>Precursorado</th><th>Grupo</th><th>Género</th><th>Mayor Edad</th><th class="text-end">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="fw-bold">Segura, Eder</td>
+                                <td><span class="badge-anciano">Anciano</span></td>
+                                <td><span class="badge-ninguno">Ninguno</span></td>
+                                <td>Grupo 1</td><td>M</td><td>Sí</td>
+                                <td class="text-end"><button class="btn btn-sm btn-light border p-1 px-2">✏️</button></td>
+                            </tr>
+                            <tr>
+                                <td class="fw-bold">Ubillus, Gabriel</td>
+                                <td><span class="badge-siervo">Siervo Ministerial</span></td>
+                                <td><span class="badge-precursor-auxiliar">Precursor Auxiliar</span></td>
+                                <td>Grupo 1</td><td>M</td><td>Sí</td>
+                                <td class="text-end"><button class="btn btn-sm btn-light border p-1 px-2">✏️</button></td>
+                            </tr>
+                            <tr>
+                                <td class="fw-bold">Alvarez, Giovana</td>
+                                <td><span class="badge-publicador-bautizado">Publicador Bautizado</span></td>
+                                <td><span class="badge-ninguno">Ninguno</span></td>
+                                <td>Grupo 1</td><td>F</td><td>Sí</td>
+                                <td class="text-end"><button class="btn btn-sm btn-light border p-1 px-2">✏️</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- FRAME 6: SMARTPHONE MOBILE VIEW -->
+        <div class="figma-frame figma-frame-mobile" id="frame-mobile">
+            <div class="figma-frame-header" style="background:#0f172a; color:white; border-radius: 26px 26px 0 0;">
+                <span>📱 FRAME 6: VISTA SMARTPHONE (390px x 844px)</span>
+                <span>PWA Nativo</span>
+            </div>
+            <!-- Mobile App Topbar -->
+            <header class="app-topbar" style="position:relative;">
+                <div class="topbar-inner" style="padding: 6px 12px; height: 50px;">
+                    <div class="d-flex align-items-center gap-2">
+                        <button class="btn-topbar-menu" style="width:36px; height:36px; font-size:1.1rem;"><span>☰</span></button>
+                        <div class="topbar-brand">
+                            <img src="icons/favicon-48.png" width="24" height="24" class="rounded">
+                            <span class="topbar-title" style="font-size:1rem;">Congregación</span>
+                        </div>
+                    </div>
+                    <button class="btn-topbar-action" style="width:34px; height:34px; font-size:1rem;"><span>🌙</span></button>
+                </div>
+            </header>
+
+            <div class="figma-frame-body bg-light">
+                <h5 class="fw-bold header-title-primary mb-1">📅 Asignaciones</h5>
+                <small class="text-muted d-block mb-3">Programa de Vida y Ministerio</small>
+
+                <!-- Tarjeta Móvil Asignación 1 -->
+                <div class="fila-programa shadow-sm bg-white mb-2">
+                    <div class="prog-numero-tipo">
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="badge-numero-parte">3</span>
+                            <strong class="texto-azul" style="font-size:0.9rem;">Lectura de la Biblia</strong>
+                        </div>
+                        <span class="badge-rol-pill">Estudiante</span>
+                    </div>
+                    <div class="prog-nombres">
+                        <strong class="text-dark">Thiago Gutierrez Ch</strong>
+                        <span class="badge-estado-cumplio" style="align-self:flex-start;">✅ Cumplió</span>
+                    </div>
+                    <div class="prog-acciones">
+                        <button class="btn-icon-action btn-cumplimiento">🎯</button>
+                        <button class="btn-icon-action">✏️</button>
+                        <button class="btn-icon-action">📝</button>
+                        <button class="btn-icon-action">🔔</button>
+                    </div>
+                </div>
+
+                <!-- Tarjeta Móvil Asignación 2 -->
+                <div class="franja-maestros my-2" style="font-size:0.75rem; padding:6px 10px;">
+                    <span>📖 SEAMOS MEJORES MAESTROS</span>
+                    <span class="franja-sub">Intervenciones</span>
+                </div>
+
+                <div class="fila-programa shadow-sm bg-white">
+                    <div class="prog-numero-tipo">
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="badge-numero-parte">4</span>
+                            <strong class="texto-dorado" style="font-size:0.9rem;">Empiece conversaciones</strong>
+                        </div>
+                        <span class="badge-rol-pill">Estudiante / Ayudante</span>
+                    </div>
+                    <div class="prog-nombres">
+                        <strong class="text-dark">Emma Benites</strong>
+                        <small class="text-secondary">/ Estelita Benites</small>
+                        <span class="badge-estado-cumplio" style="align-self:flex-start;">✅ Cumplió</span>
+                    </div>
+                    <div class="prog-acciones">
+                        <button class="btn-icon-action btn-cumplimiento">🎯</button>
+                        <button class="btn-icon-action">✏️</button>
+                        <button class="btn-icon-action">📝</button>
+                        <button class="btn-icon-action">🔔</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</body>
+</html>

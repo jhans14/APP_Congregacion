@@ -23,7 +23,7 @@
 <body>
 
     <!-- Toast de notificaciones global para el copiado de mensajes -->
-    <div id="toast-copiado">✅ Mensaje copiado al portapapeles</div>
+    <div id="toast-copiado" style="display: none;">✅ Mensaje copiado al portapapeles</div>
 
     <!-- Banner flotante de instalación PWA -->
     <div id="banner-pwa-instalacion" class="banner-pwa-instalacion d-none">
@@ -47,15 +47,23 @@
     <header class="app-topbar">
         <div class="topbar-inner">
             <div class="d-flex align-items-center gap-2">
-                <button class="btn-topbar-menu" id="btnMenuSidebar" onclick="toggleSidebar()" aria-label="Abrir menú" title="Menú de navegación">
+                <!-- Botón para móvil (Drawer overlay) -->
+                <button class="btn-topbar-menu d-md-none" id="btnMenuSidebar" onclick="toggleSidebar()" aria-label="Abrir menú" title="Menú de navegación">
+                    <span class="btn-menu-icon">☰</span>
+                </button>
+                <!-- Botón para escritorio (Colapsar / Expandir para maximizar área de trabajo) -->
+                <button class="btn-topbar-menu d-none d-md-inline-flex" id="btnDesktopSidebarToggle" onclick="toggleSidebarDesktop()" aria-label="Colapsar panel lateral" title="Expandir/Ocultar panel lateral">
                     <span class="btn-menu-icon">☰</span>
                 </button>
                 <div class="topbar-brand" onclick="cargarModulo('inicio')" role="button" title="Ir al Inicio">
                     <img src="icons/favicon-48.png" width="30" height="30" alt="Logo" class="rounded shadow-2xs">
-                    <span class="topbar-title">Congregación</span>
+                    <span class="topbar-title">Gestor <strong style="font-weight: 700;">Congregación</strong></span>
                 </div>
             </div>
             <div class="d-flex align-items-center gap-2">
+                <div class="d-none d-sm-inline-flex align-items-center gap-2 me-2 text-white-50" style="font-size: 0.8rem; border-right: 1px solid rgba(255,255,255,0.15); padding-right: 12px;">
+                    <span style="width: 7px; height: 7px; border-radius: 50%; background: #10b981; display: inline-block; box-shadow: 0 0 0 3px rgba(16,185,129,0.2);"></span> En línea
+                </div>
                 <button class="btn-topbar-action" id="btnThemeToggle" onclick="alternarModoOscuroTop()" title="Cambiar Tema (Claro/Oscuro)">
                     <span id="iconoTemaTop">🌙</span>
                 </button>
@@ -63,25 +71,70 @@
         </div>
     </header>
 
-    <!-- Barra Lateral (Sidebar) -->
-    <div class="sidebar-izquierda" id="sidebarMenu">
-        <div class="sidebar-header d-flex justify-content-between align-items-center px-3 py-3 border-bottom border-secondary">
-            <div class="d-flex align-items-center gap-2">
-                <img src="icons/favicon-48.png" width="26" height="26" alt="Logo" class="rounded shadow-sm">
-                <h5 class="text-white m-0 fw-bold" style="font-size: 1.1rem; letter-spacing: -0.01em;">Menú Principal</h5>
+    <!-- Barra Lateral (Sidebar Drawer) -->
+    <aside class="sidebar-izquierda" id="sidebarMenu">
+        <div class="sidebar-header">
+            <div class="brand-area">
+                <div class="brand-mark-logo">
+                    <img src="icons/favicon-48.png" width="24" height="24" alt="Logo" class="rounded">
+                </div>
+                <div class="brand-text">
+                    <strong>Gestor</strong>
+                    <small>CONGREGACIÓN</small>
+                </div>
             </div>
-            <button class="btn btn-sm btn-outline-light py-0 px-2 rounded-pill" onclick="toggleSidebar(false)" aria-label="Cerrar menú">✕</button>
+            <button class="btn btn-sm btn-outline-light py-0 px-2 rounded-pill d-md-none" onclick="toggleSidebar(false)" aria-label="Cerrar menú">✕</button>
         </div>
-        <div class="sidebar-links-container py-2">
-            <a class="sidebar-link" onclick="cargarModulo('inicio')">🏠 Inicio</a>
-            <a class="sidebar-link" onclick="cargarModulo('informes')">📊 Informes</a>
-            <a class="sidebar-link" onclick="cargarModulo('asignaciones')">📅 Asignaciones</a>
-            <a class="sidebar-link" onclick="cargarModulo('territorios')">📦 Territorios</a>
-            <a class="sidebar-link" onclick="cargarModulo('asistencia')">👥 Asistencia</a>
-            <a class="sidebar-link" onclick="cargarModulo('hermanos')">🗃️ Base de datos</a>
-            <a class="sidebar-link" onclick="cargarModulo('ajustes')">⚙️ Ajustes</a>
+
+        <div class="sidebar-congregation-pill">
+            <span class="avatar-pill">PC</span>
+            <div class="congregation-info">
+                <strong id="sidebarNombreCongregacion">Paraíso</strong>
+                <small>Carabayllo</small>
+            </div>
         </div>
-    </div>
+
+        <nav class="sidebar-links-container">
+            <a class="sidebar-link active" id="nav-link-inicio" onclick="cargarModulo('inicio')">
+                <span class="nav-icon">🏠</span>
+                <span class="nav-text">Inicio</span>
+            </a>
+            <a class="sidebar-link" id="nav-link-informes" onclick="cargarModulo('informes')">
+                <span class="nav-icon">📊</span>
+                <span class="nav-text">Informes</span>
+            </a>
+            <a class="sidebar-link" id="nav-link-asignaciones" onclick="cargarModulo('asignaciones')">
+                <span class="nav-icon">📅</span>
+                <span class="nav-text">Asignaciones</span>
+            </a>
+            <a class="sidebar-link" id="nav-link-territorios" onclick="cargarModulo('territorios')">
+                <span class="nav-icon">📦</span>
+                <span class="nav-text">Territorios</span>
+            </a>
+            <a class="sidebar-link" id="nav-link-asistencia" onclick="cargarModulo('asistencia')">
+                <span class="nav-icon">👥</span>
+                <span class="nav-text">Asistencia</span>
+            </a>
+            <a class="sidebar-link" id="nav-link-hermanos" onclick="cargarModulo('hermanos')">
+                <span class="nav-icon">🗃️</span>
+                <span class="nav-text">Base de datos</span>
+            </a>
+            <a class="sidebar-link" id="nav-link-ajustes" onclick="cargarModulo('ajustes')">
+                <span class="nav-icon">⚙️</span>
+                <span class="nav-text">Ajustes</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="sync-status">
+                <span class="sync-dot"></span>
+                <div class="sync-text">
+                    <strong>Datos sincronizados</strong>
+                    <small>Modo local PWA activo</small>
+                </div>
+            </div>
+        </div>
+    </aside>
 
     <div class="contenido-principal" id="app-container">
         <div id="area-tabla" class="container mt-4"></div>

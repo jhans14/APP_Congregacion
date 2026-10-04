@@ -1,4 +1,7 @@
 window.onload = () => {
+    if (localStorage.getItem('app_sidebar_collapsed') === 'true') {
+        document.body.classList.add('sidebar-collapsed');
+    }
     cargarModulo('inicio');
     actualizarIconoTemaTop();
 };
@@ -43,12 +46,21 @@ function toggleSidebar(forceState) {
     }
 }
 
+function toggleSidebarDesktop() {
+    let isCollapsed = document.body.classList.toggle('sidebar-collapsed');
+    localStorage.setItem('app_sidebar_collapsed', isCollapsed);
+}
+
 document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') toggleSidebar(false);
 });
 
 function cargarModulo(modulo) {
     toggleSidebar(false);
+    document.querySelectorAll('.sidebar-link').forEach(link => link.classList.remove('active'));
+    let activeLink = document.getElementById(`nav-link-${modulo}`);
+    if (activeLink) activeLink.classList.add('active');
+
     requestAnimationFrame(() => {
         ejecutarCargaModulo(modulo);
     });
@@ -531,137 +543,7 @@ function ejecutarCargaModulo(modulo) {
         inicializarModuloServicio();
     }
     else if (modulo === 'asistencia') {
-        let hoyIso = new Date().toISOString().split('T')[0];
-        areaTabla.innerHTML = `
-            <div class="card p-4 shadow-sm bg-white mb-4">
-                <!-- CABECERA DEL MÓDULO -->
-                <div class="border-bottom pb-3 mb-4">
-                    <h4 class="fw-bold" style="color: #2c3e50; margin: 0;">🗺️ Sistema de Control de Asistencia</h4>
-                    <small class="text-muted">Congregación Paraíso de Carabayllo — Registro por Fechas</small>
-                </div>
-
-                <!-- NAVEGACIÓN TIPO BOTONERA CENTRADA -->
-                <div class="card p-2 bg-light border mb-4">
-                    <ul class="nav nav-pills gap-2 justify-content-center" id="asistenciaTabs" role="tablist">
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link active fw-bold px-3 py-2" id="tab-plano-btn" data-bs-toggle="tab" data-bs-target="#tab-plano" type="button" role="tab" aria-selected="true">🗺️ Mapa de Asientos</button>
-                        </li>
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link fw-bold px-3 py-2 text-dark" id="tab-resumen-btn" data-bs-toggle="tab" data-bs-target="#tab-resumen" type="button" role="tab" aria-selected="false" onclick="cargarDatosResumenEstadisticas()">📊 Resumen y Gráficas</button>
-                        </li>
-                    </ul>
-                </div>
-
-                <div class="tab-content" id="asistenciaTabContent">
-                    <!-- CONTENIDO 1: MAPA DE ASIENTOS -->
-                    <div class="tab-pane fade show active" id="tab-plano" role="tabpanel">
-                        <div class="border-bottom pb-3 mb-4 d-flex justify-content-between align-items-center flex-wrap gap-2">
-                            <div>
-                                <h5 class="fw-bold text-dark m-0">🎟️ Distribución y Aforo</h5>
-                            </div>
-                            <div class="d-flex align-items-center gap-2 flex-wrap">
-                                <label class="fw-bold text-muted small mb-0">Fecha de Reunión:</label>
-                                <input type="date" id="inputFechaAsistencia" class="form-control form-control-sm fw-bold border-primary text-primary" value="${hoyIso}" style="width: 140px;" onchange="cambiarFechaAsistencia()">
-                                <button class="btn btn-primary btn-sm fw-bold" onclick="abrirModalGuardarAsistencia()">💾 Guardar Asistencia</button>
-                            </div>
-                        </div>
-
-                        <!-- Panel de Estadísticas Rápidas -->
-                        <div class="row g-3 mb-4 text-center">
-                            <div class="col-md-4"><div class="card bg-light p-3 border-0 shadow-sm"><span class="text-muted small fw-bold">Asientos Ocupados</span><h2 class="fw-bold text-danger mb-0" id="contadorOcupados">0</h2></div></div>
-                            <div class="col-md-4"><div class="card bg-light p-3 border-0 shadow-sm"><span class="text-muted small fw-bold">Asientos Disponibles</span><h2 class="fw-bold text-success mb-0" id="contadorLibres">0</h2></div></div>
-                            <div class="col-md-4"><div class="card bg-light p-3 border-0 shadow-sm"><span class="text-muted small fw-bold">Total aforo</span><h2 class="fw-bold text-dark mb-0" id="contadorTotal">0</h2></div></div>
-                        </div>
-
-                        <!-- Leyenda -->
-                        <div class="d-flex justify-content-center align-items-center gap-4 mb-4 text-secondary small fw-bold">
-                            <div class="d-flex align-items-center gap-2"><div style="width: 20px; height: 20px; background: #198754; border-radius: 4px;"></div> Disponible</div>
-                            <div class="d-flex align-items-center gap-2"><div style="width: 20px; height: 20px; background: #dc3545; border-radius: 4px;"></div> Ocupado</div>
-                        </div>
-
-                        <!-- Contenedor del Mapa con Scroll Táctil Optimizado -->
-                        <div class="mapa-scroll-wrapper">
-                            <div class="mapa-scroll-hint d-md-none text-center py-2 px-3 mb-3 rounded-pill">
-                                ↔️ Desliza con el dedo para ver todas las filas y asientos
-                            </div>
-                            <div class="mapa-scroll-inner">
-                                <div id="mapaAsientosContainer" class="d-flex flex-column align-items-center gap-3"></div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- CONTENIDO 2: RESUMEN Y ESTADÍSTICAS -->
-                    <div class="tab-pane fade" id="tab-resumen" role="tabpanel">
-                        <div class="border-bottom pb-3 mb-4 d-flex justify-content-between align-items-center flex-wrap gap-2">
-                            <div>
-                                <h5 class="fw-bold text-dark m-0">📈 Análisis y Tendencias de Asistencia</h5>
-                                <small class="text-muted">Evolución histórica y comparativa general</small>
-                            </div>
-                            <div class="d-flex align-items-center gap-2">
-                                <label class="fw-bold text-muted small mb-0">Agrupar por:</label>
-                                <select id="filtroTiempoResumen" class="form-select form-select-sm fw-bold border-primary text-primary" style="width: 160px;" onchange="actualizarGraficasEstadisticas()">
-                                    <option value="dia">Vista por Días</option>
-                                    <option value="mes">Agrupado por Meses</option>
-                                    <option value="ano">Agrupado por Años</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <!-- Gráficas Estadísticas -->
-                        <div class="row g-4">
-                            <div class="col-lg-6">
-                                <div class="card border p-3 shadow-sm h-100 bg-light">
-                                    <h6 class="fw-bold text-secondary text-center mb-3">📊 Comparativa: Total Presencial vs Zoom</h6>
-                                    <div style="position: relative; height: 320px;">
-                                        <canvas id="graficoBarrasAsistencia"></canvas>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-6">
-                                <div class="card border p-3 shadow-sm h-100 bg-light">
-                                    <h6 class="fw-bold text-secondary text-center mb-3">📈 Tendencia General de Asistencia</h6>
-                                    <div style="position: relative; height: 320px;">
-                                        <canvas id="graficoLineasAsistencia"></canvas>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Modal para Guardar Asistencia -->
-            <div class="modal fade" id="modalGuardarAsistencia" tabindex="-1" aria-hidden="true">
-              <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content">
-                  <div class="modal-header bg-dark text-white">
-                    <h5 class="modal-title">💾 Registrar y Guardar Asistencia</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                  </div>
-                  <div class="modal-body py-4">
-                    <p class="text-muted mb-1 text-center">Fecha de la reunión:</p>
-                    <h4 class="fw-bold text-primary mb-3 text-center" id="modalTextoFechaGuardar">--</h4>
-                    <div class="alert alert-secondary py-2 mb-3 text-center">
-                      Asientos Ocupados: <strong id="modalResumenOcupados">0</strong> | Libres: <strong id="modalResumenLibres">0</strong>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label fw-bold text-muted small">👥 Hermanos Parados (De pie):</label>
-                        <input type="number" id="inputParados" class="form-control" value="0" min="0">
-                    </div>
-                    <div class="mb-2">
-                        <label class="form-label fw-bold text-muted small">💻 Conectados por Zoom:</label>
-                        <input type="number" id="inputZoom" class="form-control" value="0" min="0">
-                    </div>
-                  </div>
-                  <div class="modal-footer justify-content-center">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-primary px-4 fw-bold" onclick="confirmarGuardadoAsistenciaHistorial()">Guardar Registro</button>
-                  </div>
-                </div>
-              </div>
-            </div>
-        `;
-        inicializarModuloAsistencia();
+        inicializarModuloAsistencia(areaTabla);
     }
     else if (modulo === 'territorios') {
         areaTabla.innerHTML = `
