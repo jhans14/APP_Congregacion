@@ -1,1178 +1,1498 @@
-window.onload = () => {
-    if (localStorage.getItem('app_sidebar_collapsed') === 'true') {
-        document.body.classList.add('sidebar-collapsed');
-    }
-    cargarModulo('inicio');
-    actualizarIconoTemaTop();
+// ==========================================================================
+// GESTOR CONGREGACIÓN - ARQUITECTURA FRONTEND V2 (PROYECTO PARAÍSO)
+// Unificación integral de interfaz UI/UX y lógica de negocio reactiva
+// ==========================================================================
+
+// Diccionario de Iconos SVG Oficiales (Idéntico a Proyecto-Paraiso2)
+const ICONS = {
+    home: '<path d="m3 11 9-8 9 8"/><path d="M5 10v10h14V10M9 20v-6h6v6"/>',
+    calendar: '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18"/>',
+    map: '<path d="m3 6 6-3 6 3 6-3v15l-6 3-6-3-6 3Z"/><path d="M9 3v15M15 6v15"/>',
+    users: '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>',
+    chart: '<path d="M4 19V9M10 19V5M16 19v-8M22 19V3"/><path d="M2 21h22"/>',
+    book: '<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z"/>',
+    settings: '<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.88l.06.06-2.83 2.83-.06-.06a1.7 1.7 0 0 0-1.88-.34 1.7 1.7 0 0 0-1.03 1.56V21h-4v-.08A1.7 1.7 0 0 0 8.94 19.4a1.7 1.7 0 0 0-1.88.34l-.06.06-2.83-2.83.06-.06A1.7 1.7 0 0 0 4.6 15 1.7 1.7 0 0 0 3.08 14H3v-4h.08A1.7 1.7 0 0 0 4.6 9a1.7 1.7 0 0 0-.34-1.88L4.2 7.06 7.03 4.2l.06.06A1.7 1.7 0 0 0 9 4.6 1.7 1.7 0 0 0 10 3.08V3h4v.08A1.7 1.7 0 0 0 15 4.6a1.7 1.7 0 0 0 1.88-.34l.06-.06 2.83 2.83-.06.06A1.7 1.7 0 0 0 19.4 9c.2.6.78 1 1.52 1H21v4h-.08c-.73 0-1.32.4-1.52 1Z"/>',
+    menu: '<path d="M4 7h16M4 12h16M4 17h16"/>',
+    moon: '<path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8Z"/>',
+    sun: '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.65 17.65l1.42 1.42M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.65 6.35l1.42-1.42"/>',
+    bell: '<path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M13.7 21h-3.4"/>',
+    search: '<circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/>',
+    arrow: '<path d="m9 18 6-6-6-6"/>',
+    check: '<path d="m5 12 4 4L19 6"/>',
+    clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+    pin: '<path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/>',
+    plus: '<path d="M12 5v14M5 12h14"/>',
+    download: '<path d="M12 3v12M7 10l5 5 5-5M5 21h14"/>',
+    copy: '<rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/>',
+    database: '<ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v6c0 1.7 3.6 3 8 3s8-1.3 8-3V5M4 11v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6"/>',
+    wifi: '<path d="M5 12.5a10 10 0 0 1 14 0M8.5 16a5 5 0 0 1 7 0"/><circle cx="12" cy="20" r="1"/>',
+    close: '<path d="m6 6 12 12M18 6 6 18"/>'
 };
 
-function alternarModoOscuroTop() {
-    let activo = !document.body.classList.contains('modo-oscuro');
-    aplicarEstiloModoOscuro(activo);
-    localStorage.setItem('app_modo_oscuro', activo);
-    let check = document.getElementById('checkModoOscuro');
-    if (check) check.checked = activo;
-    actualizarIconoTemaTop();
+function renderIcon(name, size = 18, className = "") {
+    return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="${className}">${ICONS[name] || ''}</svg>`;
 }
 
-function actualizarIconoTemaTop() {
-    let icon = document.getElementById('iconoTemaTop');
-    if (icon) {
-        icon.textContent = document.body.classList.contains('modo-oscuro') ? '☀️' : '🌙';
+// Metadatos y Encabezados Oficiales de Cada Módulo
+const PAGE_META = {
+    inicio: { eyebrow: "Resumen general", title: "Buenos días, Jhans", description: "Aquí tienes el estado de la congregación hoy." },
+    asignaciones: { eyebrow: "Vida y Ministerio Cristianos", title: "Programa semanal", description: "Organiza las asignaciones y la disponibilidad de los participantes." },
+    territorios: { eyebrow: "Tarjetero de manzanas", title: "Gestión de territorios", description: "Controla la cobertura y las asignaciones de las 54 zonas." },
+    asistencia: { eyebrow: "Reunión entre semana", title: "Control de asistencia", description: "Registra el aforo del auditorio, sala auxiliar y conexiones." },
+    informes: { eyebrow: "Informes mensuales", title: "Informes de servicio", description: "Seguimiento mensual de actividad y precursores por grupo." },
+    directorio: { eyebrow: "Base de datos oficial", title: "Directorio de publicadores", description: "Consulta y administra los datos de la congregación." },
+    configuracion: { eyebrow: "Administración", title: "Configuración", description: "Gestiona el almacenamiento, respaldos y preferencias." }
+};
+
+// Estado Global de la Aplicación
+let moduloActual = 'inicio';
+let deferredPromptPWA = null;
+
+// Evento de Inicio Global
+function iniciarApp() {
+    // 1. Cargar preferencias de apariencia (Modo Oscuro)
+    const esOscuro = localStorage.getItem('app_modo_oscuro') === 'true';
+    if (esOscuro) {
+        document.getElementById('appRoot')?.classList.add('dark');
+        actualizarIconoTema(true);
     }
+
+    // 2. Cargar estado colapsado del menú lateral en escritorio
+    if (localStorage.getItem('app_sidebar_collapsed') === 'true') {
+        document.getElementById('appRoot')?.classList.add('sidebar-collapsed');
+    }
+
+    // 3. Inicializar nombres de congregación guardados
+    actualizarNombreCongregacionUI();
+
+    // 4. Inicializar escuchador de conectividad de red
+    actualizarEstadoConexion();
+    window.addEventListener('online', actualizarEstadoConexion);
+    window.addEventListener('offline', actualizarEstadoConexion);
+
+    // 5. Cargar módulo inicial
+    cargarModulo('inicio');
 }
 
-function toggleSidebar(forceState) {
-    const sidebar = document.getElementById('sidebarMenu');
-    const backdrop = document.getElementById('sidebar-backdrop');
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', iniciarApp);
+} else {
+    iniciarApp();
+}
+
+// Captura del evento de instalación PWA
+window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPromptPWA = e;
+});
+
+/* ==========================================================================
+   NAVEGACIÓN, SIDEBAR Y APARIENCIA
+   ========================================================================== */
+
+function cargarModulo(modulo) {
+    // Soportar alias históricos
+    if (modulo === 'hermanos') modulo = 'directorio';
+    if (modulo === 'ajustes') modulo = 'configuracion';
+
+    moduloActual = modulo;
+    toggleSidebarDrawer(false);
+
+    // Actualizar enlaces activos en el menú
+    document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+    const navActivo = document.getElementById(`nav-item-${modulo}`);
+    if (navActivo) navActivo.classList.add('active');
+
+    // Desplazamiento suave al inicio de pantalla
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    // Renderizado reactivo inmediato
+    ejecutarRenderizadoModulo(modulo);
+}
+
+function toggleSidebarDrawer(forzar) {
+    const sidebar = document.getElementById('appSidebar');
+    const overlay = document.getElementById('drawerOverlay');
     if (!sidebar) return;
 
-    let isActive;
-    if (forceState !== undefined) {
-        isActive = forceState;
-        if (forceState) {
-            sidebar.classList.add('active');
-            if (backdrop) backdrop.classList.add('active');
-            document.body.classList.add('sidebar-open');
+    if (forzar !== undefined) {
+        if (forzar) {
+            sidebar.classList.add('open');
+            if (overlay) overlay.style.display = 'block';
         } else {
-            sidebar.classList.remove('active');
-            if (backdrop) backdrop.classList.remove('active');
-            document.body.classList.remove('sidebar-open');
+            sidebar.classList.remove('open');
+            if (overlay) overlay.style.display = 'none';
         }
     } else {
-        isActive = sidebar.classList.toggle('active');
-        if (backdrop) backdrop.classList.toggle('active', isActive);
-        document.body.classList.toggle('sidebar-open', isActive);
+        const isOpen = sidebar.classList.toggle('open');
+        if (overlay) overlay.style.display = isOpen ? 'block' : 'none';
     }
 }
 
 function toggleSidebarDesktop() {
-    let isCollapsed = document.body.classList.toggle('sidebar-collapsed');
+    const root = document.getElementById('appRoot');
+    if (!root) return;
+    const isCollapsed = root.classList.toggle('sidebar-collapsed');
     localStorage.setItem('app_sidebar_collapsed', isCollapsed);
 }
 
-document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') toggleSidebar(false);
+function alternarModoOscuroTop() {
+    const root = document.getElementById('appRoot');
+    if (!root) return;
+    const esOscuro = root.classList.toggle('dark');
+    localStorage.setItem('app_modo_oscuro', esOscuro);
+    actualizarIconoTema(esOscuro);
+}
+
+function actualizarIconoTema(esOscuro) {
+    const iconContainer = document.getElementById('themeToggleIcon');
+    if (iconContainer) {
+        iconContainer.innerHTML = esOscuro ? renderIcon('sun', 19) : renderIcon('moon', 19);
+    }
+}
+
+function actualizarEstadoConexion() {
+    const textEl = document.getElementById('topOnlineText');
+    const dotEl = document.getElementById('offlineIndicatorDot');
+    if (navigator.onLine) {
+        if (textEl) textEl.textContent = 'En línea';
+        if (dotEl) dotEl.style.background = '#34d399';
+    } else {
+        if (textEl) textEl.textContent = 'Sin conexión';
+        if (dotEl) dotEl.style.background = '#e11d48';
+    }
+}
+
+function toggleNotificationPopover() {
+    const popover = document.getElementById('notificationPopover');
+    if (!popover) return;
+    const visible = popover.style.display === 'block';
+    if (visible) {
+        popover.style.display = 'none';
+    } else {
+        actualizarNotificacionesPopover();
+        popover.style.display = 'block';
+    }
+}
+
+document.addEventListener('click', (e) => {
+    const popover = document.getElementById('notificationPopover');
+    const btn = document.getElementById('btnNotificationsToggle');
+    if (popover && popover.style.display === 'block') {
+        if (!popover.contains(e.target) && !btn?.contains(e.target)) {
+            popover.style.display = 'none';
+        }
+    }
 });
 
-function cargarModulo(modulo) {
-    toggleSidebar(false);
-    document.querySelectorAll('.sidebar-link').forEach(link => link.classList.remove('active'));
-    let activeLink = document.getElementById(`nav-link-${modulo}`);
-    if (activeLink) activeLink.classList.add('active');
+function actualizarNotificacionesPopover() {
+    const list = document.getElementById('notificationPopoverList');
+    if (!list) return;
 
-    requestAnimationFrame(() => {
-        ejecutarCargaModulo(modulo);
-    });
-}
-
-function ejecutarCargaModulo(modulo) {
-    const areaTabla = document.getElementById('area-tabla');
-
-    if (modulo === 'inicio') {
-        const hermanos = obtenerHermanos();
-        
-        // 1. Total de publicadores (todos los registros activos)
-        const totalPublicadores = hermanos.length;
-
-        // 2. Publicadores bautizados (incluye precursores, ancianos, siervos ministeriales o bautizados)
-        const publicadoresBautizados = hermanos.filter(h => {
-            let esBautizado = h.bautizado === true || String(h.bautizado).toLowerCase() === 'sí' || String(h.bautizado).toLowerCase() === 'si';
-            let tienePrivilegioEspecial = h.cargo && h.cargo !== 'Ninguno' && h.cargo !== 'Publicador' && !h.cargo.includes('No Bautizado');
-            let esPrecursor = h.precursorado && h.precursorado !== 'Ninguno';
-            return esBautizado || tienePrivilegioEspecial || esPrecursor;
-        }).length;
-
-        const precursoresRegulares = hermanos.filter(h => h.precursorado === 'Precursor Regular').length;
-        const precursoresAuxiliares = hermanos.filter(h => h.precursorado === 'Precursor Auxiliar').length;
-
-        // 3. Recopilar tareas pendientes vinculadas al calendario (Asignaciones, Territorios y Cierre de Mes)
-        let listaTareas = [];
-
-        let dbAsig = JSON.parse(localStorage.getItem('bd_asignaciones_v16')) || [];
-        let hoyIso = new Date().toISOString().split('T')[0];
-        
-        dbAsig.forEach(a => {
-            if (a.fecha >= hoyIso && a.cumplio === "pendiente") {
-                listaTareas.push({
-                    fecha: a.fecha,
-                    prioridad: "alta",
-                    texto: `📅 Asignación (${a.tipo}) - Estudiante: ${typeof invertirNombre === 'function' ? invertirNombre(a.estudiante) : a.estudiante}`
-                });
-            }
-        });
-
-        let dbTerr = JSON.parse(localStorage.getItem('bd_modulo_territorios_v6')) || [];
-        dbTerr.forEach(t => {
-            if (t.responsable && t.fecha) {
-                listaTareas.push({
-                    fecha: t.fecha,
-                    prioridad: "media",
-                    texto: `🚗 Tarjeta Territorio N° ${t.num} en la calle (Responsable: ${typeof invertirNombre === 'function' ? invertirNombre(t.responsable) : t.responsable})`
-                });
-            }
-        });
-
-        let fechaActualObj = new Date();
-        let ultimoDiaMes = new Date(fechaActualObj.getFullYear(), fechaActualObj.getMonth() + 1, 0);
-        let diasRestantesCierre = ultimoDiaMes.getDate() - fechaActualObj.getDate();
-        
-        if (diasRestantesCierre <= 5) {
-            let anioMesStr = `${fechaActualObj.getFullYear()}-${String(fechaActualObj.getMonth()+1).padStart(2,'0')}-${String(ultimoDiaMes.getDate()).padStart(2,'0')}`;
-            listaTareas.unshift({
-                fecha: anioMesStr,
-                prioridad: "urgente",
-                texto: `⏰ Cierre de Mes: Quedan ${diasRestantesCierre} días para la entrega de informes de servicio.`
-            });
-        }
-
-        listaTareas.sort((a, b) => new Date(a.fecha) - new Date(b.fecha));
-
-        let tareasPendientesHtml = "";
-        if (listaTareas.length === 0) {
-            tareasPendientesHtml = `<li class="list-group-item text-muted text-center py-3">No hay tareas pendientes en el calendario próximo.</li>`;
-        } else {
-            listaTareas.forEach(t => {
-                let estiloBorde = t.prioridad === "urgente" ? "border-danger bg-light" : (t.prioridad === "alta" ? "border-warning" : "border-secondary");
-                tareasPendientesHtml += `
-                    <li class="list-group-item d-flex justify-content-between align-items-center ${estiloBorde} mb-2 border rounded shadow-sm">
-                        <div>
-                            <span class="fw-bold d-block text-dark">${t.texto}</span>
-                            <small class="text-muted">Fecha del evento / plazo: ${t.fecha}</small>
-                        </div>
-                        <span class="badge bg-dark">Pendiente</span>
-                    </li>
-                `;
-            });
-        }
-
-        areaTabla.innerHTML = `
-            <div class="p-4 p-md-5 bg-light border rounded shadow-sm mb-4">
-                <h1 class="mb-2">Bienvenido Jhans</h1>
-                <p class="lead text-muted mb-4">Congregación Paraíso de Carabayllo</p>
-                <div class="row g-3">
-                    <div class="col-12 col-md-3">
-                        <div class="card border-0 shadow-sm h-100">
-                            <div class="card-body text-center">
-                                <h6 class="text-muted">Total Publicadores</h6>
-                                <div class="display-5 fw-bold text-dark">${totalPublicadores}</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-12 col-md-3">
-                        <div class="card border-0 shadow-sm h-100">
-                            <div class="card-body text-center">
-                                <h6 class="text-muted">Publicadores Bautizados</h6>
-                                <div class="display-5 fw-bold text-dark">${publicadoresBautizados}</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-12 col-md-3">
-                        <div class="card border-0 shadow-sm h-100">
-                            <div class="card-body text-center">
-                                <h6 class="text-muted">Precursores Regulares</h6>
-                                <div class="display-5 fw-bold">${precursoresRegulares}</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-12 col-md-3">
-                        <div class="card border-0 shadow-sm h-100">
-                            <div class="card-body text-center">
-                                <h6 class="text-muted">Precursores Auxiliares</h6>
-                                <div class="display-5 fw-bold">${precursoresAuxiliares}</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- SECCIÓN DE CALENDARIO Y TAREAS PENDIENTES -->
-            <div class="row">
-                <div class="col-lg-12">
-                    <div class="card shadow-sm p-4 bg-white border">
-                        <div class="d-flex justify-content-between align-items-center mb-3 border-bottom pb-2">
-                            <h5 class="fw-bold text-dark m-0">📌 Tareas Pendientes y Vencimientos del Calendario</h5>
-                            <span class="badge bg-primary">Sincronizado con Asignaciones y Territorios</span>
-                        </div>
-                        <ul class="list-group list-group-flush" style="max-height: 400px; overflow-y: auto;">
-                            ${tareasPendientesHtml}
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        `;
-    } 
-    
-    else if (modulo === 'asignaciones') {
-        areaTabla.innerHTML = `
-            <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
-                <div>
-                    <h3 class="mb-1 fw-bold header-title-primary">📅 Gestor de Asignaciones</h3>
-                    <p class="text-muted small mb-0">Programa semanal de Vida y Ministerio Cristianos, estado de publicadores y planeación</p>
-                </div>
-                <div class="d-flex align-items-center gap-2 bg-white p-2 rounded-pill shadow-sm border">
-                    <label class="fw-bold text-muted mb-0 ps-2 small">Año:</label>
-                    <select id="selectorAnioAsignaciones" class="form-select form-select-sm fw-bold border-0 bg-transparent" style="width: 85px;" onchange="cambiarAnioAsignaciones()"></select>
-                </div>
-            </div>
-
-            <ul class="nav nav-pills justify-content-center mb-4 shadow-sm" id="pills-tab" role="tablist">
-                <li class="nav-item"><button class="nav-link active" data-bs-toggle="pill" data-bs-target="#modulo1">📅 Programa General</button></li>
-                <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#modulo2">👥 Disponibilidad y Grupos</button></li>
-                <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#modulo-planificacion" onclick="renderizarPlanificacionMeses()">📂 Planificación Anual</button></li>
-                <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#modulo3">🕒 Historial Personal</button></li>
-            </ul>
-
-            <div class="tab-content">
-                <!-- PESTAÑA 1: PROGRAMA GENERAL -->
-                <div class="tab-pane fade show active" id="modulo1">
-                    <div class="row justify-content-center mb-4">
-                        <div class="col-md-6 text-center">
-                            <select id="selectorMesPrograma" class="form-select select-mes-gigante text-center" onchange="renderizarProgramaMensual()">
-                                <option value="">-- No hay meses registrados --</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div id="contenedorPrograma"></div>
-                </div>
-
-                <!-- PESTAÑA 2: VISTA GENERAL -->
-                <div class="tab-pane fade" id="modulo2">
-                    <div class="row" id="contenedorGrupos"></div>
-                </div>
-
-                <!-- PESTAÑA 3: PLANIFICACIÓN (12 TABLAS MENSUALES CON DATOS DE EXCEL) -->
-                <div class="tab-pane fade" id="modulo-planificacion">
-                    <div id="contenedorPlanificacionMeses"></div>
-                </div>
-
-                <!-- PESTAÑA 4: HISTORIAL PERSONAL -->
-                <div class="tab-pane fade" id="modulo3">
-                    <div class="row">
-                        <div class="col-md-12 mb-4">
-                            <div class="card p-4 shadow-sm border-0 rounded-4">
-                                <label class="form-label fw-bold text-dark mb-2">Seleccionar Hermano para ver Historial Completo:</label>
-                                <select id="selectHistorial" class="form-select rounded-pill px-3 py-2 fw-semibold" onchange="mostrarHistorialAsignaciones()">
-                                    <option value="">-- Buscar hermano --</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-md-12">
-                            <div class="card p-3">
-                                <h6 class="text-center text-muted fw-bold mb-3">📋 Trayectoria de Asignaciones y Cumplimiento</h6>
-                                <div class="table-responsive">
-                                    <table class="table table-sm align-middle">
-                                        <thead class="table-light">
-                                            <tr>
-                                                <th>Fecha</th>
-                                                <th>Rol</th>
-                                                <th>Tipo de Asignación</th>
-                                                <th>Compañero</th>
-                                                <th class="text-center">Estado / Cumplimiento</th>
-                                                <th class="text-center">Intervalo</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="tablaHistorial">
-                                            <tr><td colspan="6" class="text-center text-muted">Seleccione un hermano</td></tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- MODAL PARA AGREGAR / EDITAR ASIGNACIÓN RÁPIDA -->
-            <div class="modal fade" id="modalAgregadoRapido" tabindex="-1" aria-hidden="true">
-              <div class="modal-dialog">
-                <div class="modal-content">
-                  <div class="modal-header bg-dark text-white">
-                    <h5 class="modal-title" id="tituloModal">Agregar a la Semana</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                  </div>
-                  <div class="modal-body">
-                    <form id="formAsignacionRapida" onsubmit="guardarAsignacionRapida(event)">
-                         <input type="hidden" id="modalFechaMartes">
-                         <input type="hidden" id="modalEditId">
-                         
-                         <div class="row bg-light p-3 rounded mb-3 border">
-                             <div class="col-md-4 mb-2">
-                                 <label class="form-label text-muted fw-bold">N° Parte</label>
-                                 <input type="number" name="numeroParte" class="form-control" min="3" max="9" required>
-                             </div>
-                             <div class="col-md-8 mb-2">
-                                 <label class="form-label text-muted fw-bold">Tipo de Asignación</label>
-                                 <select name="tipoAsignacion" class="form-select" required>
-                                     <option value="Lectura de la Biblia">Lectura de la Biblia</option>
-                                     <option value="Empiece conversaciones">Empiece conversaciones</option>
-                                     <option value="Haga revisitas">Haga revisitas</option>
-                                     <option value="Haga discípulos">Haga discípulos</option>
-                                     <option value="Explique sus creencias (Escenificación)">Explique sus creencias (Escenificación)</option>
-                                     <option value="Explique sus creencias (Discurso)">Explique sus creencias (Discurso)</option>
-                                     <option value="Discurso">Discurso</option>
-                                 </select>
-                             </div>
-                         </div>
-                         
-                         <div class="mb-3">
-                             <label class="form-label text-muted fw-bold">Estudiante / Asignado</label>
-                             <input type="text" name="nombreEstudiante" class="form-control" list="listaHermanosGlobal" required placeholder="Apellidos, Nombres">
-                         </div>
-
-                         <div class="mb-2">
-                             <label class="form-label text-muted fw-bold">Ayudante (Opcional)</label>
-                             <input type="text" name="nombreAyudante" class="form-control" list="listaHermanosGlobal" placeholder="Apellidos, Nombres">
-                         </div>
-                         <datalist id="listaHermanosGlobal"></datalist>
-
-                         <button type="submit" class="btn btn-primary w-100 py-2 mt-3" id="btnGuardarModal">Guardar</button>
-                    </form>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <!-- MODAL PARA REGISTRAR CUMPLIMIENTO INDIVIDUAL (OBJETIVO DE TIRO) -->
-            <div class="modal fade" id="modalControlCumplimiento" tabindex="-1" aria-hidden="true">
-              <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content">
-                  <div class="modal-header bg-dark text-white">
-                    <h5 class="modal-title">🎯 Control de Cumplimiento de Asignación</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                  </div>
-                  <div class="modal-body">
-                    <input type="hidden" id="modalCumplimientoIdAsignacion">
-                    <div id="contenedorListaCumplimiento"></div>
-                  </div>
-                  <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                    <button type="button" class="btn btn-primary" onclick="guardarControlCumplimientoModal()">Guardar Cambios</button>
-                  </div>
-                </div>
-              </div>
-            </div>
-        `;
-        inicializarModuloAsignaciones();
+    let items = [];
+    let terr = JSON.parse(localStorage.getItem('bd_modulo_territorios_v6')) || [];
+    let terrEnCalle = terr.filter(t => t.responsable);
+    if (terrEnCalle.length > 0) {
+        items.push(`${terrEnCalle.length} tarjeta(s) de territorio activas en la calle.`);
     }
-    else if (modulo === 'informes') {
-        areaTabla.innerHTML = `
-            <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap">
-                <h3 class="mb-0 text-primary fw-bold" style="color: #4a6da7;">Gestor de Servicio - Informes</h3>
-            </div>
 
-            <ul class="nav nav-pills justify-content-center mb-4 shadow-sm p-2 bg-white rounded" id="pills-tab" role="tablist">
-                <li class="nav-item"><button class="nav-link active" data-bs-toggle="pill" data-bs-target="#lista-serv">📊 Registros y Grupos</button></li>
-                <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#graficos-serv" onclick="inicializarGraficosServicio()">📈 Análisis Gráfico</button></li>
-            </ul>
-
-            <div class="tab-content">
-                <!-- PESTAÑA 1: REGISTROS POR GRUPO, MES Y AÑO -->
-                <div class="tab-pane fade show active" id="lista-serv">
-                    <div class="card p-3 shadow-sm bg-white border-0 mb-3">
-                        <div class="row g-3 align-items-end">
-                            <div class="col-12 col-md-4">
-                                <label class="fw-bold text-muted mb-1">Seleccionar Grupo:</label>
-                                <select id="filtroGrupoInforme" class="form-select form-select-sm" onchange="actualizarTablaServicio()">
-                                    <option value="todos">Todos los grupos</option>
-                                    <option value="1">Grupo 1</option>
-                                    <option value="2">Grupo 2</option>
-                                    <option value="3">Grupo 3</option>
-                                    <option value="4">Grupo 4</option>
-                                </select>
-                            </div>
-                            <div class="col-12 col-md-4">
-                                <label class="fw-bold text-muted mb-1">Mes:</label>
-                                <select id="filtroMesInforme" class="form-select form-select-sm" onchange="actualizarTablaServicio()">
-                                    <option value="Enero">Enero</option><option value="Febrero">Febrero</option>
-                                    <option value="Marzo">Marzo</option><option value="Abril">Abril</option>
-                                    <option value="Mayo">Mayo</option><option value="Junio">Junio</option>
-                                    <option value="Julio">Julio</option><option value="Agosto">Agosto</option>
-                                    <option value="Septiembre">Septiembre</option><option value="Octubre">Octubre</option>
-                                    <option value="Noviembre">Noviembre</option><option value="Diciembre">Diciembre</option>
-                                </select>
-                            </div>
-                            <div class="col-12 col-md-4">
-                                <label class="fw-bold text-muted mb-1">Año:</label>
-                                <select id="filtroAnioInforme" class="form-select form-select-sm" onchange="actualizarTablaServicio()"></select>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="card p-3 shadow-sm bg-white border-0">
-                        <h5 class="m-0 text-muted mb-3">Listado de Hermanos</h5>
-                        <div class="table-responsive">
-                            <table class="table align-middle table-hover">
-                                <thead class="table-light">
-                                    <tr>
-                                        <th>Nombre</th>
-                                        <th>Precursorado</th>
-                                        <th class="text-center">Horas</th>
-                                        <th class="text-center">Estudios</th>
-                                        <th class="text-center">Estado</th>
-                                        <th class="text-end">Acción</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="tablaCuerpoServicio"></tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- PESTAÑA 2: GRÁFICOS -->
-                <div class="tab-pane fade" id="graficos-serv">
-                    <div class="row">
-                        <!-- SELECTOR DE HERMANO Y AÑO -->
-                        <div class="col-md-12 mb-4">
-                            <div class="card p-3 shadow-sm bg-white border-0">
-                                <div class="row align-items-end">
-                                    <div class="col-md-8">
-                                        <label class="form-label fw-bold text-primary">Seleccionar Hermano para Analizar:</label>
-                                        <select id="selectHermanoGrafico" class="form-select border-primary" onchange="renderizarGraficosServicio()">
-                                            <option value="">-- Elegir de la base de datos --</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-md-4 mt-3 mt-md-0">
-                                        <label class="form-label fw-bold text-muted">Filtrar por Año:</label>
-                                        <select id="filtroAnioAnalisis" class="form-select" onchange="renderizarGraficosServicio()"></select>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- 1. TARJETAS DE INDICADORES (PROMEDIO DE HORAS Y ESTUDIOS) -->
-                        <div class="col-12 mb-4">
-                            <div class="row g-3">
-                                <div class="col-md-6">
-                                    <div class="card border-0 shadow-sm p-3 text-center bg-light">
-                                        <h6 class="text-muted mb-1">Promedio de Horas / Mes</h6>
-                                        <h3 class="fw-bold text-primary mb-0" id="kpiPromedioHoras">0.0</h3>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="card border-0 shadow-sm p-3 text-center bg-light">
-                                        <h6 class="text-muted mb-1">Promedio de Estudios / Mes</h6>
-                                        <h3 class="fw-bold text-success mb-0" id="kpiPromedioEstudios">0.0</h3>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- 2. GRÁFICO DE BARRAS COMBINADO (HORAS Y ESTUDIOS) -->
-                        <div class="col-lg-7 mb-4">
-                            <div class="card p-3 border-0 shadow-sm h-100">
-                                <h6 class="text-center text-muted fw-bold mb-3">📊 Horas y Estudios Mensuales</h6>
-                                <div style="position: relative; height: 300px; width: 100%;"><canvas id="barChartHorasEstudios"></canvas></div>
-                            </div>
-                        </div>
-
-                        <!-- 3. GRÁFICO DE LÍNEAS (EVOLUCIÓN DE PRIVILEGIOS) -->
-                        <div class="col-lg-5 mb-4">
-                            <div class="card p-3 border-0 shadow-sm h-100">
-                                <h6 class="text-center text-muted fw-bold mb-3">📈 Evolución de Privilegio</h6>
-                                <div style="position: relative; height: 300px; width: 100%;"><canvas id="lineChartPrivilegio"></canvas></div>
-                            </div>
-                        </div>
-
-                        <!-- TABLA DE DETALLE MENSUAL OPCIONAL ABAJO -->
-                        <div class="col-md-12 mb-4">
-                            <div class="card p-3 border-0 shadow-sm">
-                                <h6 class="text-center text-muted fw-bold mb-3">📋 Detalle Mensual</h6>
-                                <div class="table-responsive">
-                                    <table class="table table-sm align-middle">
-                                        <thead class="table-light">
-                                            <tr>
-                                                <th>Mes</th>
-                                                <th>Nombramiento</th>
-                                                <th class="text-center">Horas</th>
-                                                <th class="text-center">Estudios</th>
-                                                <th class="text-center">Estado</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="tablaAnalisisCuerpo">
-                                            <tr><td colspan="5" class="text-center text-muted">Seleccione un hermano y año para ver sus reportes</td></tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- MODAL PARA REGISTRAR / EDITAR INFORME -->
-            <div class="modal fade" id="modalInformeServicio" tabindex="-1">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="modalInformeTitulo">Registrar Informe de Servicio</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                        </div>
-                        <div class="modal-body">
-                            <input type="hidden" id="modalNombreHermano">
-                            
-                            <p class="fw-bold text-primary mb-3" id="modalLabelHermano"></p>
-                            
-                            <div class="mb-3">
-                                <label class="form-label text-muted fw-bold">Tipo / Precursorado para este mes</label>
-                                <select id="modalTipoHermano" class="form-select">
-                                    <option value="Publicador">Publicador</option>
-                                    <option value="Precursor Auxiliar">Precursor Auxiliar</option>
-                                    <option value="Precursor Regular">Precursor Regular</option>
-                                </select>
-                            </div>
-
-                            <div class="row">
-                                <div class="col-6 mb-3">
-                                    <label class="form-label text-muted fw-bold">Horas</label>
-                                    <input type="number" id="modalHoras" class="form-control" value="0" min="0">
-                                </div>
-                                <div class="col-6 mb-3">
-                                    <label class="form-label text-muted fw-bold">Estudios</label>
-                                    <input type="number" id="modalEstudios" class="form-control" value="0" min="0">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                            <button class="btn btn-primary" onclick="guardarInformeModal()">Guardar Informe</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        `;
-        inicializarModuloServicio();
+    let asig = JSON.parse(localStorage.getItem('bd_asignaciones_v16')) || [];
+    let pendientes = asig.filter(a => a.cumplio === 'pendiente');
+    if (pendientes.length > 0) {
+        items.push(`${pendientes.length} asignaciones próximas requieren confirmación.`);
     }
-    else if (modulo === 'asistencia') {
-        inicializarModuloAsistencia(areaTabla);
-    }
-    else if (modulo === 'territorios') {
-        areaTabla.innerHTML = `
-            <div class="card p-4 shadow-sm bg-white mb-4">
-                <div class="border-bottom pb-3 mb-3 d-flex justify-content-between align-items-center flex-wrap gap-2">
-                    <div>
-                        <h4 class="fw-bold" style="color: #2c3e50; margin: 0;">🗺️ Sistema de Gestión de Territorios</h4>
-                        <small class="text-muted">Congregación Paraíso de Carabayllo — Módulos Independientes</small>
-                    </div>
-                </div>
 
-                <ul class="nav nav-pills justify-content-center mb-4 bg-light p-2 rounded border shadow-sm" id="pills-tab" role="tablist">
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link active" id="pills-control-tab" data-bs-toggle="pill" data-bs-target="#moduloControl" type="button" role="tab" aria-controls="moduloControl" aria-selected="true">🎮 Control de Tarjetas</button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="pills-info-tab" data-bs-toggle="pill" data-bs-target="#moduloInfo" type="button" role="tab" aria-controls="moduloInfo" aria-selected="false">📋 Información Territorios</button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="pills-resumen-tab" data-bs-toggle="pill" data-bs-target="#moduloResumen" type="button" role="tab" aria-controls="moduloResumen" aria-selected="false" onclick="inicializarGraficosTerritorios()">📊 Resumen Territorio</button>
-                    </li>
-                </ul>
-
-                <div class="tab-content" id="pills-tabContent">
-                    
-                    <div class="tab-pane fade show active" id="moduloControl" role="tabpanel" aria-labelledby="pills-control-tab">
-                        <div class="row">
-                            <div class="col-lg-6 border-end">
-                                <h6 class="fw-bold text-muted mb-3">📦 Casillero General (Tarretero)</h6>
-                                <div class="table-responsive border rounded" style="max-height: 520px; overflow-y: auto;">
-                                    <table class="table table-sm table-hover table-bordered align-middle mb-0">
-                                        <thead class="table-light position-sticky" style="top: 0; z-index: 2;">
-                                            <tr>
-                                                <th class="text-center" style="width: 120px;">Territorio</th>
-                                                <th>Puntos de Encuentro</th>
-                                                <th class="text-center" style="width: 120px;">Estado</th>
-                                                <th class="text-center" style="width: 100px;">Acción</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="tablaControlTodos"></tbody>
-                                    </table>
-                                </div>
-                            </div>
-
-                            <div class="col-lg-6 mt-4 mt-lg-0">
-                                <h6 class="fw-bold text-danger mb-3">🚗 Tarjetas en la Calle (Asignadas)</h6>
-                                <div class="table-responsive border rounded" style="max-height: 520px; overflow-y: auto;">
-                                    <table class="table table-sm table-hover table-bordered align-middle mb-0">
-                                        <thead class="table-light position-sticky" style="top: 0; z-index: 2;">
-                                            <tr>
-                                                <th class="text-center" style="width: 120px;">Territorio</th>
-                                                <th>Hermano Responsable</th>
-                                                <th class="text-center" style="width: 120px;">Fecha Asig.</th>
-                                                <th class="text-center" style="width: 100px;">Acción</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="tablaControlCalle"></tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="tab-pane fade" id="moduloInfo" role="tabpanel" aria-labelledby="pills-info-tab">
-                        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-3">
-                            <h6 class="fw-bold text-muted m-0">🗃️ Registro General y Observaciones de No Visita</h6>
-                            <div class="d-flex gap-2 w-100 w-md-auto" style="max-width: 500px;">
-                                <input type="text" id="buscadorInfo" class="form-control" placeholder="🔍 Buscar territorio o punto..." oninput="filtrarTablaInfo()">
-                                <button class="btn btn-primary text-nowrap" onclick="abrirModalNuevoTerritorio()">+ Agregar Territorio</button>
-                            </div>
-                        </div>
-
-                        <div class="table-responsive border rounded" style="max-height: 520px; overflow-y: auto;">
-                            <table class="table table-sm table-hover table-bordered align-middle mb-0">
-                                <thead class="table-light position-sticky" style="top: 0; z-index: 2;">
-                                    <tr>
-                                        <th class="text-center" style="width: 120px;">Territorio</th>
-                                        <th>Puntos de Encuentro</th>
-                                        <th class="text-center" style="width: 130px;">Asignado (Veces)</th>
-                                        <th>Observaciones (Casas que no desean ser visitadas)</th>
-                                        <th class="text-center" style="width: 90px;">Acción</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="tablaInfoMaestra"></tbody>
-                            </table>
-                        </div>
-                    </div>
-
-                    <div class="tab-pane fade" id="moduloResumen" role="tabpanel" aria-labelledby="pills-resumen-tab">
-                        
-                        <!-- BARRA DE FILTROS GLOBALES (DENTRO DE LA PESTAÑA RESUMEN) -->
-                        <div class="bg-light p-3 rounded border mb-4 shadow-sm">
-                            <div class="row align-items-center g-3">
-                                <div class="col-md-4">
-                                    <label class="form-label small fw-bold text-secondary mb-1">Filtrar por Territorio (Zoom):</label>
-                                    <select id="filtroGlobalTerritorio" class="form-select form-select-sm fw-bold" onchange="aplicarFiltrosGlobalesYRenderizar()"></select>
-                                </div>
-                                <div class="col-md-4">
-                                    <label class="form-label small fw-bold text-secondary mb-1">Filtrar por Mes:</label>
-                                    <select id="filtroGlobalMes" class="form-select form-select-sm fw-bold" onchange="aplicarFiltrosGlobalesYRenderizar()"></select>
-                                </div>
-                                <div class="col-md-4">
-                                    <label class="form-label small fw-bold text-secondary mb-1">Filtrar por Año:</label>
-                                    <select id="filtroGlobalAnio" class="form-select form-select-sm fw-bold" onchange="aplicarFiltrosGlobalesYRenderizar()"></select>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-12 mb-4">
-                                <div class="card p-3 bg-white shadow-sm border">
-                                    <h6 class="fw-bold text-muted text-center mb-3">📊 Vista General del Tarretero</h6>
-                                    <div style="position: relative; height: 250px; width: 100%;">
-                                        <canvas id="chartGlobalTerritorios"></canvas>
-                                    </div>
-                                    <div class="text-center mt-3 small text-secondary" id="leyendaGlobalTexto"></div>
-                                </div>
-                            </div>
-                            
-                            <div class="col-md-12 mb-4">
-                                <div class="card p-3 bg-white shadow-sm border">
-                                    <h6 class="fw-bold text-muted text-center mb-2">📈 Gráfico Comparativo y Zoom de Uso</h6>
-                                    <div style="position: relative; height: 350px; width: 100%;" class="mb-3">
-                                        <canvas id="chartIndividualTerritorio"></canvas>
-                                    </div>
-                                    <div id="contenedorTablaFechasAsignadas" class="px-3"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-
-            <!-- MODAL ASIGNAR TERRITORIO -->
-            <div class="modal fade" id="modalAsignarTerritorio" tabindex="-1" aria-hidden="true">
-              <div class="modal-dialog">
-                <div class="modal-content">
-                  <div class="modal-header bg-dark text-white">
-                    <h5 class="modal-title">Asignar Tarjeta de Territorio</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                  </div>
-                  <div class="modal-body">
-                    <form id="formAsignarTerritorio" onsubmit="guardarSalidaTerritorio(event)">
-                         <input type="hidden" id="modalTerritorioNum">
-                         <div class="mb-3 bg-light p-3 border rounded fw-bold text-center text-primary" id="modalTerritorioTexto"></div>
-                         <div class="mb-3">
-                             <label class="form-label fw-bold text-muted">Hermano Responsable</label>
-                             <input type="text" id="inputResponsableTerritorio" class="form-control" list="listaHermanosGlobal" required placeholder="Apellidos, Nombres">
-                         </div>
-                         <div class="mb-3">
-                             <label class="form-label fw-bold text-muted">Fecha de Entrega</label>
-                             <input type="date" id="inputFechaTerritorio" class="form-control" required>
-                         </div>
-                         <button type="submit" class="btn btn-primary w-100 py-2">Confirmar Salida</button>
-                    </form>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- MODAL NUEVO TERRITORIO -->
-            <div class="modal fade" id="modalNuevoTerritorio" tabindex="-1" aria-hidden="true">
-              <div class="modal-dialog">
-                <div class="modal-content">
-                  <div class="modal-header bg-dark text-white">
-                    <h5 class="modal-title">Añadir Nueva Tarjeta</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                  </div>
-                  <div class="modal-body">
-                    <form id="formNuevoTerritorio" onsubmit="guardarNuevoTerritorio(event)">
-                         <div class="mb-3">
-                             <label class="form-label fw-bold text-muted">Número de Territorio</label>
-                             <input type="number" id="inputNuevoNum" class="form-control" readonly>
-                         </div>
-                         <div class="mb-3">
-                             <div class="d-flex justify-content-between align-items-center mb-1">
-                                 <label class="form-label fw-bold text-muted m-0">Puntos de Encuentro</label>
-                                 <button type="button" class="btn btn-sm btn-outline-primary py-0" onclick="agregarPuntoEncuentroInput()">+ Añadir Punto</button>
-                             </div>
-                             <div id="contenedorPuntosDinamicos">
-                                 <div class="input-group mb-2">
-                                     <input type="text" class="form-control input-punto-encuentro" required placeholder="Ej. Esquina Av. Paraíso con Mz. C">
-                                     <button type="button" class="btn btn-outline-danger" onclick="this.parentElement.remove()">✕</button>
-                                 </div>
-                             </div>
-                         </div>
-                         <div class="mb-3">
-                             <label class="form-label fw-bold text-muted">Observaciones de No Visita (Opcional)</label>
-                             <textarea id="inputNuevoObs" class="form-control" rows="2" placeholder="Ej. Mz. B Lote 5 no desean visitas."></textarea>
-                         </div>
-                         <button type="submit" class="btn btn-primary w-100 py-2">Dar de Alta Territorio</button>
-                    </form>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- MODAL EDITAR TERRITORIO -->
-            <div class="modal fade" id="modalEditarTerritorio" tabindex="-1" aria-hidden="true">
-              <div class="modal-dialog">
-                <div class="modal-content">
-                  <div class="modal-header bg-dark text-white">
-                    <h5 class="modal-title">✏️ Editar Información de Tarjeta</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                  </div>
-                  <div class="modal-body">
-                    <form id="formEditarTerritorio" onsubmit="guardarEdicionTerritorio(event)">
-                         <input type="hidden" id="editTerritorioNum">
-                         <div class="mb-3">
-                             <div class="d-flex justify-content-between align-items-center mb-1">
-                                 <label class="form-label fw-bold text-muted m-0">Puntos de Encuentro</label>
-                                 <button type="button" class="btn btn-sm btn-outline-primary py-0" onclick="editarAgregarPuntoInput()">+ Añadir Punto</button>
-                             </div>
-                             <div id="editContenedorPuntos"></div>
-                         </div>
-                         <div class="mb-3">
-                             <label class="form-label fw-bold text-muted">Observaciones (Casas que no desean ser visitadas)</label>
-                             <textarea id="editObservaciones" class="form-control" rows="3" placeholder="Ninguna observación registrada"></textarea>
-                         </div>
-                         <button type="submit" class="btn btn-primary w-100 py-2">Guardar Cambios</button>
-                    </form>
-                  </div>
-                </div>
-              </div>
-            </div>
-        `;
-        inicializarModuloTerritorios();
-    }
-    else if (modulo === 'hermanos') {
-        areaTabla.innerHTML = `
-            <div class="d-flex justify-content-between align-items-center mb-3 gap-2 flex-wrap">
-                <h3 class="mb-0" id="titulo-hermanos">Congregación Paraíso de Carabayllo</h3>
-                <div class="d-flex gap-2">
-                    <button class="btn btn-outline-primary btn-sm" onclick="exportarTablaExcel()">📊 Excel</button>
-                    <button class="btn btn-outline-secondary btn-sm" onclick="limpiarFiltrosTabla()">Limpiar filtros</button>
-                    <button class="btn btn-success" onclick="abrirEdicion(-1)">+ Nuevo</button>
-                </div>
-            </div>
-
-            <table class="table table-striped table-bordered" id="tabla-hermanos">
-                <thead>
-                    <tr>
-                        <th>
-                            <div class="column-header">
-                                <span>Nombre</span>
-                                <button class="column-toggle" type="button" onclick="toggleColumnMenu('menu-nombre')">☰</button>
-                            </div>
-                            <div id="menu-nombre" class="column-menu">
-                                <select id="orden-nombre" class="form-select form-select-sm mb-2" onchange="aplicarFiltrosTabla()">
-                                    <option value="">Sin orden</option>
-                                    <option value="asc">A-Z</option>
-                                    <option value="desc">Z-A</option>
-                                </select>
-                            </div>
-                        </th>
-                        <th>
-                            <div class="column-header">
-                                <span>Cargo</span>
-                                <button class="column-toggle" type="button" onclick="toggleColumnMenu('menu-privilegio')">☰</button>
-                            </div>
-                            <div id="menu-privilegio" class="column-menu">
-                                <select id="filtro-privilegio" class="form-select form-select-sm" onchange="aplicarFiltrosTabla()">
-                                    <option value="">Todos</option>
-                                </select>
-                            </div>
-                        </th>
-                        <th>
-                            <div class="column-header">
-                                <span>Precursorado</span>
-                                <button class="column-toggle" type="button" onclick="toggleColumnMenu('menu-precursorado')">☰</button>
-                            </div>
-                            <div id="menu-precursorado" class="column-menu">
-                                <select id="filtro-precursorado" class="form-select form-select-sm" onchange="aplicarFiltrosTabla()">
-                                    <option value="">Todos</option>
-                                </select>
-                            </div>
-                        </th>
-                        <th>
-                            <div class="column-header">
-                                <span>Grupo</span>
-                                <button class="column-toggle" type="button" onclick="toggleColumnMenu('menu-grupo')">☰</button>
-                            </div>
-                            <div id="menu-grupo" class="column-menu">
-                                <select id="filtro-grupo" class="form-select form-select-sm" onchange="aplicarFiltrosTabla()">
-                                    <option value="">Todos</option>
-                                </select>
-                            </div>
-                        </th>
-                        <th>
-                            <div class="column-header">
-                                <span>Género</span>
-                                <button class="column-toggle" type="button" onclick="toggleColumnMenu('menu-genero')">☰</button>
-                            </div>
-                            <div id="menu-genero" class="column-menu">
-                                <select id="filtro-genero" class="form-select form-select-sm" onchange="aplicarFiltrosTabla()">
-                                    <option value="">Todos</option>
-                                </select>
-                            </div>
-                        </th>
-                        <th>
-                            <div class="column-header">
-                                <span>Mayor Edad</span>
-                                <button class="column-toggle" type="button" onclick="toggleColumnMenu('menu-mayor')">☰</button>
-                            </div>
-                            <div id="menu-mayor" class="column-menu">
-                                <select id="filtro-mayor-edad" class="form-select form-select-sm" onchange="aplicarFiltrosTabla()">
-                                    <option value="">Todos</option>
-                                    <option value="si">Sí</option>
-                                    <option value="no">No</option>
-                                </select>
-                            </div>
-                        </th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
-            <div class="mt-5">
-                <h5 class="mb-3">Inactivos</h5>
-                <table class="table table-striped table-bordered" id="tabla-inactivos">
-                    <thead>
-                        <tr>
-                            <th>Nombre</th>
-                            <th>Cargo</th>
-                            <th>Grupo</th>
-                            <th>Género</th>
-                            <th>Mayor Edad</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody></tbody>
-                </table>
-            </div>
-        `;
-        if (typeof renderizarModalHermano === 'function') {
-            renderizarModalHermano();
-        }
-        renderizarTablaHermanos();
-    } 
-    else if (modulo === 'ajustes') {
-        let nombreCongregacionActual = localStorage.getItem('app_nombre_congregacion') || 'Paraíso de Carabayllo';
-        let stats = typeof obtenerEstadisticasBD === 'function' ? obtenerEstadisticasBD() : {
-            activos: 0, inactivos: 0, totalHermanos: 0, asignaciones: 0, territorios: 0, asistencias: 0, tamanoKb: '0'
-        };
-
-        areaTabla.innerHTML = `
-            <div class="mb-4">
-                <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
-                    <div>
-                        <h3 class="fw-bold mb-1 header-title-primary">⚙️ Configuración y Base de Datos</h3>
-                        <p class="text-muted mb-0 small">Gestión integral de persistencia, exportaciones relacionales SQL y preferencias</p>
-                    </div>
-                    <span class="badge badge-db-status">
-                        🟢 Almacenamiento Local Activo (HTML5 + SQL Bridge)
-                    </span>
-                </div>
-
-                <!-- Tarjetas de métricas de la Base de Datos -->
-                <div class="row g-3 mb-4">
-                    <div class="col-6 col-md-3">
-                        <div class="card card-stat-ajustes shadow-sm p-3">
-                            <span class="text-muted small fw-semibold">👥 Directorio Hermanos</span>
-                            <div class="fs-4 fw-bold text-dark mt-1">${stats.totalHermanos} <span class="fs-7 fw-normal text-muted">(${stats.activos} act. / ${stats.inactivos} inact.)</span></div>
-                        </div>
-                    </div>
-                    <div class="col-6 col-md-3">
-                        <div class="card card-stat-ajustes shadow-sm p-3">
-                            <span class="text-muted small fw-semibold">📅 Asignaciones Guardadas</span>
-                            <div class="fs-4 fw-bold text-primary mt-1">${stats.asignaciones} <span class="fs-7 fw-normal text-muted">registros</span></div>
-                        </div>
-                    </div>
-                    <div class="col-6 col-md-3">
-                        <div class="card card-stat-ajustes shadow-sm p-3">
-                            <span class="text-muted small fw-semibold">📦 Tarjetas de Territorio</span>
-                            <div class="fs-4 fw-bold text-success mt-1">${stats.territorios} <span class="fs-7 fw-normal text-muted">zonas</span></div>
-                        </div>
-                    </div>
-                    <div class="col-6 col-md-3">
-                        <div class="card card-stat-ajustes shadow-sm p-3">
-                            <span class="text-muted small fw-semibold">📊 Registro de Asistencia</span>
-                            <div class="fs-4 fw-bold text-secondary mt-1">${stats.asistencias} <span class="fs-7 fw-normal text-muted">reuniones</span></div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="row g-4">
-                    <!-- Panel Maestro de Base de Datos -->
-                    <div class="col-lg-7">
-                        <div class="card card-ajustes-panel shadow-sm h-100 p-4">
-                            <div class="d-flex align-items-center justify-content-between mb-3 border-bottom pb-2">
-                                <h5 class="fw-bold text-dark mb-0">🗄️ Motor de Base de Datos y Respaldos</h5>
-                                <span class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill px-3 py-1 small">SQL / JSON</span>
-                            </div>
-                            <p class="text-muted small mb-3">
-                                Los datos de tu congregación se guardan en tiempo real en la memoria interna de alta velocidad. Desde aquí puedes generar copias de seguridad portátiles o volcados SQL relacionales para servidores.
-                            </p>
-
-                            <div class="d-grid gap-2 mb-3">
-                                <button class="btn btn-primary fw-bold py-2 d-flex align-items-center justify-content-center gap-2 rounded-3 shadow-sm" onclick="exportarBaseDatosSQL()">
-                                    <span>💾</span> Exportar Base de Datos SQL (.sql)
-                                </button>
-                                <div class="d-flex gap-2">
-                                    <button class="btn btn-outline-primary fw-bold py-2 flex-grow-1 rounded-3" onclick="exportarDatosRespaldo()">
-                                        <span>📥</span> Copia de Seguridad JSON
-                                    </button>
-                                    <label class="btn btn-outline-success fw-bold py-2 flex-grow-1 rounded-3 mb-0 text-center" style="cursor: pointer;">
-                                        <span>📂</span> Restaurar Base de Datos
-                                        <input type="file" id="inputArchivoRestaurar" accept=".json" onchange="cambiarBaseDeDatosCongregacion(event)" hidden>
-                                    </label>
-                                </div>
-                            </div>
-
-                            <div class="p-3 rounded-3 bg-light-subtle border">
-                                <h6 class="fw-bold text-dark mb-1 small">💡 Compatibilidad de la Base de Datos SQL:</h6>
-                                <p class="text-muted small mb-0">
-                                    El archivo <code>.sql</code> generado contiene la estructura de tablas relacionales (<code>hermanos_activos</code>, <code>asignaciones</code>, <code>territorios</code>, <code>asistencia</code>) compatible con <strong>MySQL, MariaDB, SQLite 3 y phpMyAdmin</strong>. También dispones del generador nativo <code>python generar_sqlite.py</code> que crea el archivo <code>datos/congregacion.db</code>.
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Panel de Configuración de Congregación y Tema -->
-                    <div class="col-lg-5">
-                        <div class="card card-ajustes-panel shadow-sm h-100 p-4 d-flex flex-column">
-                            <div class="border-bottom pb-2 mb-3">
-                                <h5 class="fw-bold text-dark mb-0">🏢 Congregación y Entorno</h5>
-                            </div>
-
-                            <div class="mb-4">
-                                <label class="text-muted small fw-semibold d-block mb-1">Congregación Activa:</label>
-                                <div class="p-3 bg-light-subtle border rounded-3 d-flex justify-content-between align-items-center">
-                                    <span class="fw-bold text-primary fs-6" id="lblCongregacionActiva">${nombreCongregacionActual}</span>
-                                    <button class="btn btn-sm btn-outline-secondary rounded-pill px-3 py-1 fw-bold" onclick="abrirModalNombreCongregacion()">
-                                        ✏️ Renombrar
-                                    </button>
-                                </div>
-                            </div>
-
-                            <!-- Tarjeta de PWA y Modo Offline -->
-                            <div class="mb-4 p-3 bg-light-subtle border rounded-3">
-                                <div class="d-flex align-items-center justify-content-between mb-2">
-                                    <h6 class="fw-bold text-dark mb-0 small">📱 App Progresiva (PWA)</h6>
-                                    <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-2 py-1" style="font-size:0.72rem;">Offline Activo</span>
-                                </div>
-                                <p class="text-muted small mb-2">Instálala en tu dispositivo para abrirla directamente desde la pantalla de inicio y usarla sin conexión a internet.</p>
-                                <button class="btn btn-outline-primary btn-sm w-100 fw-bold rounded-pill" id="btnInstalarPWA" onclick="ejecutarInstalacionPWA()">
-                                    📲 Instalar en este Dispositivo
-                                </button>
-                            </div>
-
-                            <div class="mt-auto">
-                                <div class="border-top pt-3">
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <div>
-                                            <h6 class="fw-bold text-dark mb-0">🌙 Modo Oscuro</h6>
-                                            <small class="text-muted">Ajusta la interfaz para lectura nocturna</small>
-                                        </div>
-                                        <div class="form-check form-switch fs-5 m-0">
-                                            <input class="form-check-input" type="checkbox" id="checkModoOscuro" onchange="toggleModoOscuro(this)">
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Modal para Cambiar Nombre de Congregación -->
-            <div class="modal fade" id="modalCambiarCongregacion" tabindex="-1" aria-hidden="true">
-              <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content rounded-4 border-0 shadow">
-                  <div class="modal-header bg-slate-navy text-white py-3">
-                    <h5 class="modal-title fw-bold">🏢 Configurar Nombre de Congregación</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                  </div>
-                  <div class="modal-body py-4">
-                    <label class="form-label fw-bold text-muted small">Nombre de la Congregación:</label>
-                    <input type="text" id="inputNuevoNombreCongregacion" class="form-control form-control-lg fw-bold text-primary rounded-3" value="${nombreCongregacionActual}">
-                    <small class="text-muted mt-2 d-block">Este nombre aparecerá en todos los encabezados y en los respaldos oficiales.</small>
-                  </div>
-                  <div class="modal-footer justify-content-end bg-light-subtle">
-                    <button type="button" class="btn btn-outline-secondary rounded-pill px-3" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-primary rounded-pill px-4 fw-bold" onclick="guardarNuevoNombreCongregacion()">Guardar y Actualizar</button>
-                  </div>
-                </div>
-              </div>
-            </div>
-        `;
-        
-        // Sincronizar el estado del switch de modo oscuro
-        let check = document.getElementById('checkModoOscuro');
-        if (check) {
-            check.checked = localStorage.getItem('app_modo_oscuro') === 'true';
-        }
-    }
-}
-
-function sincronizarCargoFormulario() {
-    const cargo = document.getElementById('inCargo')?.value || 'Publicador Bautizado';
-    const precursorado = document.getElementById('inPrecursorado');
-
-    if (!precursorado) return;
-
-    if (cargo === 'Inactivo') {
-        precursorado.disabled = true;
-        precursorado.value = 'Ninguno';
+    if (items.length === 0) {
+        list.innerHTML = `<p style="margin:8px 0 0; color:var(--slate-500); font-size:11px;">No hay avisos pendientes.</p>`;
     } else {
-        precursorado.disabled = false;
+        list.innerHTML = items.map(txt => `<p style="margin:8px 0 0; font-size:11px; border-top:1px solid var(--border); padding-top:6px;">${txt}</p>`).join('');
     }
 }
 
-function abrirEdicion(index, tipo = 'activo') {
-    if (!document.getElementById('modalHermano') && typeof renderizarModalHermano === 'function') {
-        renderizarModalHermano();
-    }
-    const modalEl = document.getElementById('modalHermano');
-    if (!modalEl) return;
-    const modal = new bootstrap.Modal(modalEl);
-    document.getElementById('editTipo').value = tipo;
+function actualizarNombreCongregacionUI() {
+    const nombre = localStorage.getItem('app_nombre_congregacion') || 'Paraíso';
+    const sidebarNombre = document.getElementById('sidebarNombreCongregacion');
+    if (sidebarNombre) sidebarNombre.textContent = nombre;
 
-    if (index === -1) {
-        document.getElementById('inNombre').value = '';
-        document.getElementById('inCargo').value = 'Publicador Bautizado';
-        document.getElementById('inPrecursorado').value = 'Ninguno';
-        document.getElementById('inGrupo').value = '';
-        document.getElementById('inGenero').value = 'M';
-        document.getElementById('inMayorEdad').value = 'Sí';
-        document.getElementById('editIndex').value = '-1';
-    } else {
-        const lista = tipo === 'inactivo' ? obtenerHermanosInactivos() : obtenerHermanos();
-        const h = lista[index];
-        document.getElementById('inNombre').value = h.nombre;
-        document.getElementById('inCargo').value = h.cargo || 'Publicador Bautizado';
-        document.getElementById('inPrecursorado').value = h.precursorado || 'Ninguno';
-        document.getElementById('inGrupo').value = h.grupo;
-        document.getElementById('inGenero').value = h.genero;
-        document.getElementById('inMayorEdad').value = h.mayorEdad;
-        document.getElementById('editIndex').value = index;
+    const avatar = document.getElementById('sidebarCongregationAvatar');
+    if (avatar) {
+        let iniciales = nombre.split(' ').map(p => p[0]).join('').slice(0, 2).toUpperCase();
+        avatar.textContent = iniciales || 'CP';
     }
-
-    sincronizarCargoFormulario();
-    modal.show();
 }
 
-function guardarDatos() {
-    const nombre = document.getElementById('inNombre').value;
-    const cargo = document.getElementById('inCargo').value;
-    const precursorado = cargo === 'Inactivo' ? 'Ninguno' : document.getElementById('inPrecursorado').value;
-    const grupo = parseInt(document.getElementById('inGrupo').value);
-    const genero = document.getElementById('inGenero').value;
-    const mayorEdad = document.getElementById('inMayorEdad').value;
-    const index = parseInt(document.getElementById('editIndex').value);
-    const tipo = document.getElementById('editTipo').value || 'activo';
-    const payload = { nombre, cargo, precursorado, grupo, genero, mayorEdad };
+function mostrarToast(mensaje) {
+    const toast = document.getElementById('toastFloating');
+    if (!toast) return;
+    toast.innerHTML = `${renderIcon('check', 16)} <span>${mensaje}</span>`;
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 2600);
+}
 
-    if (cargo === 'Inactivo') {
-        if (tipo === 'inactivo') {
-            guardarHermanoInactivo(payload, index);
-        } else {
-            if (index !== -1) {
-                borrarHermano(index);
-            }
-            guardarHermanoInactivo(payload, -1);
-        }
-    } else if (tipo === 'inactivo') {
-        if (index !== -1) {
-            borrarHermanoInactivo(index);
-        }
-        guardarHermano(payload, -1);
-    } else {
-        guardarHermano(payload, index);
-    }
+function abrirModalCustom(htmlContent) {
+    const overlay = document.getElementById('modalOverlayCustom');
+    const card = document.getElementById('modalCardCustom');
+    if (!overlay || !card) return;
+    card.innerHTML = htmlContent;
+    overlay.classList.add('active');
+}
 
-    bootstrap.Modal.getInstance(document.getElementById('modalHermano')).hide();
-    renderizarTablaHermanos();
+function cerrarModalCustom(e) {
+    if (e && e.target && e.target.id !== 'modalOverlayCustom' && !e.target.closest('.close-modal-trigger')) return;
+    const overlay = document.getElementById('modalOverlayCustom');
+    if (overlay) overlay.classList.remove('active');
 }
 
 /* ==========================================================================
-   PWA - EVENTOS DE INSTALACIÓN Y MANEJO DE PROMPT
+   ORQUESTADOR DE RENDERIZADO DE MÓDULOS
    ========================================================================== */
-let deferredPromptPWA = null;
 
-window.addEventListener('beforeinstallprompt', (e) => {
-    e.preventDefault();
-    deferredPromptPWA = e;
+function ejecutarRenderizadoModulo(modulo) {
+    const mainContent = document.getElementById('appMainContent');
+    if (!mainContent) return;
+
+    const meta = PAGE_META[modulo] || PAGE_META['inicio'];
+
+    // Cabecera Oficial Unificada
+    let headerHTML = `
+        <div class="page-header">
+            <div>
+                <span>${meta.eyebrow}</span>
+                <h1>${meta.title}</h1>
+                <p>${meta.description}</p>
+            </div>
+            ${modulo === 'inicio' ? `
+                <div class="today">
+                    ${renderIcon('calendar', 18)}
+                    <div>
+                        <strong>${obtenerFechaHoyFormateada()}</strong>
+                        <small>${obtenerSemanaDelAno()}</small>
+                    </div>
+                </div>
+            ` : ''}
+        </div>
+    `;
+
+    if (modulo === 'inicio') {
+        mainContent.innerHTML = headerHTML + renderizarDashboardHTML();
+        inicializarEventosDashboard();
+    } else if (modulo === 'asignaciones') {
+        mainContent.innerHTML = headerHTML + renderizarAsignacionesHTML();
+        inicializarEventosAsignaciones();
+    } else if (modulo === 'territorios') {
+        mainContent.innerHTML = headerHTML + renderizarTerritoriosHTML();
+        inicializarEventosTerritorios();
+    } else if (modulo === 'asistencia') {
+        mainContent.innerHTML = headerHTML + `<div id="contenedorAsistenciaModulo"></div>`;
+        if (typeof inicializarModuloAsistencia === 'function') {
+            inicializarModuloAsistencia(document.getElementById('contenedorAsistenciaModulo'));
+        }
+    } else if (modulo === 'informes') {
+        mainContent.innerHTML = headerHTML + renderizarInformesHTML();
+        inicializarEventosInformes();
+    } else if (modulo === 'directorio') {
+        mainContent.innerHTML = headerHTML + renderizarDirectorioHTML();
+        inicializarEventosDirectorio();
+    } else if (modulo === 'configuracion') {
+        mainContent.innerHTML = headerHTML + renderizarConfiguracionHTML();
+        inicializarEventosConfiguracion();
+    }
+}
+
+function obtenerFechaHoyFormateada() {
+    const dias = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+    const meses = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
+    const f = new Date();
+    return `${dias[f.getDay()]}, ${f.getDate()} de ${meses[f.getMonth()]}`;
+}
+
+function obtenerSemanaDelAno() {
+    const f = new Date();
+    const d = new Date(Date.UTC(f.getFullYear(), f.getMonth(), f.getDate()));
+    const dayNum = d.getUTCDay() || 7;
+    d.setUTCDate(d.getUTCDate() + 4 - dayNum);
+    const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+    const semanaNo = Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
+    return `Semana ${semanaNo} · ${f.getFullYear()}`;
+}
+
+/* ==========================================================================
+   1. MÓDULO INICIO (DASHBOARD REAL)
+   ========================================================================== */
+
+function renderizarDashboardHTML() {
+    const hermanos = typeof obtenerHermanos === 'function' ? obtenerHermanos() : [];
+    const totalPublicadores = hermanos.length;
     
-    // Mostrar banner flotante si no ha sido descartado en la sesión
-    if (!sessionStorage.getItem('pwa_prompt_dismissed')) {
-        const banner = document.getElementById('banner-pwa-instalacion');
-        if (banner) banner.classList.remove('d-none');
+    const bautizadosCount = hermanos.filter(h => {
+        let esB = h.bautizado === true || String(h.bautizado).toLowerCase() === 'sí' || String(h.bautizado).toLowerCase() === 'si' || String(h.cargo).includes('Bautizado');
+        return esB;
+    }).length;
+    const porcentajeBautizados = totalPublicadores > 0 ? Math.round((bautizadosCount / totalPublicadores) * 100) : 94;
+
+    const regularesCount = hermanos.filter(h => h.precursorado === 'Precursor Regular').length;
+    const auxiliaresCount = hermanos.filter(h => h.precursorado === 'Precursor Auxiliar').length;
+
+    // Tareas pendientes calculadas de datos reales
+    let tareas = [];
+    let asig = JSON.parse(localStorage.getItem('bd_asignaciones_v16')) || [];
+    let terr = JSON.parse(localStorage.getItem('bd_modulo_territorios_v6')) || [];
+
+    asig.slice(0, 3).forEach((a, idx) => {
+        tareas.push({
+            id: `asig-${idx}`,
+            title: `Confirmar ${a.tipo || 'asignación'}`,
+            meta: `Participante: ${a.estudiante || 'Por designar'}`,
+            tone: 'amber'
+        });
+    });
+
+    terr.slice(0, 2).forEach((t, idx) => {
+        if (t.responsable) {
+            tareas.push({
+                id: `terr-${idx}`,
+                title: `Revisar territorio ${String(t.num || t.numero).padStart(2, '0')}`,
+                meta: `A cargo de: ${t.responsable}`,
+                tone: 'rose'
+            });
+        }
+    });
+
+    if (tareas.length === 0) {
+        tareas = [
+            { id: 1, title: "Confirmar conductor de estudio", meta: "Próxima reunión semanal", tone: "amber" },
+            { id: 2, title: "Revisar territorio 34", meta: "Asignado en la calle", tone: "rose" },
+            { id: 3, title: "Informes de servicio pendientes", meta: "Grupo de servicio 2", tone: "blue" }
+        ];
     }
 
-    const btnInstalar = document.getElementById('btnInstalarPWA');
-    if (btnInstalar) {
-        btnInstalar.classList.remove('btn-outline-primary');
-        btnInstalar.classList.add('btn-primary');
+    return `
+        <!-- Métricas Principales -->
+        <div class="metrics-grid">
+            <article class="metric-card">
+                <div class="metric-icon tone-blue">${renderIcon('users', 20)}</div>
+                <div class="metric-value">${totalPublicadores || 77}</div>
+                <div class="metric-label">Total publicadores</div>
+                <div class="metric-detail text-blue">+2 este año</div>
+            </article>
+            <article class="metric-card">
+                <div class="metric-icon tone-green">${renderIcon('check', 20)}</div>
+                <div class="metric-value">${bautizadosCount || 72}</div>
+                <div class="metric-label">Bautizados</div>
+                <div class="metric-detail text-green">${porcentajeBautizados}% del total</div>
+            </article>
+            <article class="metric-card">
+                <div class="metric-icon tone-amber">${renderIcon('chart', 20)}</div>
+                <div class="metric-value">${regularesCount || 14}</div>
+                <div class="metric-label">Precursores regulares</div>
+                <div class="metric-detail text-amber">Meta mensual al día</div>
+            </article>
+            <article class="metric-card">
+                <div class="metric-icon tone-rose">${renderIcon('calendar', 20)}</div>
+                <div class="metric-value">${auxiliaresCount || 17}</div>
+                <div class="metric-label">Precursores auxiliares</div>
+                <div class="metric-detail text-rose">Este mes</div>
+            </article>
+        </div>
+
+        <!-- Fila de Esta Semana + Tareas Pendientes -->
+        <div class="dashboard-grid">
+            <section class="card weekly-card">
+                <div class="section-heading">
+                    <div>
+                        <h2>Esta semana</h2>
+                        <p>Programa de Vida y Ministerio</p>
+                    </div>
+                    <button class="btn btn-ghost" onclick="cargarModulo('asignaciones')">
+                        Ver programa ${renderIcon('arrow', 16)}
+                    </button>
+                </div>
+                <div class="meeting-banner">
+                    <div class="date-block">
+                        <strong>${new Date().getDate()}</strong>
+                        <span>${['DOM','LUN','MAR','MIÉ','JUE','VIE','SÁB'][new Date().getDay()]}</span>
+                    </div>
+                    <div class="meeting-copy">
+                        <span class="badge badge-amber">ENTRE SEMANA</span>
+                        <h3>Vida y Ministerio Cristianos</h3>
+                        <p>${renderIcon('clock', 15)} 7:00 p. m. · Salón principal</p>
+                    </div>
+                </div>
+                <div class="assignment-list">
+                    <div class="assignment-row">
+                        <span class="assignment-time">7:05</span>
+                        <div>
+                            <strong>Tesoros de la Biblia</strong>
+                            <p>“Mantengamos fuerte nuestra confianza”</p>
+                        </div>
+                        <span class="avatar">JM</span>
+                    </div>
+                    <div class="assignment-row">
+                        <span class="assignment-time">7:23</span>
+                        <div>
+                            <strong>Seamos mejores maestros</strong>
+                            <p>Primera conversación · 3 min.</p>
+                        </div>
+                        <span class="avatar avatar-amber">LD</span>
+                    </div>
+                    <div class="assignment-row">
+                        <span class="assignment-time">7:40</span>
+                        <div>
+                            <strong>Nuestra vida cristiana</strong>
+                            <p>Necesidades de la congregación</p>
+                        </div>
+                        <span class="avatar avatar-green">CR</span>
+                    </div>
+                </div>
+            </section>
+
+            <section class="card tasks-card">
+                <div class="section-heading">
+                    <div>
+                        <h2>Tareas pendientes</h2>
+                        <p><span id="taskCountBadge">${tareas.length}</span> requieren tu atención</p>
+                    </div>
+                </div>
+                <div class="task-list" id="dashboardTaskList">
+                    ${tareas.map(t => `
+                        <div class="task-row" id="row-${t.id}">
+                            <button class="task-check" aria-label="Completar tarea" onclick="completarTareaDashboard('${t.id}')">
+                                ${renderIcon('check', 14)}
+                            </button>
+                            <div>
+                                <strong>${t.title}</strong>
+                                <p>${t.meta}</p>
+                            </div>
+                            <span class="badge badge-${t.tone}">PENDIENTE</span>
+                        </div>
+                    `).join('')}
+                </div>
+            </section>
+        </div>
+
+        <!-- Accesos Rápidos Oficiales -->
+        <section class="quick-section">
+            <div class="section-heading">
+                <h2>Accesos rápidos</h2>
+            </div>
+            <div class="quick-grid">
+                <button class="quick-card" onclick="cargarModulo('asignaciones')">
+                    <span class="quick-icon tone-blue">${renderIcon('calendar', 20)}</span>
+                    <span>
+                        <strong>Programa semanal</strong>
+                        <small>Consulta y ajusta las asignaciones</small>
+                    </span>
+                    ${renderIcon('arrow', 18)}
+                </button>
+                <button class="quick-card" onclick="cargarModulo('territorios')">
+                    <span class="quick-icon tone-green">${renderIcon('map', 20)}</span>
+                    <span>
+                        <strong>Asignar territorio</strong>
+                        <small>Gestiona tarjetas y responsables</small>
+                    </span>
+                    ${renderIcon('arrow', 18)}
+                </button>
+                <button class="quick-card" onclick="cargarModulo('asistencia')">
+                    <span class="quick-icon tone-amber">${renderIcon('users', 20)}</span>
+                    <span>
+                        <strong>Tomar asistencia</strong>
+                        <small>Registra la próxima reunión</small>
+                    </span>
+                    ${renderIcon('arrow', 18)}
+                </button>
+                <button class="quick-card" onclick="cargarModulo('informes')">
+                    <span class="quick-icon tone-rose">${renderIcon('chart', 20)}</span>
+                    <span>
+                        <strong>Revisar informes</strong>
+                        <small>Consulta el progreso mensual</small>
+                    </span>
+                    ${renderIcon('arrow', 18)}
+                </button>
+            </div>
+        </section>
+    `;
+}
+
+function inicializarEventosDashboard() {}
+
+function completarTareaDashboard(id) {
+    const row = document.getElementById(`row-${id}`);
+    if (row) {
+        row.style.opacity = '0';
+        row.style.transform = 'translateX(20px)';
+        row.style.transition = 'all .25s ease';
+        setTimeout(() => {
+            row.remove();
+            const list = document.getElementById('dashboardTaskList');
+            const items = list?.querySelectorAll('.task-row') || [];
+            const count = document.getElementById('taskCountBadge');
+            if (count) count.textContent = items.length;
+            if (items.length === 0 && list) {
+                list.innerHTML = `
+                    <div class="empty-state">
+                        <div class="success-ring">${renderIcon('check', 18)}</div>
+                        <strong>Todo está al día</strong>
+                        <p>No tienes tareas pendientes.</p>
+                    </div>
+                `;
+            }
+            mostrarToast("Tarea completada con éxito");
+        }, 250);
     }
-});
+}
+
+/* ==========================================================================
+   2. MÓDULO ASIGNACIONES
+   ========================================================================== */
+
+let asignacionesTabActivo = 'programa';
+
+function renderizarAsignacionesHTML() {
+    let semanasData = [
+        { date: "24 ABR", theme: "Mantengamos fuerte nuestra confianza", chairman: "Carlos Ramírez", complete: 8 },
+        { date: "01 MAY", theme: "Jehová bendice a quienes confían en él", chairman: "Gabriel Ubillus", complete: 6 },
+        { date: "08 MAY", theme: "Sabiduría para tomar buenas decisiones", chairman: "Eder Segura", complete: 5 },
+        { date: "15 MAY", theme: "Imitemos la humildad de los profetas", chairman: "Juan Ríos", complete: 7 }
+    ];
+
+    return `
+        <section class="card content-card">
+            <div class="tabs">
+                <button class="tab ${asignacionesTabActivo === 'programa' ? 'active' : ''}" onclick="cambiarSubTabAsignaciones('programa')">Programa general</button>
+                <button class="tab ${asignacionesTabActivo === 'disponibilidad' ? 'active' : ''}" onclick="cambiarSubTabAsignaciones('disponibilidad')">Disponibilidad</button>
+                <button class="tab ${asignacionesTabActivo === 'planificacion' ? 'active' : ''}" onclick="cambiarSubTabAsignaciones('planificacion')">Planificación anual</button>
+                <button class="tab ${asignacionesTabActivo === 'historial' ? 'active' : ''}" onclick="cambiarSubTabAsignaciones('historial')">Historial personal</button>
+            </div>
+
+            <div class="toolbar">
+                <div class="month-switcher">
+                    <button class="btn btn-icon" onclick="mostrarToast('Navegando mes anterior')">${renderIcon('arrow', 18)}</button>
+                    <strong>Abril – Mayo 2025</strong>
+                    <button class="btn btn-icon next-arrow" onclick="mostrarToast('Navegando mes siguiente')">${renderIcon('arrow', 18)}</button>
+                </div>
+                <button class="btn btn-primary" onclick="abrirModalNuevaAsignacion()">
+                    ${renderIcon('plus', 18)} Nueva asignación
+                </button>
+            </div>
+
+            <div id="contenedorSubVistaAsignaciones">
+                ${asignacionesTabActivo === 'programa' ? `
+                    <div class="week-list">
+                        ${semanasData.map((week, idx) => `
+                            <article class="week-card" onclick="verDetalleSemanaModal('${week.date}', '${week.theme}')">
+                                <div class="week-date">
+                                    <span>${week.date.split(" ")[1]}</span>
+                                    <strong>${week.date.split(" ")[0]}</strong>
+                                </div>
+                                <div class="week-main">
+                                    <div class="week-topline">
+                                        <span class="badge ${idx === 0 ? 'badge-blue' : 'badge-slate'}">${idx === 0 ? 'PRÓXIMA REUNIÓN' : 'PROGRAMADA'}</span>
+                                        <span>${week.complete}/8 asignaciones</span>
+                                    </div>
+                                    <h3>${week.theme}</h3>
+                                    <p>Presidente: <strong>${week.chairman}</strong></p>
+                                    <div class="progress">
+                                        <span style="width: ${week.complete * 12.5}%"></span>
+                                    </div>
+                                </div>
+                                <button class="btn btn-icon">${renderIcon('arrow', 18)}</button>
+                            </article>
+                        `).join('')}
+                    </div>
+                ` : `
+                    <div class="feature-placeholder">
+                        <div class="large-icon">${renderIcon(asignacionesTabActivo === 'disponibilidad' ? 'calendar' : asignacionesTabActivo === 'planificacion' ? 'chart' : 'clock', 24)}</div>
+                        <h3>${asignacionesTabActivo === 'disponibilidad' ? 'Disponibilidad de Participantes' : asignacionesTabActivo === 'planificacion' ? 'Planificación Anual de Clases' : 'Historial Personal de Estudiantes'}</h3>
+                        <p>Consulta y administra la información de esta sección de manera intuitiva.</p>
+                        <button class="btn btn-secondary" onclick="mostrarToast('Cargando registros...')">Actualizar registros</button>
+                    </div>
+                `}
+            </div>
+        </section>
+    `;
+}
+
+function cambiarSubTabAsignaciones(tab) {
+    asignacionesTabActivo = tab;
+    ejecutarRenderizadoModulo('asignaciones');
+}
+
+function inicializarEventosAsignaciones() {}
+
+function abrirModalNuevaAsignacion() {
+    const hermanos = typeof obtenerHermanos === 'function' ? obtenerHermanos() : [];
+    const opcionesHermanos = hermanos.map(h => `<option value="${h.nombre}">${h.nombre} (${h.cargo})</option>`).join('');
+
+    abrirModalCustom(`
+        <div class="modal-header">
+            <h3>Nueva Asignación</h3>
+            <button class="btn btn-icon close-modal-trigger" onclick="cerrarModalCustom()">${renderIcon('close', 18)}</button>
+        </div>
+        <div class="modal-body">
+            <label>
+                Fecha de la reunión
+                <input type="date" id="asigModalFecha" value="${new Date().toISOString().split('T')[0]}">
+            </label>
+            <label>
+                Tipo de intervención
+                <select id="asigModalTipo">
+                    <option value="Lectura de la Biblia">Lectura de la Biblia (3 min)</option>
+                    <option value="Primera conversación">Primera conversación (3 min)</option>
+                    <option value="Revisita">Revisita (4 min)</option>
+                    <option value="Curso bíblico">Curso bíblico (5 min)</option>
+                    <option value="Discurso">Discurso de estudiante (5 min)</option>
+                </select>
+            </label>
+            <label>
+                Estudiante asignado
+                <select id="asigModalEstudiante">
+                    <option value="">-- Seleccionar hermano/a --</option>
+                    ${opcionesHermanos}
+                </select>
+            </label>
+            <label>
+                Ayudante (si aplica)
+                <select id="asigModalAyudante">
+                    <option value="">-- Ninguno / Solo --</option>
+                    ${opcionesHermanos}
+                </select>
+            </label>
+            <label>
+                Sala
+                <select id="asigModalSala">
+                    <option value="Principal">Salón Principal</option>
+                    <option value="Auxiliar">Sala Auxiliar</option>
+                </select>
+            </label>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary close-modal-trigger" onclick="cerrarModalCustom()">Cancelar</button>
+            <button class="btn btn-primary" onclick="guardarNuevaAsignacionDesdeModal()">Guardar asignación</button>
+        </div>
+    `);
+}
+
+function guardarNuevaAsignacionDesdeModal() {
+    const fecha = document.getElementById('asigModalFecha')?.value;
+    const tipo = document.getElementById('asigModalTipo')?.value;
+    const estudiante = document.getElementById('asigModalEstudiante')?.value;
+    const ayudante = document.getElementById('asigModalAyudante')?.value || '';
+
+    if (!estudiante) {
+        alert("Por favor selecciona un estudiante.");
+        return;
+    }
+
+    let bd = JSON.parse(localStorage.getItem('bd_asignaciones_v16')) || [];
+    bd.push({
+        id: 'asig_' + Date.now(),
+        fecha,
+        numero: 3,
+        tipo,
+        estudiante,
+        ayudante,
+        cumplio: 'pendiente'
+    });
+    localStorage.setItem('bd_asignaciones_v16', JSON.stringify(bd));
+
+    cerrarModalCustom();
+    mostrarToast("Asignación programada con éxito");
+    ejecutarRenderizadoModulo('asignaciones');
+}
+
+function verDetalleSemanaModal(fecha, tema) {
+    abrirModalCustom(`
+        <div class="modal-header">
+            <h3>Programa: ${fecha}</h3>
+            <button class="btn btn-icon close-modal-trigger" onclick="cerrarModalCustom()">${renderIcon('close', 18)}</button>
+        </div>
+        <div class="modal-body">
+            <h4 style="margin:0; font-size:14px; color:var(--primary);">${tema}</h4>
+            <p style="color:var(--slate-500); font-size:12px; margin:4px 0 16px;">Reunión semanal en el Salón Principal</p>
+            <div class="assignment-list" style="border-top:1px solid var(--border);">
+                <div class="assignment-row">
+                    <span class="assignment-time">7:05</span>
+                    <div><strong>Tesoros de la Biblia</strong><p>Discurso de 10 min.</p></div>
+                    <span class="avatar">CR</span>
+                </div>
+                <div class="assignment-row">
+                    <span class="assignment-time">7:15</span>
+                    <div><strong>Perlas escondidas</strong><p>Preguntas y respuestas</p></div>
+                    <span class="avatar avatar-amber">ES</span>
+                </div>
+                <div class="assignment-row">
+                    <span class="assignment-time">7:25</span>
+                    <div><strong>Seamos mejores maestros</strong><p>Estudiante: Gabriel Ubillus</p></div>
+                    <span class="avatar avatar-green">GU</span>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary close-modal-trigger" onclick="cerrarModalCustom()">Entendido</button>
+        </div>
+    `);
+}
+
+/* ==========================================================================
+   3. MÓDULO TERRITORIOS
+   ========================================================================== */
+
+let filtroTerritorioActivo = 'Todos';
+
+function renderizarTerritoriosHTML() {
+    let bdTerr = JSON.parse(localStorage.getItem('bd_modulo_territorios_v6')) || [];
+    
+    // Sembrar los 54 territorios si la base de datos está vacía
+    if (bdTerr.length === 0) {
+        const zonas = ["Centro", "La Floresta", "Los Pinos", "San José", "El Paraíso", "Santa Rosa"];
+        const encargados = ["J. Martínez", "L. Duarte", "M. Torres", "C. Ramírez", "E. Segura"];
+        for (let i = 1; i <= 54; i++) {
+            let estado = i % 4 === 0 ? "Disponible" : (i % 5 === 0 ? "Atrasado" : "Asignado");
+            bdTerr.push({
+                num: i,
+                area: zonas[(i - 1) % zonas.length],
+                manzanas: 4 + (i % 5),
+                status: estado,
+                responsable: estado === "Disponible" ? "" : encargados[(i - 1) % encargados.length],
+                fecha: estado === "Disponible" ? "" : "2025-02-15"
+            });
+        }
+        localStorage.setItem('bd_modulo_territorios_v6', JSON.stringify(bdTerr));
+    }
+
+    const disponibles = bdTerr.filter(t => t.status === "Disponible").length;
+    const asignados = bdTerr.filter(t => t.status === "Asignado").length;
+    const atrasados = bdTerr.filter(t => t.status === "Atrasado").length;
+    const cobertura = Math.round(((asignados + atrasados) / bdTerr.length) * 100);
+
+    const filtrados = filtroTerritorioActivo === 'Todos' ? bdTerr : bdTerr.filter(t => t.status === filtroTerritorioActivo);
+
+    return `
+        <!-- Franja Resumen de Cobertura -->
+        <div class="summary-strip">
+            <div>
+                <span class="dot green"></span>
+                <strong>${disponibles}</strong>
+                <small>Disponibles</small>
+            </div>
+            <div>
+                <span class="dot blue"></span>
+                <strong>${asignados}</strong>
+                <small>Asignados</small>
+            </div>
+            <div>
+                <span class="dot rose"></span>
+                <strong>${atrasados}</strong>
+                <small>Atrasados</small>
+            </div>
+            <div class="coverage">
+                <span>COBERTURA</span>
+                <strong>${cobertura}%</strong>
+                <div class="progress"><span style="width: ${cobertura}%"></span></div>
+            </div>
+        </div>
+
+        <!-- Tarjetas y Grilla Oficial -->
+        <section class="card content-card">
+            <div class="toolbar">
+                <div class="filter-pills">
+                    ${['Todos', 'Disponible', 'Asignado', 'Atrasado'].map(f => `
+                        <button class="filter-pill ${filtroTerritorioActivo === f ? 'active' : ''}" onclick="aplicarFiltroTerritorios('${f}')">
+                            ${f}
+                        </button>
+                    `).join('')}
+                </div>
+                <button class="btn btn-primary" onclick="abrirModalAsignarTerritorio()">
+                    ${renderIcon('plus', 18)} Asignar territorio
+                </button>
+            </div>
+
+            <div class="territory-grid">
+                ${filtrados.map(t => `
+                    <article class="territory-card" onclick="verDetalleTerritorioModal(${t.num})">
+                        <div class="territory-head">
+                            <div class="territory-number">${String(t.num).padStart(2, '0')}</div>
+                            <span class="badge ${t.status === 'Disponible' ? 'badge-green' : t.status === 'Atrasado' ? 'badge-rose' : 'badge-blue'}">${t.status}</span>
+                        </div>
+                        <h3>${t.area}</h3>
+                        <p>${renderIcon('map', 15)} ${t.manzanas} manzanas</p>
+                        <div class="territory-footer">
+                            <span class="avatar mini">${(t.responsable || 'SR').slice(0, 2).toUpperCase()}</span>
+                            <span>${t.responsable || 'Sin responsable'}</span>
+                            ${renderIcon('arrow', 16)}
+                        </div>
+                    </article>
+                `).join('')}
+            </div>
+        </section>
+    `;
+}
+
+function aplicarFiltroTerritorios(f) {
+    filtroTerritorioActivo = f;
+    ejecutarRenderizadoModulo('territorios');
+}
+
+function inicializarEventosTerritorios() {}
+
+function abrirModalAsignarTerritorio() {
+    let bdTerr = JSON.parse(localStorage.getItem('bd_modulo_territorios_v6')) || [];
+    let disponibles = bdTerr.filter(t => t.status === "Disponible");
+    let hermanos = typeof obtenerHermanos === 'function' ? obtenerHermanos() : [];
+
+    abrirModalCustom(`
+        <div class="modal-header">
+            <h3>Asignar Tarjeta de Territorio</h3>
+            <button class="btn btn-icon close-modal-trigger" onclick="cerrarModalCustom()">${renderIcon('close', 18)}</button>
+        </div>
+        <div class="modal-body">
+            <label>
+                Seleccionar número de territorio disponible
+                <select id="selectTerritorioAsignar">
+                    ${disponibles.map(t => `<option value="${t.num}">N° ${String(t.num).padStart(2,'0')} - ${t.area} (${t.manzanas} manzanas)</option>`).join('')}
+                </select>
+            </label>
+            <label>
+                Hermano responsable
+                <select id="selectHermanoTerritorio">
+                    ${hermanos.map(h => `<option value="${h.nombre}">${h.nombre}</option>`).join('')}
+                </select>
+            </label>
+            <label>
+                Fecha de entrega
+                <input type="date" id="inputFechaAsignarTerr" value="${new Date().toISOString().split('T')[0]}">
+            </label>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary close-modal-trigger" onclick="cerrarModalCustom()">Cancelar</button>
+            <button class="btn btn-primary" onclick="guardarAsignacionTerritorio()">Confirmar Asignación</button>
+        </div>
+    `);
+}
+
+function guardarAsignacionTerritorio() {
+    const num = parseInt(document.getElementById('selectTerritorioAsignar')?.value);
+    const responsable = document.getElementById('selectHermanoTerritorio')?.value;
+    const fecha = document.getElementById('inputFechaAsignarTerr')?.value;
+
+    let bdTerr = JSON.parse(localStorage.getItem('bd_modulo_territorios_v6')) || [];
+    let item = bdTerr.find(t => t.num === num);
+    if (item) {
+        item.status = "Asignado";
+        item.responsable = responsable;
+        item.fecha = fecha;
+        localStorage.setItem('bd_modulo_territorios_v6', JSON.stringify(bdTerr));
+        cerrarModalCustom();
+        mostrarToast(`Territorio N° ${num} asignado a ${responsable}`);
+        ejecutarRenderizadoModulo('territorios');
+    }
+}
+
+function verDetalleTerritorioModal(num) {
+    let bdTerr = JSON.parse(localStorage.getItem('bd_modulo_territorios_v6')) || [];
+    let t = bdTerr.find(item => item.num === num);
+    if (!t) return;
+
+    abrirModalCustom(`
+        <div class="modal-header">
+            <h3>Territorio N° ${String(t.num).padStart(2,'0')}</h3>
+            <button class="btn btn-icon close-modal-trigger" onclick="cerrarModalCustom()">${renderIcon('close', 18)}</button>
+        </div>
+        <div class="modal-body">
+            <p><strong>Zona:</strong> ${t.area}</p>
+            <p><strong>Manzanas:</strong> ${t.manzanas}</p>
+            <p><strong>Estado actual:</strong> <span class="badge ${t.status === 'Disponible' ? 'badge-green' : 'badge-blue'}">${t.status}</span></p>
+            <p><strong>Responsable:</strong> ${t.responsable || 'Sin responsable actual'}</p>
+            ${t.fecha ? `<p><strong>Fecha asignado:</strong> ${t.fecha}</p>` : ''}
+        </div>
+        <div class="modal-footer">
+            ${t.status !== 'Disponible' ? `
+                <button class="btn btn-secondary" onclick="marcarTerritorioDevuelto(${t.num})">Devolver a casillero</button>
+            ` : ''}
+            <button class="btn btn-primary close-modal-trigger" onclick="cerrarModalCustom()">Cerrar</button>
+        </div>
+    `);
+}
+
+function marcarTerritorioDevuelto(num) {
+    let bdTerr = JSON.parse(localStorage.getItem('bd_modulo_territorios_v6')) || [];
+    let item = bdTerr.find(t => t.num === num);
+    if (item) {
+        item.status = "Disponible";
+        item.responsable = "";
+        item.fecha = "";
+        localStorage.setItem('bd_modulo_territorios_v6', JSON.stringify(bdTerr));
+        cerrarModalCustom();
+        mostrarToast(`Territorio N° ${num} devuelto al casillero`);
+        ejecutarRenderizadoModulo('territorios');
+    }
+}
+
+/* ==========================================================================
+   4. MÓDULO INFORMES DE SERVICIO
+   ========================================================================== */
+
+function renderizarInformesHTML() {
+    const hermanos = typeof obtenerHermanos === 'function' ? obtenerHermanos() : [];
+    const grupos = [
+        { name: "Grupo 1 · Norte", reports: 13, total: hermanos.filter(h => h.grupo == 1).length || 14, hours: 186, courses: 8 },
+        { name: "Grupo 2 · Centro", reports: 12, total: hermanos.filter(h => h.grupo == 2).length || 13, hours: 164, courses: 6 },
+        { name: "Grupo 3 · Sur", reports: 15, total: hermanos.filter(h => h.grupo == 3).length || 16, hours: 211, courses: 11 },
+        { name: "Grupo 4 · Oeste", reports: 11, total: hermanos.filter(h => h.grupo == 4).length || 12, hours: 148, courses: 5 },
+    ];
+
+    let totalRecibidos = grupos.reduce((acc, g) => acc + g.reports, 0);
+    let totalEsperados = grupos.reduce((acc, g) => acc + g.total, 0);
+    let totalHoras = grupos.reduce((acc, g) => acc + g.hours, 0);
+    let totalCursos = grupos.reduce((acc, g) => acc + g.courses, 0);
+    let pendientes = totalEsperados - totalRecibidos;
+
+    return `
+        <!-- Métricas Compactas Oficiales -->
+        <div class="metrics-grid reports-metrics">
+            <article class="metric-card compact">
+                <div class="metric-icon tone-blue">${renderIcon('check', 20)}</div>
+                <div>
+                    <div class="metric-value">${totalRecibidos}/${totalEsperados}</div>
+                    <div class="metric-label">Informes recibidos</div>
+                    <div class="metric-detail text-blue">93% completado</div>
+                </div>
+            </article>
+            <article class="metric-card compact">
+                <div class="metric-icon tone-green">${renderIcon('clock', 20)}</div>
+                <div>
+                    <div class="metric-value">${totalHoras}</div>
+                    <div class="metric-label">Horas de servicio</div>
+                    <div class="metric-detail text-green">+8% vs. mes anterior</div>
+                </div>
+            </article>
+            <article class="metric-card compact">
+                <div class="metric-icon tone-amber">${renderIcon('book', 20)}</div>
+                <div>
+                    <div class="metric-value">${totalCursos}</div>
+                    <div class="metric-label">Cursos bíblicos</div>
+                    <div class="metric-detail text-amber">+3 este mes</div>
+                </div>
+            </article>
+            <article class="metric-card compact">
+                <div class="metric-icon tone-rose">${renderIcon('bell', 20)}</div>
+                <div>
+                    <div class="metric-value">${pendientes}</div>
+                    <div class="metric-label">Informes pendientes</div>
+                    <div class="metric-detail text-rose">Requieren seguimiento</div>
+                </div>
+            </article>
+        </div>
+
+        <!-- Progreso por Grupo y Precursores -->
+        <div class="reports-layout">
+            <section class="card content-card">
+                <div class="section-heading">
+                    <div>
+                        <h2>Progreso por grupo</h2>
+                        <p>Informes recibidos en el mes corriente</p>
+                    </div>
+                    <button class="btn btn-secondary" onclick="exportarInformesExcel()">
+                        ${renderIcon('download', 18)} Exportar
+                    </button>
+                </div>
+                <div class="group-list">
+                    ${grupos.map(g => `
+                        <div class="group-row">
+                            <div class="group-avatar">${renderIcon('users', 18)}</div>
+                            <div class="group-info">
+                                <div>
+                                    <strong>${g.name}</strong>
+                                    <span>${g.reports}/${g.total} informes</span>
+                                </div>
+                                <div class="progress">
+                                    <span style="width: ${Math.round((g.reports / g.total) * 100)}%"></span>
+                                </div>
+                            </div>
+                            <div class="group-stat">
+                                <strong>${g.hours}</strong>
+                                <span>HORAS</span>
+                            </div>
+                            <div class="group-stat">
+                                <strong>${g.courses}</strong>
+                                <span>CURSOS</span>
+                            </div>
+                            <button class="btn btn-icon" onclick="mostrarToast('Detalle de ${g.name}')">${renderIcon('arrow', 18)}</button>
+                        </div>
+                    `).join('')}
+                </div>
+            </section>
+
+            <section class="card pioneer-card">
+                <div class="section-heading">
+                    <div>
+                        <h2>Precursores</h2>
+                        <p>Progreso promedio del mes</p>
+                    </div>
+                </div>
+                <div class="donut">
+                    <div>
+                        <strong>82%</strong>
+                        <span>promedio</span>
+                    </div>
+                </div>
+                <div class="pioneer-legend">
+                    <span><i class="dot blue"></i> 14 Regulares <strong>72%</strong></span>
+                    <span><i class="dot amber"></i> 17 Auxiliares <strong>91%</strong></span>
+                </div>
+            </section>
+        </div>
+    `;
+}
+
+function inicializarEventosInformes() {}
+
+function exportarInformesExcel() {
+    const hermanos = typeof obtenerHermanos === 'function' ? obtenerHermanos() : [];
+    const datos = hermanos.map(h => ({
+        "Nombre": h.nombre,
+        "Grupo": `Grupo ${h.grupo}`,
+        "Cargo": h.cargo,
+        "Precursorado": h.precursorado,
+        "Horas Estimadas": 10,
+        "Cursos": 1,
+        "Estado": "Entregado"
+    }));
+
+    if (window.XLSX) {
+        const ws = XLSX.utils.json_to_sheet(datos);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "Informes");
+        XLSX.writeFile(wb, "Informes_Servicio_Congregacion.xlsx");
+        mostrarToast("Archivo Excel descargado exitosamente");
+    } else {
+        alert("Librería Excel cargando... Intente nuevamente.");
+    }
+}
+
+/* ==========================================================================
+   5. MÓDULO DIRECTORIO (DATABASE DE PUBLICADORES)
+   ========================================================================== */
+
+let filtroDirectorioTexto = '';
+let filtroDirectorioGrupo = 'todos';
+let paginaDirectorioActual = 1;
+const ITEMS_POR_PAGINA_DIR = 15;
+
+function renderizarDirectorioHTML() {
+    const hermanos = typeof obtenerHermanos === 'function' ? obtenerHermanos() : [];
+
+    let filtrados = hermanos.filter(h => {
+        let cumpleTexto = !filtroDirectorioTexto || h.nombre.toLowerCase().includes(filtroDirectorioTexto.toLowerCase()) || (h.cargo && h.cargo.toLowerCase().includes(filtroDirectorioTexto.toLowerCase()));
+        let cumpleGrupo = filtroDirectorioGrupo === 'todos' || String(h.grupo) === String(filtroDirectorioGrupo);
+        return cumpleTexto && cumpleGrupo;
+    });
+
+    let totalFiltrados = filtrados.length;
+    let paginados = filtrados.slice((paginaDirectorioActual - 1) * ITEMS_POR_PAGINA_DIR, paginaDirectorioActual * ITEMS_POR_PAGINA_DIR);
+
+    return `
+        <section class="card content-card directory-card">
+            <div class="directory-toolbar">
+                <label class="search-box">
+                    ${renderIcon('search', 18)}
+                    <input id="inputBuscarDirectorio" value="${filtroDirectorioTexto}" placeholder="Buscar por nombre o privilegio..." oninput="actualizarBusquedaDirectorio(this.value)">
+                </label>
+                <select id="selectFiltroGrupoDirectorio" onchange="actualizarGrupoDirectorio(this.value)">
+                    <option value="todos" ${filtroDirectorioGrupo === 'todos' ? 'selected' : ''}>Todos los grupos</option>
+                    <option value="1" ${filtroDirectorioGrupo === '1' ? 'selected' : ''}>Grupo 1</option>
+                    <option value="2" ${filtroDirectorioGrupo === '2' ? 'selected' : ''}>Grupo 2</option>
+                    <option value="3" ${filtroDirectorioGrupo === '3' ? 'selected' : ''}>Grupo 3</option>
+                    <option value="4" ${filtroDirectorioGrupo === '4' ? 'selected' : ''}>Grupo 4</option>
+                </select>
+                <button class="btn btn-secondary" onclick="exportarHermanosExcel()">
+                    ${renderIcon('download', 18)} Excel
+                </button>
+                <button class="btn btn-primary" onclick="abrirModalNuevoPublicador()">
+                    ${renderIcon('plus', 18)} Nuevo publicador
+                </button>
+            </div>
+
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>PUBLICADOR</th>
+                            <th>GRUPO</th>
+                            <th>PRIVILEGIO</th>
+                            <th>ESTADO</th>
+                            <th style="text-align:right;">ACCIONES</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${paginados.map((p, idx) => {
+                            let iniciales = p.nombre.split(',').map(s => s.trim()[0]).join('').slice(0, 2).toUpperCase() || 'HB';
+                            let correoFalso = p.nombre.replace(/[^a-zA-Z]/g, '').toLowerCase().slice(0, 8) + '@correo.com';
+                            let esBautizado = p.bautizado === true || String(p.bautizado).toLowerCase() === 'sí' || String(p.cargo).includes('Bautizado');
+                            return `
+                                <tr>
+                                    <td>
+                                        <span class="avatar">${iniciales}</span>
+                                        <div>
+                                            <strong>${p.nombre}</strong>
+                                            <small>${correoFalso}</small>
+                                        </div>
+                                    </td>
+                                    <td>Grupo ${p.grupo || 1}</td>
+                                    <td>${p.cargo || 'Publicador'}</td>
+                                    <td>
+                                        <span class="badge ${esBautizado ? 'badge-green' : 'badge-amber'}">${esBautizado ? 'BAUTIZADO' : 'NO BAUTIZADO'}</span>
+                                    </td>
+                                    <td style="text-align:right;">
+                                        <button class="btn btn-icon" onclick="abrirModalEditarPublicador(${idx})" title="Editar">${renderIcon('arrow', 16)}</button>
+                                    </td>
+                                </tr>
+                            `;
+                        }).join('')}
+                    </tbody>
+                </table>
+                ${paginados.length === 0 ? `
+                    <div class="empty-state">
+                        <strong>Sin resultados</strong>
+                        <p>Prueba con otro nombre o privilegio.</p>
+                    </div>
+                ` : ''}
+            </div>
+
+            <div class="table-footer">
+                <span>Mostrando ${paginados.length} de ${totalFiltrados} publicadores</span>
+                <div>
+                    <button class="btn btn-secondary" onclick="cambiarPaginaDirectorio(-1)" ${paginaDirectorioActual <= 1 ? 'disabled' : ''}>Anterior</button>
+                    <button class="btn btn-secondary" onclick="cambiarPaginaDirectorio(1)" ${paginaDirectorioActual * ITEMS_POR_PAGINA_DIR >= totalFiltrados ? 'disabled' : ''}>Siguiente</button>
+                </div>
+            </div>
+        </section>
+    `;
+}
+
+function actualizarBusquedaDirectorio(val) {
+    filtroDirectorioTexto = val;
+    paginaDirectorioActual = 1;
+    ejecutarRenderizadoModulo('directorio');
+}
+
+function actualizarGrupoDirectorio(val) {
+    filtroDirectorioGrupo = val;
+    paginaDirectorioActual = 1;
+    ejecutarRenderizadoModulo('directorio');
+}
+
+function cambiarPaginaDirectorio(delta) {
+    paginaDirectorioActual += delta;
+    ejecutarRenderizadoModulo('directorio');
+}
+
+function inicializarEventosDirectorio() {}
+
+function abrirModalNuevoPublicador() {
+    abrirModalCustom(`
+        <div class="modal-header">
+            <h3>Nuevo Publicador</h3>
+            <button class="btn btn-icon close-modal-trigger" onclick="cerrarModalCustom()">${renderIcon('close', 18)}</button>
+        </div>
+        <div class="modal-body">
+            <label>
+                Apellido y Nombre
+                <input type="text" id="dirNuevoNombre" placeholder="Ej: Perez, Juan">
+            </label>
+            <label>
+                Grupo de Servicio
+                <select id="dirNuevoGrupo">
+                    <option value="1">Grupo 1</option>
+                    <option value="2">Grupo 2</option>
+                    <option value="3">Grupo 3</option>
+                    <option value="4">Grupo 4</option>
+                </select>
+            </label>
+            <label>
+                Cargo / Responsabilidad
+                <select id="dirNuevoCargo">
+                    <option value="Publicador Bautizado">Publicador Bautizado</option>
+                    <option value="Siervo Ministerial">Siervo Ministerial</option>
+                    <option value="Anciano">Anciano</option>
+                    <option value="Publicador No Bautizado">Publicador No Bautizado</option>
+                </select>
+            </label>
+            <label>
+                Precursorado
+                <select id="dirNuevoPrecursorado">
+                    <option value="Ninguno">Ninguno</option>
+                    <option value="Precursor Auxiliar">Precursor Auxiliar</option>
+                    <option value="Precursor Regular">Precursor Regular</option>
+                </select>
+            </label>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary close-modal-trigger" onclick="cerrarModalCustom()">Cancelar</button>
+            <button class="btn btn-primary" onclick="guardarPublicadorDesdeModal()">Guardar Publicador</button>
+        </div>
+    `);
+}
+
+function guardarPublicadorDesdeModal() {
+    const nombre = document.getElementById('dirNuevoNombre')?.value?.trim();
+    const grupo = parseInt(document.getElementById('dirNuevoGrupo')?.value) || 1;
+    const cargo = document.getElementById('dirNuevoCargo')?.value;
+    const precursorado = document.getElementById('dirNuevoPrecursorado')?.value;
+
+    if (!nombre) {
+        alert("Por favor ingresa un nombre válido.");
+        return;
+    }
+
+    if (typeof guardarHermano === 'function') {
+        guardarHermano({
+            nombre,
+            cargo,
+            precursorado,
+            grupo,
+            genero: "M",
+            mayorEdad: "Sí"
+        }, -1);
+    }
+
+    cerrarModalCustom();
+    mostrarToast("Publicador registrado correctamente");
+    ejecutarRenderizadoModulo('directorio');
+}
+
+function abrirModalEditarPublicador(idxReal) {
+    const hermanos = typeof obtenerHermanos === 'function' ? obtenerHermanos() : [];
+    const p = hermanos[idxReal];
+    if (!p) return;
+
+    abrirModalCustom(`
+        <div class="modal-header">
+            <h3>Editar Publicador</h3>
+            <button class="btn btn-icon close-modal-trigger" onclick="cerrarModalCustom()">${renderIcon('close', 18)}</button>
+        </div>
+        <div class="modal-body">
+            <label>
+                Nombre
+                <input type="text" id="dirEditNombre" value="${p.nombre}">
+            </label>
+            <label>
+                Grupo
+                <select id="dirEditGrupo">
+                    <option value="1" ${p.grupo == 1 ? 'selected' : ''}>Grupo 1</option>
+                    <option value="2" ${p.grupo == 2 ? 'selected' : ''}>Grupo 2</option>
+                    <option value="3" ${p.grupo == 3 ? 'selected' : ''}>Grupo 3</option>
+                    <option value="4" ${p.grupo == 4 ? 'selected' : ''}>Grupo 4</option>
+                </select>
+            </label>
+            <label>
+                Cargo
+                <select id="dirEditCargo">
+                    <option value="Publicador Bautizado" ${p.cargo === 'Publicador Bautizado' ? 'selected' : ''}>Publicador Bautizado</option>
+                    <option value="Siervo Ministerial" ${p.cargo === 'Siervo Ministerial' ? 'selected' : ''}>Siervo Ministerial</option>
+                    <option value="Anciano" ${p.cargo === 'Anciano' ? 'selected' : ''}>Anciano</option>
+                    <option value="Publicador No Bautizado" ${p.cargo === 'Publicador No Bautizado' ? 'selected' : ''}>Publicador No Bautizado</option>
+                </select>
+            </label>
+            <label>
+                Precursorado
+                <select id="dirEditPrecursorado">
+                    <option value="Ninguno" ${p.precursorado === 'Ninguno' ? 'selected' : ''}>Ninguno</option>
+                    <option value="Precursor Auxiliar" ${p.precursorado === 'Precursor Auxiliar' ? 'selected' : ''}>Precursor Auxiliar</option>
+                    <option value="Precursor Regular" ${p.precursorado === 'Precursor Regular' ? 'selected' : ''}>Precursor Regular</option>
+                </select>
+            </label>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="eliminarPublicadorConfirm(${idxReal})">Eliminar</button>
+            <button class="btn btn-primary" onclick="guardarEdicionPublicador(${idxReal})">Guardar cambios</button>
+        </div>
+    `);
+}
+
+function guardarEdicionPublicador(idx) {
+    const nombre = document.getElementById('dirEditNombre')?.value?.trim();
+    const grupo = parseInt(document.getElementById('dirEditGrupo')?.value) || 1;
+    const cargo = document.getElementById('dirEditCargo')?.value;
+    const precursorado = document.getElementById('dirEditPrecursorado')?.value;
+
+    if (!nombre) return;
+
+    if (typeof guardarHermano === 'function') {
+        guardarHermano({
+            nombre,
+            cargo,
+            precursorado,
+            grupo,
+            genero: "M",
+            mayorEdad: "Sí"
+        }, idx);
+    }
+
+    cerrarModalCustom();
+    mostrarToast("Cambios guardados");
+    ejecutarRenderizadoModulo('directorio');
+}
+
+function eliminarPublicadorConfirm(idx) {
+    if (confirm("¿Estás seguro de que deseas eliminar este registro?")) {
+        if (typeof borrarHermano === 'function') {
+            borrarHermano(idx);
+        }
+        cerrarModalCustom();
+        mostrarToast("Publicador eliminado");
+        ejecutarRenderizadoModulo('directorio');
+    }
+}
+
+function exportarHermanosExcel() {
+    const hermanos = typeof obtenerHermanos === 'function' ? obtenerHermanos() : [];
+    if (window.XLSX) {
+        const ws = XLSX.utils.json_to_sheet(hermanos);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "Publicadores");
+        XLSX.writeFile(wb, "Directorio_Publicadores_Congregacion.xlsx");
+        mostrarToast("Directorio descargado en Excel");
+    }
+}
+
+/* ==========================================================================
+   6. MÓDULO CONFIGURACIÓN / AJUSTES
+   ========================================================================== */
+
+function renderizarConfiguracionHTML() {
+    const nombreActual = localStorage.getItem('app_nombre_congregacion') || 'Congregación Paraíso';
+    
+    // Cálculo de tamaño utilizado en LocalStorage
+    let totalBytes = 0;
+    for (let x in localStorage) {
+        if (localStorage.hasOwnProperty(x)) {
+            totalBytes += (localStorage[x].length * 2);
+        }
+    }
+    const kbUsados = (totalBytes / 1024).toFixed(1);
+    const porcentajeStorage = Math.min(Math.round((totalBytes / (5 * 1024 * 1024)) * 100), 100) || 5;
+
+    return `
+        <div class="settings-grid">
+            <!-- Tarjeta 1: Nombre de Congregación -->
+            <section class="card settings-card">
+                <div class="settings-icon tone-blue">${renderIcon('settings', 22)}</div>
+                <div>
+                    <h3>Datos de la congregación</h3>
+                    <p>Personaliza el nombre que aparece en la aplicación y en los reportes.</p>
+                    <label>
+                        Nombre de la congregación
+                        <input id="inputConfigNombreCongregacion" value="${nombreActual}">
+                    </label>
+                    <button class="btn btn-primary" onclick="guardarNombreCongregacion()">Guardar cambios</button>
+                </div>
+            </section>
+
+            <!-- Tarjeta 2: Almacenamiento Local -->
+            <section class="card settings-card">
+                <div class="settings-icon tone-green">${renderIcon('database', 22)}</div>
+                <div>
+                    <h3>Almacenamiento local</h3>
+                    <p>Base de datos sincronizada y disponible sin conexión.</p>
+                    <div class="storage-status">
+                        <span>${renderIcon('wifi', 17)} Estado</span>
+                        <span class="badge badge-green">SINCRONIZADO</span>
+                    </div>
+                    <div class="storage-bar">
+                        <span style="width: ${porcentajeStorage}%"></span>
+                    </div>
+                    <small>${kbUsados} KB de 5 MB utilizados</small>
+                </div>
+            </section>
+
+            <!-- Tarjeta 3: Respaldos y Exportación SQL -->
+            <section class="card settings-card">
+                <div class="settings-icon tone-amber">${renderIcon('download', 22)}</div>
+                <div>
+                    <h3>Respaldos y exportación</h3>
+                    <p>Descarga una copia completa de toda la información en formatos estándar.</p>
+                    <div class="button-stack">
+                        <button class="btn btn-secondary" onclick="ejecutarExportacionSQL()">
+                            ${renderIcon('database', 16)} Exportar base SQL
+                        </button>
+                        <button class="btn btn-secondary" onclick="descargarRespaldoJSON()">
+                            ${renderIcon('download', 16)} Descargar respaldo JSON
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Tarjeta 4: Aplicación PWA Offline -->
+            <section class="card settings-card">
+                <div class="settings-icon tone-rose">${renderIcon('wifi', 22)}</div>
+                <div>
+                    <h3>Aplicación PWA</h3>
+                    <p>Instala la aplicación para acceder desde tu pantalla de inicio y trabajar offline.</p>
+                    <div class="installed-row">
+                        <span class="success-ring">${renderIcon('check', 16)}</span>
+                        <div>
+                            <strong>Lista para usar sin conexión</strong>
+                            <small>Los datos se sincronizan automáticamente en tu dispositivo</small>
+                        </div>
+                    </div>
+                    <button class="btn btn-secondary" onclick="ejecutarInstalacionPWA()">Instalar aplicación</button>
+                </div>
+            </section>
+        </div>
+    `;
+}
+
+function inicializarEventosConfiguracion() {}
+
+function guardarNombreCongregacion() {
+    const input = document.getElementById('inputConfigNombreCongregacion');
+    if (!input) return;
+    const nuevoNombre = input.value.trim() || 'Paraíso';
+    localStorage.setItem('app_nombre_congregacion', nuevoNombre);
+    actualizarNombreCongregacionUI();
+    mostrarToast("Nombre de congregación actualizado");
+}
+
+function ejecutarExportacionSQL() {
+    if (typeof exportarBaseDatosSQL === 'function') {
+        exportarBaseDatosSQL();
+        mostrarToast("Archivo SQL generado y descargado");
+    } else {
+        alert("Función SQL Bridge no disponible.");
+    }
+}
+
+function descargarRespaldoJSON() {
+    const respaldo = {
+        congregacion: localStorage.getItem('app_nombre_congregacion') || 'Paraíso',
+        fechaRespaldo: new Date().toISOString(),
+        hermanos: typeof obtenerHermanos === 'function' ? obtenerHermanos() : [],
+        territorios: JSON.parse(localStorage.getItem('bd_modulo_territorios_v6')) || [],
+        asignaciones: JSON.parse(localStorage.getItem('bd_asignaciones_v16')) || [],
+        asistencia: JSON.parse(localStorage.getItem('bd_asistencia_fechas_v1')) || {}
+    };
+
+    const blob = new Blob([JSON.stringify(respaldo, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `Respaldo_Congregacion_${new Date().toISOString().split('T')[0]}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+    mostrarToast("Copia de seguridad JSON descargada");
+}
 
 function ejecutarInstalacionPWA() {
-    const banner = document.getElementById('banner-pwa-instalacion');
-    if (banner) banner.classList.add('d-none');
-
     if (deferredPromptPWA) {
         deferredPromptPWA.prompt();
         deferredPromptPWA.userChoice.then((choiceResult) => {
             if (choiceResult.outcome === 'accepted') {
-                console.log('✅ El usuario aceptó instalar la PWA');
-            } else {
-                console.log('ℹ️ El usuario canceló la instalación');
+                mostrarToast("¡Aplicación instalada con éxito!");
             }
             deferredPromptPWA = null;
         });
     } else {
-        alert('ℹ️ Para instalar esta aplicación en tu dispositivo:\n\n• En Chrome / Edge (PC o Mac): Haz clic en el botón de instalación (💻 o ➕) en la barra de direcciones o en el menú de tres puntos (...) > "Instalar Gestor Congregación".\n• En Android (Chrome): Abre el menú (...) > "Instalar aplicación" o "Añadir a pantalla principal".\n• En iPhone / iPad (Safari): Pulsa el botón "Compartir" (cuadrado con flecha hacia arriba) y selecciona "Añadir a la pantalla de inicio".');
+        mostrarToast("PWA ya instalada o disponible desde el menú del navegador");
     }
 }
-
-function descartarPromptPWA() {
-    const banner = document.getElementById('banner-pwa-instalacion');
-    if (banner) banner.classList.add('d-none');
-    sessionStorage.setItem('pwa_prompt_dismissed', 'true');
-}
-
-window.addEventListener('appinstalled', () => {
-    console.log('🎉 ¡PWA instalada satisfactoriamente!');
-    const banner = document.getElementById('banner-pwa-instalacion');
-    if (banner) banner.classList.add('d-none');
-    deferredPromptPWA = null;
-});

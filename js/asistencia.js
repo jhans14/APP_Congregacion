@@ -65,7 +65,7 @@ function inicializarModuloAsistencia(contenedorDestino) {
                     </button>
                 </div>
                 <div>
-                    <button class="btn btn-outline-primary btn-sm fw-bold d-inline-flex align-items-center gap-2" 
+                    <button class="btn btn-secondary" 
                             id="btnCopiarWhatsapp" onclick="copiarReporteWhatsApp()" title="Copiar reporte formateado para WhatsApp">
                         <span>📋</span> <span id="lblCopiarWhatsapp">Copiar para WhatsApp</span>
                     </button>
