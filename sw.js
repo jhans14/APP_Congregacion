@@ -1,7 +1,7 @@
 // ==========================================================================
 // SERVICE WORKER - GESTOR CONGREGACIÓN (PWA OFFLINE ENGINE)
 // ==========================================================================
-const CACHE_NAME = 'congregacion-pwa-v3';
+const CACHE_NAME = 'congregacion-pwa-v4';
 
 // Recursos esenciales que se guardan durante la instalación
 const STATIC_ASSETS = [
@@ -24,10 +24,7 @@ const STATIC_ASSETS = [
     './icons/icon-maskable-512.png',
     './icons/favicon-48.png',
     './icons/icon-apple-180.png',
-    'https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css',
-    'https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js',
-    'https://cdn.jsdelivr.net/npm/xlsx@0.18.1/dist/xlsx.full.min.js',
-    'https://cdn.jsdelivr.net/npm/chart.js'
+    'https://cdn.jsdelivr.net/npm/xlsx@0.18.1/dist/xlsx.full.min.js'
 ];
 
 // Instalación: Precarga todos los recursos en Cache Storage

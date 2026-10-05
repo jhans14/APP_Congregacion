@@ -183,8 +183,8 @@ main { padding: 30px 34px 50px; max-width: 1510px; margin: 0 auto; }
 .quick-card small { color: var(--slate-500); font-size: 9px; line-height: 1.35; margin-top: 3px; }
 
 /* CONTENT CARD & TABS */
-.content-card { min-height: 450px; }
-.tabs { display: flex; overflow-x: auto; border-bottom: 1px solid var(--border); margin: -5px -20px 20px; padding: 0 20px; }
+.tabs { display: flex; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; touch-action: pan-x; border-bottom: 1px solid var(--border); margin: -5px -20px 20px; padding: 0 20px; }
+.tabs::-webkit-scrollbar { display: none; }
 .tab { border: 0; border-bottom: 2px solid transparent; background: transparent; color: var(--slate-500); font-size: 11px; font-weight: 700; padding: 14px 17px; white-space: nowrap; transition: color .18s, border-color .18s; }
 .tab:hover { color: var(--navy-900); }
 .tab.active { color: var(--primary); border-color: var(--primary); }
@@ -269,7 +269,7 @@ main { padding: 30px 34px 50px; max-width: 1510px; margin: 0 auto; }
 .stage .platform-seat.center { left: 50%; transform: translateX(-50%); }
 .stage > span { position: absolute; right: 18px; }
 
-.seat-scroll { overflow-x: auto; padding: 0 2px 12px; scrollbar-width: thin; scrollbar-color: var(--slate-200) transparent; }
+.seat-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; touch-action: pan-x pan-y; overscroll-behavior-x: contain; padding: 0 2px 12px; scrollbar-width: thin; scrollbar-color: var(--slate-200) transparent; }
 .seat-sections { width: max-content; min-width: 100%; display: flex; align-items: flex-start; justify-content: center; gap: 24px; }
 .seat-section { padding: 10px 12px 14px; border-radius: 11px; background: var(--slate-100); }
 .seat-section.featured { padding-inline: 17px; }
@@ -399,7 +399,7 @@ main { padding: 30px 34px 50px; max-width: 1510px; margin: 0 auto; }
 .search-box { flex: 1; min-width: 180px; height: 38px; border: 1px solid var(--border); border-radius: 8px; display: flex; align-items: center; gap: 8px; padding: 0 11px; color: var(--slate-400); background: var(--surface); }
 .search-box input { border: 0; outline: 0; color: var(--navy-900); background: transparent; width: 100%; font-size: 11px; }
 .directory-toolbar select, .settings-card input { height: 38px; border: 1px solid var(--border); border-radius: 8px; background: var(--surface); color: var(--slate-700); padding: 0 11px; font-size: 11px; outline: none; }
-.table-wrap { overflow-x: auto; margin: 0 -20px; }
+.table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; touch-action: pan-x pan-y; margin: 0 -20px; }
 .table-wrap table { width: 100%; min-width: 700px; border-collapse: collapse; }
 .table-wrap th { background: var(--slate-100); color: var(--slate-500); font-size: 8px; letter-spacing: .06em; text-align: left; padding: 10px 20px; }
 .table-wrap td { padding: 11px 20px; border-bottom: 1px solid var(--border); color: var(--slate-700); font-size: 10px; }
@@ -552,8 +552,9 @@ main { padding: 30px 34px 50px; max-width: 1510px; margin: 0 auto; }
   .notification-popover { right: -8px; width: min(290px,calc(100vw - 30px)); }
   .attendance-viewbar { align-items: stretch; flex-direction: column-reverse; border: 0; }
   .attendance-viewbar > .btn { align-self: flex-end; margin: 0; }
-  .view-tabs { width: 100%; border-bottom: 1px solid var(--border); }
-  .view-tab { flex: 1; justify-content: center; padding-inline: 8px; }
+  .view-tabs { width: 100%; border-bottom: 1px solid var(--border); overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; touch-action: pan-x; }
+  .view-tabs::-webkit-scrollbar { display: none; }
+  .view-tab { flex: 0 0 auto; justify-content: center; padding-inline: 12px; white-space: nowrap; }
   .auditorium-heading { align-items: stretch; flex-direction: column; gap: 13px; }
   .date-control.compact { display: flex; justify-content: space-between; align-items: center; }
   .analytics-grid { gap: 10px; }
