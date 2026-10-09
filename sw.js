@@ -1,7 +1,7 @@
 // ==========================================================================
 // SERVICE WORKER - GESTOR CONGREGACIÓN (PWA OFFLINE ENGINE)
 // ==========================================================================
-const CACHE_NAME = 'congregacion-pwa-v4';
+const CACHE_NAME = 'congregacion-pwa-v5';
 
 // Recursos esenciales que se guardan durante la instalación
 const STATIC_ASSETS = [

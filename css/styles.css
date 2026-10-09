@@ -273,12 +273,11 @@ main { padding: 30px 34px 50px; max-width: 1510px; margin: 0 auto; }
 .seat-sections { width: max-content; min-width: 100%; display: flex; align-items: flex-start; justify-content: center; gap: 24px; }
 .seat-section { padding: 10px 12px 14px; border-radius: 11px; background: var(--slate-100); }
 .seat-section.featured { padding-inline: 17px; }
-.seat-section.left-section { padding-top: 0; padding-bottom: 28px; }
+.seat-section.left-section { padding-top: 10px; padding-bottom: 14px; }
 .section-label { display: block; color: var(--slate-500); font-size: 8px; font-weight: 800; text-align: center; text-transform: uppercase; letter-spacing: .05em; margin-bottom: 10px; }
 .seat-matrix-wrap { display: flex; align-items: flex-start; gap: 7px; position: relative; }
 .left-extra { margin-top: 123px; }
-.right-extras { display: flex; gap: 7px; margin-top: 175px; }
-.seat-matrix { display: grid; gap: 7px; }
+.seat-matrix { display: grid; gap: 7px; grid-auto-rows: 28px; }
 .seat { width: 34px; height: 28px; border: 1px solid var(--slate-200); border-radius: 6px 6px 9px 9px; color: var(--slate-400); background: var(--surface); font-size: 8px; box-shadow: inset 0 -3px var(--slate-100); cursor: pointer; transition: all .12s; }
 .seat:hover { border-color: var(--primary); }
 .seat.occupied { color: white; background: var(--primary); border-color: var(--primary); box-shadow: inset 0 -3px #1d4ed8; }
@@ -318,6 +317,7 @@ main { padding: 30px 34px 50px; max-width: 1510px; margin: 0 auto; }
 .save-status.saved { color: var(--emerald); }
 .attendance-side > .save-status { justify-content: center; padding-top: 3px; }
 .full-button { width: 100%; }
+.btn-sm { padding: 6px 12px; font-size: 11px; border-radius: 6px; }
 
 /* ASISTENCIA ANALITICA */
 .attendance-analytics { margin-top: 8px; }

@@ -25,10 +25,12 @@ if (Object.keys(baseDatosAsistenciasPorFecha).length === 0) {
 let vistaActualAsistencia = 'registro'; // 'registro' | 'analitica' | 'datos'
 let fechaSeleccionadaAsistencia = new Date().toISOString().split('T')[0];
 let asientosOcupadosSet = new Set();
+let asientosPresencialesManual = 0;
+let salaAuxiliarAsistencia = 0;
 let paradosAsistencia = 2;
 let zoomAsistencia = 12;
 let estadoGuardadoAsistencia = true;
-const CAPACIDAD_AUDITORIO_TOTAL = 161; // 2 plataforma + 33 izquierda + 72 centro + 38 derecha + 16 auxiliar
+const CAPACIDAD_AUDITORIO_TOTAL = 147; // Plataforma (2) + Izq (34) + Centro (73) + Der (38)
 
 // Filtros interactivos del gráfico de líneas
 let filtroLineaTotal = true;
@@ -48,7 +50,7 @@ function inicializarModuloAsistencia(contenedorDestino) {
 
     area.innerHTML = `
         <div class="attendance-page">
-            <!-- Barra Superior de Navegación de Vistas y Copiado Rápido -->
+            <!-- Barra Superior de Navegación de Vistas -->
             <div class="attendance-viewbar">
                 <div class="view-tabs" role="tablist" aria-label="Vistas de Asistencia">
                     <button class="view-tab ${vistaActualAsistencia === 'registro' ? 'active' : ''}" 
@@ -62,12 +64,6 @@ function inicializarModuloAsistencia(contenedorDestino) {
                     <button class="view-tab ${vistaActualAsistencia === 'datos' ? 'active' : ''}" 
                             onclick="cambiarPestanaAsistencia('datos')" id="btnTabDatos">
                         🗃️ Datos Históricos
-                    </button>
-                </div>
-                <div>
-                    <button class="btn btn-secondary" 
-                            id="btnCopiarWhatsapp" onclick="copiarReporteWhatsApp()" title="Copiar reporte formateado para WhatsApp">
-                        <span>📋</span> <span id="lblCopiarWhatsapp">Copiar para WhatsApp</span>
                     </button>
                 </div>
             </div>
@@ -130,12 +126,16 @@ function cargarDatosFechaActual(fecha) {
             asientosOcupadosSet = new Set(asientos);
         }
 
+        asientosPresencialesManual = parseInt(registro.asientosPresenciales ?? registro._asientosPresenciales ?? asientosOcupadosSet.size);
+        salaAuxiliarAsistencia = parseInt(registro.auxiliar ?? registro._auxiliar ?? registro.salaAuxiliar ?? 0);
         paradosAsistencia = parseInt(registro.standing ?? registro._parados ?? 0);
         zoomAsistencia = parseInt(registro.zoom ?? registro._zoom ?? registro.zoomVal ?? 0);
         estadoGuardadoAsistencia = true;
     } else {
         // Nueva fecha sin registro previo
         asientosOcupadosSet = new Set();
+        asientosPresencialesManual = 0;
+        salaAuxiliarAsistencia = 0;
         paradosAsistencia = 0;
         zoomAsistencia = 0;
         estadoGuardadoAsistencia = false;
@@ -143,16 +143,16 @@ function cargarDatosFechaActual(fecha) {
 }
 
 // ==========================================================================
-// VISTA 1: REGISTRO Y GUARDADO (Plano del Auditorio, Contadores y Sala Auxiliar)
+// VISTA 1: REGISTRO Y GUARDADO (Plano del Auditorio y Contadores)
 // ==========================================================================
 function renderizarVistaRegistro(contenedor) {
-    const totalPresencial = asientosOcupadosSet.size + paradosAsistencia;
+    const totalPresencial = asientosPresencialesManual + salaAuxiliarAsistencia + paradosAsistencia;
     const totalGeneral = totalPresencial + zoomAsistencia;
     const porcentajeCapacidad = Math.min(Math.round((totalPresencial / CAPACIDAD_AUDITORIO_TOTAL) * 100), 100);
 
     contenedor.innerHTML = `
         <div class="attendance-layout">
-            <!-- Columna Izquierda: Auditorio, Plano y Sala Auxiliar -->
+            <!-- Columna Izquierda: Auditorio y Plano Principal -->
             <section class="card auditorium-card">
                 <!-- Encabezado con Selector de Fecha a la Derecha -->
                 <div class="auditorium-heading">
@@ -173,11 +173,13 @@ function renderizarVistaRegistro(contenedor) {
                 <!-- Plataforma Superior (2 Asientos Estratégicos: Centro y Esquina Izquierda) -->
                 <div class="stage">
                     <button class="seat platform-seat left ${asientosOcupadosSet.has('P-2') ? 'occupied' : ''}" 
+                            id="seat-P-2"
                             onclick="toggleButaca('P-2')" title="Plataforma Esquina Izquierda (P2)">
                         P2
                     </button>
                     <span>PLATAFORMA</span>
                     <button class="seat platform-seat center ${asientosOcupadosSet.has('P-1') ? 'occupied' : ''}" 
+                            id="seat-P-1"
                             onclick="toggleButaca('P-1')" title="Plataforma Centro (P1)">
                         P1
                     </button>
@@ -186,42 +188,57 @@ function renderizarVistaRegistro(contenedor) {
                 <!-- Plano de Butacas con Scroll Horizontal Táctil -->
                 <div class="seat-scroll">
                     <div class="seat-sections">
-                        <!-- Sección Izquierda: 4x8 + 1 asiento extra en extremo izquierdo -->
+                        <!-- Sección Izquierda: 4x8 + 1 extra lateral + 1 extra 2 espacios detrás del 29 -->
                         <div class="seat-section left-section">
                             <span class="section-label">Sección Izquierda</span>
                             <div class="seat-matrix-wrap">
                                 <button class="seat extra-seat left-extra ${asientosOcupadosSet.has('L-E1') ? 'occupied' : ''}" 
-                                        onclick="toggleButaca('L-E1')" title="Asiento Extra Izquierdo">
+                                        id="seat-L-E1"
+                                        onclick="toggleButaca('L-E1')" title="Asiento Extra Lateral Izquierdo">
                                     E
                                 </button>
                                 <div class="seat-matrix" style="grid-template-columns: repeat(4, 34px);">
                                     ${generarMatrizAsientos('L', 4, 8)}
+                                    <button class="seat extra-seat ${asientosOcupadosSet.has('L-E2') ? 'occupied' : ''}" 
+                                            id="seat-L-E2"
+                                            style="grid-column: 1; grid-row: 10;" 
+                                            onclick="toggleButaca('L-E2')" title="Asiento Extra (2 espacios detrás del 29)">
+                                        E
+                                    </button>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Sección Central: 8x9 -->
+                        <!-- Sección Central: 8x9 + 1 asiento extra detrás del 70 -->
                         <div class="seat-section featured">
                             <span class="section-label">Sección Central</span>
                             <div class="seat-matrix" style="grid-template-columns: repeat(8, 34px);">
                                 ${generarMatrizAsientos('C', 8, 9)}
+                                <button class="seat extra-seat ${asientosOcupadosSet.has('C-E1') ? 'occupied' : ''}" 
+                                            id="seat-C-E1"
+                                            style="grid-column: 6; grid-row: 10;" 
+                                            onclick="toggleButaca('C-E1')" title="Asiento Extra (detrás del asiento 70)">
+                                    E
+                                </button>
                             </div>
                         </div>
 
-                        <!-- Sección Derecha: 4x9 + 2 asientos extra en extremo derecho (fila 6) -->
+                        <!-- Sección Derecha: 4x9 + 2 asientos extra detrás del 34 y 35 -->
                         <div class="seat-section">
                             <span class="section-label">Sección Derecha</span>
                             <div class="seat-matrix-wrap">
                                 <div class="seat-matrix" style="grid-template-columns: repeat(4, 34px);">
                                     ${generarMatrizAsientos('R', 4, 9)}
-                                </div>
-                                <div class="right-extras">
                                     <button class="seat extra-seat ${asientosOcupadosSet.has('R-E1') ? 'occupied' : ''}" 
-                                            onclick="toggleButaca('R-E1')" title="Asiento Extra 1 Derecha">
+                                            id="seat-R-E1"
+                                            style="grid-column: 2; grid-row: 10;" 
+                                            onclick="toggleButaca('R-E1')" title="Asiento Extra (detrás del asiento 34)">
                                         E
                                     </button>
                                     <button class="seat extra-seat ${asientosOcupadosSet.has('R-E2') ? 'occupied' : ''}" 
-                                            onclick="toggleButaca('R-E2')" title="Asiento Extra 2 Derecha">
+                                            id="seat-R-E2"
+                                            style="grid-column: 3; grid-row: 10;" 
+                                            onclick="toggleButaca('R-E2')" title="Asiento Extra (detrás del asiento 35)">
                                         E
                                     </button>
                                 </div>
@@ -235,19 +252,6 @@ function renderizarVistaRegistro(contenedor) {
                     <span><i class="legend-seat occupied"></i> Butaca Ocupada</span>
                     <span><i class="legend-seat"></i> Disponible</span>
                     <span>↔️ Desliza horizontalmente para ver todas las secciones</span>
-                </div>
-
-                <!-- Sala Auxiliar (Matriz 4x4) -->
-                <div class="auxiliary-room-card">
-                    <span class="auxiliary-room-heading">SALA AUXILIAR (4x4)</span>
-                    <div class="auxiliary-grid">
-                        ${generarMatrizAsientos('AUX', 4, 4)}
-                    </div>
-
-                    <!-- Botón de Guardar Asistencia Posicionado Exactamente Debajo de la Sala Auxiliar -->
-                    <button class="btn-guardar-asistencia-aux" id="btnGuardarAsistenciaAux" onclick="guardarAsistenciaActual()">
-                        <span>💾</span> Guardar Asistencia
-                    </button>
                 </div>
             </section>
 
@@ -270,22 +274,38 @@ function renderizarVistaRegistro(contenedor) {
                     </div>
                 </section>
 
-                <!-- Tarjeta de Contadores y Modificadores (+/- o entrada numérica directa) -->
+                <!-- Tarjeta de Contadores (+/- o entrada numérica directa) -->
                 <section class="card counter-card">
-                    <!-- Butacas Marcadas -->
+                    <!-- Asientos presenciales -->
                     <div class="counter-row">
-                        <span>Butacas Marcadas</span>
-                        <strong class="text-primary fs-6" id="lblButacasMarcadas">${asientosOcupadosSet.size}</strong>
+                        <span>Asientos presenciales</span>
+                        <div>
+                            <button type="button" onclick="modificarContador('asientos', -1)" aria-label="Disminuir asientos presenciales">−</button>
+                            <input type="number" id="inputContadorAsientos" value="${asientosPresencialesManual}" min="0" 
+                                   onchange="alCambiarInputContador('asientos', this.value)">
+                            <button type="button" onclick="modificarContador('asientos', 1)" aria-label="Aumentar asientos presenciales">+</button>
+                        </div>
+                    </div>
+
+                    <!-- Sala auxiliar -->
+                    <div class="counter-row">
+                        <span>Sala auxiliar</span>
+                        <div>
+                            <button type="button" onclick="modificarContador('auxiliar', -1)" aria-label="Disminuir sala auxiliar">−</button>
+                            <input type="number" id="inputContadorAuxiliar" value="${salaAuxiliarAsistencia}" min="0" 
+                                   onchange="alCambiarInputContador('auxiliar', this.value)">
+                            <button type="button" onclick="modificarContador('auxiliar', 1)" aria-label="Aumentar sala auxiliar">+</button>
+                        </div>
                     </div>
 
                     <!-- Personas de Pie (Parados) -->
                     <div class="counter-row">
                         <span>Personas de Pie</span>
                         <div>
-                            <button type="button" onclick="modificarContador('parados', -1)" aria-label="Disminuir parados">−</button>
+                            <button type="button" onclick="modificarContador('parados', -1)" aria-label="Disminuir personas de pie">−</button>
                             <input type="number" id="inputContadorParados" value="${paradosAsistencia}" min="0" 
                                    onchange="alCambiarInputContador('parados', this.value)">
-                            <button type="button" onclick="modificarContador('parados', 1)" aria-label="Aumentar parados">+</button>
+                            <button type="button" onclick="modificarContador('parados', 1)" aria-label="Aumentar personas de pie">+</button>
                         </div>
                     </div>
 
@@ -307,10 +327,16 @@ function renderizarVistaRegistro(contenedor) {
                     <span id="textoEstadoGuardado">${estadoGuardadoAsistencia ? 'Cambios guardados' : 'Cambios pendientes de guardar'}</span>
                 </div>
 
-                <!-- Botón de Guardado Adicional para Acceso Inmediato en Lateral -->
-                <button class="btn btn-primary fw-bold py-2 shadow-sm d-flex align-items-center justify-content-center gap-2" 
-                        onclick="guardarAsistenciaActual()">
+                <!-- Botón de Guardar Asistencia -->
+                <button class="btn btn-primary full-button fw-bold py-2 shadow-sm d-flex align-items-center justify-content-center gap-2" 
+                        id="btnGuardarAsistencia" onclick="guardarAsistenciaActual()">
                     <span>💾</span> Guardar Asistencia
+                </button>
+
+                <!-- Botón de Copiar para WhatsApp posicionado directamente debajo de Guardar Asistencia -->
+                <button class="btn btn-secondary full-button fw-bold py-2 shadow-sm d-flex align-items-center justify-content-center gap-2" 
+                        id="btnCopiarWhatsapp" onclick="copiarReporteWhatsApp()" title="Copiar reporte formateado para WhatsApp">
+                    <span>📋</span> <span id="lblCopiarWhatsapp">Copiar para WhatsApp</span>
                 </button>
             </aside>
         </div>
@@ -345,8 +371,10 @@ function generarMatrizAsientos(prefijo, columnas, filas) {
 function toggleButaca(idAsiento) {
     if (asientosOcupadosSet.has(idAsiento)) {
         asientosOcupadosSet.delete(idAsiento);
+        asientosPresencialesManual = Math.max(0, asientosPresencialesManual - 1);
     } else {
         asientosOcupadosSet.add(idAsiento);
+        asientosPresencialesManual++;
     }
 
     // Actualizar visualmente la butaca en el DOM si existe
@@ -359,6 +387,9 @@ function toggleButaca(idAsiento) {
         btns.forEach(b => b.classList.toggle('occupied', asientosOcupadosSet.has(idAsiento)));
     }
 
+    const inputAsientos = document.getElementById('inputContadorAsientos');
+    if (inputAsientos) inputAsientos.value = asientosPresencialesManual;
+
     marcarCambioPendiente();
     actualizarValoresUI();
 }
@@ -367,7 +398,15 @@ function toggleButaca(idAsiento) {
  * Modifica contadores con botones +/-
  */
 function modificarContador(tipo, delta) {
-    if (tipo === 'parados') {
+    if (tipo === 'asientos') {
+        asientosPresencialesManual = Math.max(0, asientosPresencialesManual + delta);
+        const input = document.getElementById('inputContadorAsientos');
+        if (input) input.value = asientosPresencialesManual;
+    } else if (tipo === 'auxiliar') {
+        salaAuxiliarAsistencia = Math.max(0, salaAuxiliarAsistencia + delta);
+        const input = document.getElementById('inputContadorAuxiliar');
+        if (input) input.value = salaAuxiliarAsistencia;
+    } else if (tipo === 'parados') {
         paradosAsistencia = Math.max(0, paradosAsistencia + delta);
         const input = document.getElementById('inputContadorParados');
         if (input) input.value = paradosAsistencia;
@@ -385,7 +424,11 @@ function modificarContador(tipo, delta) {
  */
 function alCambiarInputContador(tipo, valor) {
     const valNumerico = Math.max(0, parseInt(valor) || 0);
-    if (tipo === 'parados') {
+    if (tipo === 'asientos') {
+        asientosPresencialesManual = valNumerico;
+    } else if (tipo === 'auxiliar') {
+        salaAuxiliarAsistencia = valNumerico;
+    } else if (tipo === 'parados') {
         paradosAsistencia = valNumerico;
     } else if (tipo === 'zoom') {
         zoomAsistencia = valNumerico;
@@ -398,21 +441,30 @@ function alCambiarInputContador(tipo, valor) {
  * Actualiza los contadores y porcentajes en la interfaz en tiempo real
  */
 function actualizarValoresUI() {
-    const presencial = asientosOcupadosSet.size + paradosAsistencia;
-    const total = presencial + zoomAsistencia;
-    const porcentaje = Math.min(Math.round((presencial / CAPACIDAD_AUDITORIO_TOTAL) * 100), 100);
+    const totalPresencial = asientosPresencialesManual + salaAuxiliarAsistencia + paradosAsistencia;
+    const totalGeneral = totalPresencial + zoomAsistencia;
+    const porcentaje = Math.min(Math.round((totalPresencial / CAPACIDAD_AUDITORIO_TOTAL) * 100), 100);
 
     const lblTotal = document.getElementById('lblAsistenciaTotal');
-    if (lblTotal) lblTotal.textContent = total;
+    if (lblTotal) lblTotal.textContent = totalGeneral;
 
     const lblPresencial = document.getElementById('lblCapacidadPresencial');
-    if (lblPresencial) lblPresencial.textContent = `${presencial} / ${CAPACIDAD_AUDITORIO_TOTAL}`;
+    if (lblPresencial) lblPresencial.textContent = `${totalPresencial} / ${CAPACIDAD_AUDITORIO_TOTAL}`;
 
     const barra = document.getElementById('barraProgresoCapacidad');
     if (barra) barra.style.width = `${porcentaje}%`;
 
-    const lblButacas = document.getElementById('lblButacasMarcadas');
-    if (lblButacas) lblButacas.textContent = asientosOcupadosSet.size;
+    const inputAsientos = document.getElementById('inputContadorAsientos');
+    if (inputAsientos && document.activeElement !== inputAsientos) inputAsientos.value = asientosPresencialesManual;
+
+    const inputAuxiliar = document.getElementById('inputContadorAuxiliar');
+    if (inputAuxiliar && document.activeElement !== inputAuxiliar) inputAuxiliar.value = salaAuxiliarAsistencia;
+
+    const inputParados = document.getElementById('inputContadorParados');
+    if (inputParados && document.activeElement !== inputParados) inputParados.value = paradosAsistencia;
+
+    const inputZoom = document.getElementById('inputContadorZoom');
+    if (inputZoom && document.activeElement !== inputZoom) inputZoom.value = zoomAsistencia;
 }
 
 /**
@@ -438,8 +490,8 @@ function alCambiarFechaAsistencia(nuevaFecha) {
  * Guarda los datos de la asistencia en localStorage y actualiza persistencia
  */
 function guardarAsistenciaActual() {
-    const presencial = asientosOcupadosSet.size + paradosAsistencia;
-    const total = presencial + zoomAsistencia;
+    const totalPresencial = asientosPresencialesManual + salaAuxiliarAsistencia + paradosAsistencia;
+    const totalGeneral = totalPresencial + zoomAsistencia;
     const fecha = fechaSeleccionadaAsistencia;
 
     const occupiedArray = Array.from(asientosOcupadosSet);
@@ -449,15 +501,20 @@ function guardarAsistenciaActual() {
         fecha: fecha,
         occupied: occupiedArray,
         asientos: occupiedArray,
+        asientosPresenciales: asientosPresencialesManual,
+        _asientosPresenciales: asientosPresencialesManual,
+        auxiliar: salaAuxiliarAsistencia,
+        _auxiliar: salaAuxiliarAsistencia,
+        salaAuxiliar: salaAuxiliarAsistencia,
         standing: paradosAsistencia,
         _parados: paradosAsistencia,
         zoom: zoomAsistencia,
         _zoom: zoomAsistencia,
         zoomVal: zoomAsistencia,
-        presencial: presencial,
-        _presencial: presencial,
-        total: total,
-        _total: total
+        presencial: totalPresencial,
+        _presencial: totalPresencial,
+        total: totalGeneral,
+        _total: totalGeneral
     };
 
     // Agregar claves booleanas de butacas para retrocompatibilidad con SQL bridge
@@ -474,19 +531,87 @@ function guardarAsistenciaActual() {
     if (indicador) indicador.classList.add('saved');
     if (texto) texto.textContent = 'Cambios guardados con éxito';
 
-    mostrarToastNotificacion(`✅ Asistencia de ${fecha.split('-').reverse().join('/')} guardada correctamente`);
+    // Mostrar modal emergente de éxito según requerimiento
+    mostrarModalExitoGuardado(fecha, totalPresencial, zoomAsistencia, totalGeneral);
+}
+
+/**
+ * Ventana emergente (modal) de confirmación tras guardar la asistencia
+ */
+function mostrarModalExitoGuardado(fecha, totalPresencial, zoom, totalGeneral) {
+    const [y, m, d] = fecha.split('-');
+    const fechaFmt = `${d}/${m}/${y}`;
+    const closeIcon = typeof renderIcon === 'function' ? renderIcon('close', 18) : '✕';
+
+    if (typeof abrirModalCustom === 'function') {
+        abrirModalCustom(`
+            <div class="modal-header">
+                <h3 style="color: var(--emerald); display: flex; align-items: center; gap: 8px;">
+                    <span>✅</span> Asistencia Guardada con Éxito
+                </h3>
+                <button class="btn btn-icon close-modal-trigger" onclick="cerrarModalCustom()">${closeIcon}</button>
+            </div>
+            <div class="modal-body" style="text-align: center; padding: 22px 20px;">
+                <div style="width: 52px; height: 52px; margin: 0 auto 12px; background: rgba(5, 150, 105, 0.12); color: var(--emerald); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 26px;">
+                    ✓
+                </div>
+                <h4 style="font-size: 16px; font-weight: 800; color: var(--navy-900); margin-bottom: 6px;">
+                    ¡Se guardó con éxito!
+                </h4>
+                <p style="color: var(--slate-500); font-size: 13px; margin-bottom: 18px;">
+                    Los datos de la reunión del <strong>${fechaFmt}</strong> quedaron registrados correctamente en el sistema.
+                </p>
+                <div style="background: var(--slate-100); border-radius: var(--radius-lg); padding: 14px 16px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; text-align: left; margin-bottom: 6px;">
+                    <div>
+                        <span style="font-size: 11px; color: var(--slate-500); display: block;">Asientos presenciales</span>
+                        <strong style="font-size: 15px; color: var(--navy-900);">${asientosPresencialesManual}</strong>
+                    </div>
+                    <div>
+                        <span style="font-size: 11px; color: var(--slate-500); display: block;">Sala auxiliar</span>
+                        <strong style="font-size: 15px; color: var(--navy-900);">${salaAuxiliarAsistencia}</strong>
+                    </div>
+                    <div>
+                        <span style="font-size: 11px; color: var(--slate-500); display: block;">Personas de pie</span>
+                        <strong style="font-size: 15px; color: var(--navy-900);">${paradosAsistencia}</strong>
+                    </div>
+                    <div>
+                        <span style="font-size: 11px; color: var(--slate-500); display: block;">Conexiones Zoom</span>
+                        <strong style="font-size: 15px; color: var(--amber);">${zoom}</strong>
+                    </div>
+                    <div style="grid-column: span 2; border-top: 1px solid var(--border); padding-top: 10px; display: flex; justify-content: space-between; align-items: center;">
+                        <span style="font-size: 12px; font-weight: 700; color: var(--slate-700);">TOTAL GENERAL:</span>
+                        <strong style="font-size: 18px; color: var(--primary);">${totalGeneral} asistentes</strong>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer" style="display: flex; gap: 10px; justify-content: flex-end;">
+                <button class="btn btn-secondary" onclick="copiarReporteWhatsApp();">
+                    <span>📋</span> Copiar para WhatsApp
+                </button>
+                <button class="btn btn-primary close-modal-trigger" onclick="cerrarModalCustom()">
+                    Aceptar
+                </button>
+            </div>
+        `);
+    } else {
+        alert(`¡Se guardó con éxito!\nFecha: ${fechaFmt}\nPresencial: ${totalPresencial}\nZoom: ${zoom}\nTotal: ${totalGeneral}`);
+    }
 }
 
 /**
  * Copia el reporte formateado para WhatsApp
  */
 async function copiarReporteWhatsApp() {
-    const presencial = asientosOcupadosSet.size + paradosAsistencia;
-    const total = presencial + zoomAsistencia;
+    const totalPresencial = asientosPresencialesManual + salaAuxiliarAsistencia + paradosAsistencia;
+    const totalGeneral = totalPresencial + zoomAsistencia;
     const [y, m, d] = fechaSeleccionadaAsistencia.split('-');
     const fechaFormateada = `${d}/${m}/${y}`;
 
-    const reporteTexto = `📊 *Asistencia - Congregación Paraíso*\n📅 Fecha: ${fechaFormateada}\n👥 Presencial: ${presencial}\n💻 Zoom: ${zoomAsistencia}\n📈 Total General: ${total}`;
+    let detalle = `Asientos: ${asientosPresencialesManual}`;
+    if (salaAuxiliarAsistencia > 0) detalle += `, Sala Aux: ${salaAuxiliarAsistencia}`;
+    if (paradosAsistencia > 0) detalle += `, De pie: ${paradosAsistencia}`;
+
+    const reporteTexto = `📊 *Asistencia - Congregación Paraíso*\n📅 Fecha: ${fechaFormateada}\n🏛️ Presencial: ${totalPresencial} (${detalle})\n💻 Zoom: ${zoomAsistencia}\n📈 Total General: ${totalGeneral}`;
 
     try {
         await navigator.clipboard.writeText(reporteTexto);
@@ -749,7 +874,7 @@ function renderizarVistaDatos(contenedor) {
             <div class="history-heading">
                 <div>
                     <h2>Registro Histórico de Asistencias</h2>
-                    <p>Consulta, carga o exporta el detalle completo de todas las reuniones registradas.</p>
+                    <p>Consulta, edita o exporta el detalle completo de todas las reuniones registradas.</p>
                 </div>
                 <div class="d-flex align-items-center gap-2">
                     <select onchange="alCambiarFiltroPeriodo(this.value)" aria-label="Filtrar por año">
@@ -770,20 +895,19 @@ function renderizarVistaDatos(contenedor) {
                             <th>PRESENCIAL</th>
                             <th>ZOOM</th>
                             <th>TOTAL</th>
-                            <th>ESTADO</th>
                             <th style="text-align: right;">ACCIONES</th>
                         </tr>
                     </thead>
                     <tbody>
                         ${registrosFiltrados.length === 0 ? `
                             <tr>
-                                <td colspan="6" class="text-center text-muted py-4">
+                                <td colspan="5" class="text-center text-muted py-4">
                                     No se encontraron registros de asistencia para este periodo.
                                 </td>
                             </tr>
                         ` : registrosFiltrados.map(f => {
                             const r = baseDatosAsistenciasPorFecha[f];
-                            const presencial = parseInt(r.presencial ?? r._presencial ?? ((r.occupied ? r.occupied.length : 0) + (r.standing ?? 0)));
+                            const presencial = parseInt(r.presencial ?? r._presencial ?? ((r.asientosPresenciales ?? (r.occupied ? r.occupied.length : 0)) + (r.auxiliar ?? 0) + (r.standing ?? 0)));
                             const zoom = parseInt(r.zoom ?? r._zoom ?? r.zoomVal ?? 0);
                             const total = parseInt(r.total ?? r._total ?? (presencial + zoom));
                             const [y, m, d] = f.split('-');
@@ -797,11 +921,10 @@ function renderizarVistaDatos(contenedor) {
                                     <td>${presencial}</td>
                                     <td>${zoom}</td>
                                     <td><strong class="text-primary">${total}</strong></td>
-                                    <td><span class="badge bg-success">GUARDADO</span></td>
                                     <td style="text-align: right;">
                                         <button class="btn btn-sm btn-outline-primary py-0 px-2 fw-bold me-1" 
-                                                onclick="cargarFechaEnPlano('${f}')" title="Cargar fecha en plano para ver o editar">
-                                            🔍 Cargar
+                                                onclick="abrirModalEditarAsistenciaHistorica('${f}')" title="Editar este registro">
+                                            ✏️ Editar
                                         </button>
                                         <button class="btn btn-sm btn-outline-danger py-0 px-2 fw-bold" 
                                                 onclick="eliminarFechaAsistencia('${f}')" title="Eliminar este registro">
@@ -822,6 +945,114 @@ function alCambiarFiltroPeriodo(nuevoPeriodo) {
     filtroPeriodoHistorico = nuevoPeriodo;
     const contenedor = document.getElementById('contenedorVistaAsistencia');
     if (contenedor) renderizarVistaDatos(contenedor);
+}
+
+/**
+ * Abre el modal para editar de forma directa Presencial, Zoom y Total
+ */
+function abrirModalEditarAsistenciaHistorica(fecha) {
+    const r = baseDatosAsistenciasPorFecha[fecha] || {};
+    const presencial = parseInt(r.presencial ?? r._presencial ?? ((r.asientosPresenciales ?? (r.occupied ? r.occupied.length : 0)) + (r.auxiliar ?? 0) + (r.standing ?? 0)));
+    const zoom = parseInt(r.zoom ?? r._zoom ?? r.zoomVal ?? 0);
+    const total = parseInt(r.total ?? r._total ?? (presencial + zoom));
+    const [y, m, d] = fecha.split('-');
+    const fechaFmt = `${d}/${m}/${y}`;
+    const closeIcon = typeof renderIcon === 'function' ? renderIcon('close', 18) : '✕';
+
+    if (typeof abrirModalCustom === 'function') {
+        abrirModalCustom(`
+            <div class="modal-header">
+                <h3>✏️ Editar Asistencia (${fechaFmt})</h3>
+                <button class="btn btn-icon close-modal-trigger" onclick="cerrarModalCustom()">${closeIcon}</button>
+            </div>
+            <div class="modal-body">
+                <p style="color: var(--slate-500); font-size: 12px; margin-bottom: 8px;">
+                    Edita de manera directa los valores de asistencia presencial y por Zoom para actualizar el total registrado.
+                </p>
+                <label>
+                    Asistencia Presencial:
+                    <input type="number" id="editModalPresencial" value="${presencial}" min="0" oninput="recalcularTotalModalEdicion()">
+                </label>
+                <label>
+                    Conexiones por Zoom:
+                    <input type="number" id="editModalZoom" value="${zoom}" min="0" oninput="recalcularTotalModalEdicion()">
+                </label>
+                <label>
+                    Asistencia Total:
+                    <input type="number" id="editModalTotal" value="${total}" min="0" readonly style="background: var(--slate-100); font-weight: 800; color: var(--primary);">
+                </label>
+                <div style="margin-top: 4px; text-align: right;">
+                    <button type="button" class="btn btn-sm btn-outline-secondary" onclick="cerrarModalCustom(); cargarFechaEnPlano('${fecha}')">
+                        🗺️ Ver / Editar en el plano del auditorio
+                    </button>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary close-modal-trigger" onclick="cerrarModalCustom()">Cancelar</button>
+                <button class="btn btn-primary" onclick="guardarEdicionAsistenciaHistorica('${fecha}')">💾 Guardar Cambios</button>
+            </div>
+        `);
+    } else {
+        const nuevoPres = prompt(`Editar Asistencia Presencial para ${fechaFmt}:`, presencial);
+        if (nuevoPres === null) return;
+        const nuevoZoom = prompt(`Editar Conexiones Zoom para ${fechaFmt}:`, zoom);
+        if (nuevoZoom === null) return;
+        const reg = baseDatosAsistenciasPorFecha[fecha] || { fecha };
+        reg.presencial = parseInt(nuevoPres) || 0;
+        reg.zoom = parseInt(nuevoZoom) || 0;
+        reg.total = reg.presencial + reg.zoom;
+        baseDatosAsistenciasPorFecha[fecha] = reg;
+        localStorage.setItem('bd_asistencia_fechas_v1', JSON.stringify(baseDatosAsistenciasPorFecha));
+        const c = document.getElementById('contenedorVistaAsistencia');
+        if (c) renderizarVistaDatos(c);
+    }
+}
+
+/**
+ * Recalcula el total en tiempo real dentro del modal de edición
+ */
+function recalcularTotalModalEdicion() {
+    const pres = parseInt(document.getElementById('editModalPresencial')?.value) || 0;
+    const zm = parseInt(document.getElementById('editModalZoom')?.value) || 0;
+    const totInput = document.getElementById('editModalTotal');
+    if (totInput) totInput.value = pres + zm;
+}
+
+/**
+ * Guarda los cambios editados desde el modal histórico
+ */
+function guardarEdicionAsistenciaHistorica(fecha) {
+    const pres = Math.max(0, parseInt(document.getElementById('editModalPresencial')?.value) || 0);
+    const zm = Math.max(0, parseInt(document.getElementById('editModalZoom')?.value) || 0);
+    const tot = pres + zm;
+
+    let reg = baseDatosAsistenciasPorFecha[fecha] || { fecha: fecha };
+    reg.presencial = pres;
+    reg._presencial = pres;
+    reg.asientosPresenciales = pres;
+    reg._asientosPresenciales = pres;
+    reg.zoom = zm;
+    reg._zoom = zm;
+    reg.zoomVal = zm;
+    reg.total = tot;
+    reg._total = tot;
+
+    baseDatosAsistenciasPorFecha[fecha] = reg;
+    localStorage.setItem('bd_asistencia_fechas_v1', JSON.stringify(baseDatosAsistenciasPorFecha));
+
+    // Si la fecha editada coincide con la activa en el plano, recargar
+    if (fechaSeleccionadaAsistencia === fecha) {
+        cargarDatosFechaActual(fecha);
+    }
+
+    if (typeof cerrarModalCustom === 'function') {
+        cerrarModalCustom();
+    }
+
+    const contenedor = document.getElementById('contenedorVistaAsistencia');
+    if (contenedor) renderizarVistaDatos(contenedor);
+
+    mostrarToastNotificacion(`✅ Asistencia de ${fecha.split('-').reverse().join('/')} actualizada a ${tot} asistentes`);
 }
 
 /**
